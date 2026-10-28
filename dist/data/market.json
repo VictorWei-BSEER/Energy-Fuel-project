@@ -6,13 +6,263 @@
     "url": "https://www.eia.gov/dnav/pet/hist/eer_epjk_pf4_rgc_dpgD.htm",
     "region": "US Gulf Coast",
     "unit": "USD/US gallon",
-    "frequency": "daily observations; published with a reporting lag",
-    "releaseDate": "2026-10-28",
-    "nextReleaseDate": "2026-11-04"
+    "frequency": "daily observations; published with a reporting lag"
   },
-  "fetchedAt": "2026-10-28T20:29:55.699970Z",
+  "fetchedAt": "2026-10-28T20:41:10.209882Z",
   "observedAt": "2026-10-27",
   "observations": [
+    {
+      "date": "2026-06-22",
+      "value": 2.698
+    },
+    {
+      "date": "2026-06-23",
+      "value": 2.765
+    },
+    {
+      "date": "2026-06-24",
+      "value": 2.794
+    },
+    {
+      "date": "2026-06-25",
+      "value": 2.898
+    },
+    {
+      "date": "2026-06-26",
+      "value": 2.786
+    },
+    {
+      "date": "2026-06-29",
+      "value": 2.928
+    },
+    {
+      "date": "2026-06-30",
+      "value": 2.867
+    },
+    {
+      "date": "2026-07-01",
+      "value": 2.755
+    },
+    {
+      "date": "2026-07-02",
+      "value": 2.713
+    },
+    {
+      "date": "2026-07-06",
+      "value": 2.828
+    },
+    {
+      "date": "2026-07-07",
+      "value": 2.885
+    },
+    {
+      "date": "2026-07-08",
+      "value": 3.187
+    },
+    {
+      "date": "2026-07-09",
+      "value": 2.986
+    },
+    {
+      "date": "2026-07-10",
+      "value": 2.969
+    },
+    {
+      "date": "2026-07-13",
+      "value": 3.351
+    },
+    {
+      "date": "2026-07-14",
+      "value": 3.552
+    },
+    {
+      "date": "2026-07-15",
+      "value": 3.516
+    },
+    {
+      "date": "2026-07-16",
+      "value": 3.563
+    },
+    {
+      "date": "2026-07-17",
+      "value": 3.501
+    },
+    {
+      "date": "2026-07-20",
+      "value": 3.549
+    },
+    {
+      "date": "2026-07-21",
+      "value": 3.589
+    },
+    {
+      "date": "2026-07-22",
+      "value": 3.67
+    },
+    {
+      "date": "2026-07-23",
+      "value": 3.864
+    },
+    {
+      "date": "2026-07-24",
+      "value": 3.708
+    },
+    {
+      "date": "2026-07-27",
+      "value": 3.582
+    },
+    {
+      "date": "2026-07-28",
+      "value": 3.712
+    },
+    {
+      "date": "2026-07-29",
+      "value": 3.825
+    },
+    {
+      "date": "2026-07-30",
+      "value": 3.681
+    },
+    {
+      "date": "2026-07-31",
+      "value": 3.88
+    },
+    {
+      "date": "2026-08-03",
+      "value": 3.506
+    },
+    {
+      "date": "2026-08-04",
+      "value": 3.322
+    },
+    {
+      "date": "2026-08-05",
+      "value": 3.361
+    },
+    {
+      "date": "2026-08-06",
+      "value": 3.519
+    },
+    {
+      "date": "2026-08-07",
+      "value": 3.445
+    },
+    {
+      "date": "2026-08-10",
+      "value": 3.713
+    },
+    {
+      "date": "2026-08-11",
+      "value": 3.814
+    },
+    {
+      "date": "2026-08-12",
+      "value": 3.822
+    },
+    {
+      "date": "2026-08-13",
+      "value": 3.734
+    },
+    {
+      "date": "2026-08-14",
+      "value": 3.766
+    },
+    {
+      "date": "2026-08-17",
+      "value": 3.912
+    },
+    {
+      "date": "2026-08-18",
+      "value": 3.96
+    },
+    {
+      "date": "2026-08-19",
+      "value": 3.895
+    },
+    {
+      "date": "2026-08-20",
+      "value": 3.926
+    },
+    {
+      "date": "2026-08-21",
+      "value": 3.918
+    },
+    {
+      "date": "2026-08-24",
+      "value": 3.734
+    },
+    {
+      "date": "2026-08-25",
+      "value": 3.619
+    },
+    {
+      "date": "2026-08-26",
+      "value": 3.675
+    },
+    {
+      "date": "2026-08-27",
+      "value": 3.74
+    },
+    {
+      "date": "2026-08-28",
+      "value": 3.805
+    },
+    {
+      "date": "2026-08-31",
+      "value": 4.021
+    },
+    {
+      "date": "2026-09-01",
+      "value": 4.19
+    },
+    {
+      "date": "2026-09-02",
+      "value": 4.118
+    },
+    {
+      "date": "2026-09-03",
+      "value": 4.063
+    },
+    {
+      "date": "2026-09-04",
+      "value": 4.017
+    },
+    {
+      "date": "2026-09-08",
+      "value": 4.126
+    },
+    {
+      "date": "2026-09-09",
+      "value": 4.341
+    },
+    {
+      "date": "2026-09-10",
+      "value": 4.682
+    },
+    {
+      "date": "2026-09-11",
+      "value": 4.521
+    },
+    {
+      "date": "2026-09-14",
+      "value": 4.488
+    },
+    {
+      "date": "2026-09-15",
+      "value": 4.705
+    },
+    {
+      "date": "2026-09-16",
+      "value": 4.68
+    },
+    {
+      "date": "2026-09-17",
+      "value": 4.514
+    },
+    {
+      "date": "2026-09-18",
+      "value": 4.532
+    },
     {
       "date": "2026-09-21",
       "value": 4.397
@@ -133,9 +383,14 @@
     "assumption": "Density of 0.8 kg/L is a model assumption, not a measured cargo specification."
   },
   "collection": {
-    "method": "web_connector",
+    "method": "https",
     "status": "ok",
-    "detail": "Initial 27-observation snapshot transcribed from the official EIA historical table via the web connector. The local collector has offline test coverage; outbound EIA HTTPS has not been run in this restricted environment. EIA page release: 2026-10-28; next release shown: 2026-11-04. This is a US Gulf Coast benchmark, not an Asian or airport executable quote."
+    "detail": "Observed EIA public benchmark. Not a live, Asian, or airport executable quote.",
+    "limitations": "US wholesale benchmark used only as an explicit proxy. Asian delivered differentials, logistics costs, capacities and demand remain model assumptions.",
+    "transport": {
+      "sha256": "7fe3d78c29a454e50a4dcd0dd32745289403c599250f418e6a1b8632e9712d47",
+      "httpLastModified": "Wed, 28 Oct 2026 13:50:38 GMT"
+    }
   },
   "staleAfterDays": 7
 }

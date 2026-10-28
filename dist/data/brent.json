@@ -6,12 +6,263 @@
     "unit": "USD/barrel",
     "frequency": "daily observations; reporting lag",
     "region": "Europe / North Sea",
-    "url": "https://www.eia.gov/dnav/pet/hist/RBRTED.htm",
-    "releaseDate": "2026-10-28"
+    "url": "https://www.eia.gov/dnav/pet/hist/RBRTED.htm"
   },
-  "fetchedAt": "2026-10-28T20:39:02.712366Z",
+  "fetchedAt": "2026-10-28T20:41:10.209882Z",
   "observedAt": "2026-10-27",
   "observations": [
+    {
+      "date": "2026-06-23",
+      "value": 75.69
+    },
+    {
+      "date": "2026-06-24",
+      "value": 72.09
+    },
+    {
+      "date": "2026-06-25",
+      "value": 73.74
+    },
+    {
+      "date": "2026-06-26",
+      "value": 70.16
+    },
+    {
+      "date": "2026-06-29",
+      "value": 71.59
+    },
+    {
+      "date": "2026-06-30",
+      "value": 70.46
+    },
+    {
+      "date": "2026-07-01",
+      "value": 69.24
+    },
+    {
+      "date": "2026-07-02",
+      "value": 68.53
+    },
+    {
+      "date": "2026-07-03",
+      "value": 68.68
+    },
+    {
+      "date": "2026-07-06",
+      "value": 69.56
+    },
+    {
+      "date": "2026-07-07",
+      "value": 71.78
+    },
+    {
+      "date": "2026-07-08",
+      "value": 76.5
+    },
+    {
+      "date": "2026-07-09",
+      "value": 74.46
+    },
+    {
+      "date": "2026-07-10",
+      "value": 74.34
+    },
+    {
+      "date": "2026-07-13",
+      "value": 81.62
+    },
+    {
+      "date": "2026-07-14",
+      "value": 83.69
+    },
+    {
+      "date": "2026-07-15",
+      "value": 83.08
+    },
+    {
+      "date": "2026-07-16",
+      "value": 81.23
+    },
+    {
+      "date": "2026-07-17",
+      "value": 85.01
+    },
+    {
+      "date": "2026-07-20",
+      "value": 86.99
+    },
+    {
+      "date": "2026-07-21",
+      "value": 93.85
+    },
+    {
+      "date": "2026-07-22",
+      "value": 94.12
+    },
+    {
+      "date": "2026-07-23",
+      "value": 105.32
+    },
+    {
+      "date": "2026-07-24",
+      "value": 100.31
+    },
+    {
+      "date": "2026-07-27",
+      "value": 91.82
+    },
+    {
+      "date": "2026-07-28",
+      "value": 85.51
+    },
+    {
+      "date": "2026-07-29",
+      "value": 91.95
+    },
+    {
+      "date": "2026-07-30",
+      "value": 91.91
+    },
+    {
+      "date": "2026-07-31",
+      "value": 96.95
+    },
+    {
+      "date": "2026-08-03",
+      "value": 88.9
+    },
+    {
+      "date": "2026-08-04",
+      "value": 86.47
+    },
+    {
+      "date": "2026-08-05",
+      "value": 86.65
+    },
+    {
+      "date": "2026-08-06",
+      "value": 89.65
+    },
+    {
+      "date": "2026-08-07",
+      "value": 87.62
+    },
+    {
+      "date": "2026-08-10",
+      "value": 92.74
+    },
+    {
+      "date": "2026-08-11",
+      "value": 93.26
+    },
+    {
+      "date": "2026-08-12",
+      "value": 92.52
+    },
+    {
+      "date": "2026-08-13",
+      "value": 92.03
+    },
+    {
+      "date": "2026-08-14",
+      "value": 92.02
+    },
+    {
+      "date": "2026-08-17",
+      "value": 92.43
+    },
+    {
+      "date": "2026-08-18",
+      "value": 95.29
+    },
+    {
+      "date": "2026-08-19",
+      "value": 92.37
+    },
+    {
+      "date": "2026-08-20",
+      "value": 94.0
+    },
+    {
+      "date": "2026-08-21",
+      "value": 96.92
+    },
+    {
+      "date": "2026-08-24",
+      "value": 92.71
+    },
+    {
+      "date": "2026-08-25",
+      "value": 88.24
+    },
+    {
+      "date": "2026-08-26",
+      "value": 87.77
+    },
+    {
+      "date": "2026-08-27",
+      "value": 90.18
+    },
+    {
+      "date": "2026-08-28",
+      "value": 89.75
+    },
+    {
+      "date": "2026-09-01",
+      "value": 96.02
+    },
+    {
+      "date": "2026-09-02",
+      "value": 97.59
+    },
+    {
+      "date": "2026-09-03",
+      "value": 100.52
+    },
+    {
+      "date": "2026-09-04",
+      "value": 102.24
+    },
+    {
+      "date": "2026-09-07",
+      "value": 104.47
+    },
+    {
+      "date": "2026-09-08",
+      "value": 106.12
+    },
+    {
+      "date": "2026-09-09",
+      "value": 109.51
+    },
+    {
+      "date": "2026-09-10",
+      "value": 120.98
+    },
+    {
+      "date": "2026-09-11",
+      "value": 118.06
+    },
+    {
+      "date": "2026-09-14",
+      "value": 121.25
+    },
+    {
+      "date": "2026-09-15",
+      "value": 130.8
+    },
+    {
+      "date": "2026-09-16",
+      "value": 127.84
+    },
+    {
+      "date": "2026-09-17",
+      "value": 121.18
+    },
+    {
+      "date": "2026-09-18",
+      "value": 119.66
+    },
     {
       "date": "2026-09-21",
       "value": 116.15
@@ -126,10 +377,14 @@
     "value": 123.1
   },
   "collection": {
-    "method": "web_connector",
+    "method": "https",
     "status": "ok",
-    "detail": "27 observations transcribed from official EIA daily Brent table through 2026-10-27. Page release 2026-10-28. Direct runtime HTTPS refresh not executed in this environment.",
-    "limitations": "Different commodity and geography from USGC jet. Any jet-minus-Brent comparison is a cross-market indicative spread, not a refinery margin or executable arbitrage."
+    "detail": "Public reference observation; not an executable quote.",
+    "limitations": "Different commodity and geography from USGC jet. Any jet-minus-Brent comparison is a cross-market indicative spread, not a refinery margin or executable arbitrage.",
+    "transport": {
+      "sha256": "b3d06b7c0deaf752991cd8cb926b057fb30e778b046a7242221f777314587ff4",
+      "httpLastModified": "Wed, 28 Oct 2026 13:51:04 GMT"
+    }
   },
   "staleAfterDays": 7
 }
