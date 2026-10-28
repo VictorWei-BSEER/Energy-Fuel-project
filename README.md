@@ -1,60 +1,73 @@
 # FUEL ATLAS / 东亚能源流向
 
-A working single-period jet-fuel procurement and logistics optimizer with an offline East Asia map. Constructivist interface, public benchmark observations, editable supply/demand assumptions, constrained allocation, stress scenarios and reproducible exports.
+An interactive, single-product **multi-period jet-fuel procurement and distribution model** with real public data collection, an East Asia map, and reproducible scenario files.
 
-## Run
+## Run and verify
 
-Node.js 22+ and Python 3.10+ are recommended. The browser app has no runtime dependencies.
-
-```sh
-npm run dev
-```
-
-Open http://localhost:4173. To run checks:
+Requires Node.js 22+ and Python 3.10+.
 
 ```sh
 npm ci
+npm run dev
+```
+
+Open http://localhost:4173. The planning engine is bundled automatically before local serving. The deployed application runs entirely in the browser; no keys are exposed.
+
+```sh
+npm run build
 npm test
 npm run check
 ```
 
-## What works
+## The model
 
-- Three illustrative supply hubs and three demand hubs on a real Natural Earth geographic base.
-- Exact continuous min-cost maximum-flow optimization, including residual rerouting, supply limits and route capacity limits.
-- Existing inventories and closing reserve targets adjust each destination's required delivery.
-- Editable benchmark, supplier capacity/basis, demand and logistics assumptions; base, Gulf shock and Singapore outage scenarios.
-- Procurement/logistics cost breakdown, allocation and unmet demand; baseline savings shown only when both solutions fulfill demand.
-- A real, dated EIA US Gulf Coast jet-fuel benchmark snapshot, with source, units, acquisition method and density conversion.
-- Scenario export and an independent educational aircraft-tankering model module.
+Plan 1–12 equal periods. Edit supplier capacity/basis, period demand, initial stock, reserve targets, storage size/cost, route capacity/lead time/freight/handling, financing, budget and transport-emissions caps. Provide a flat benchmark, a growth assumption or an explicit price curve.
 
-## Refresh observed data
+The continuous LP first minimizes unmet demand, then minimizes cost while preserving that service optimum within a disclosed numerical tolerance. Results include dated departures/arrivals, procurement, stock balances, shortages, binding constraints, costs and emissions. Supply arriving late never fulfills an earlier period's demand. Infeasible hard constraints produce diagnostics, not fabricated allocations.
+
+Three stress cases share the same underlying assumptions. Cost comparisons appear only when both cases fully serve the same node-period demand. JSON export/import preserves the inputs and recomputes results; CSV exports shipment, procurement and shortage records. Existing inventory is already owned, so purchase costs apply only to new procurement. This is an incremental planning-cost model, not accounting profit.
+
+See [model formulation](docs/model.md) for equations, timing, costs, tolerances and limits.
+
+## Connected data
+
+Five official-source adapters have completed a real GitHub Actions HTTPS run:
+
+| Feed | Model role |
+| --- | --- |
+| EIA US Gulf Coast jet fuel | Observed geographic benchmark proxy for the user-editable future curve |
+| EIA Brent spot | Market context; different product/geography from USGC jet |
+| ECB reference FX | Context; reference rates, not executable quotes |
+| OurAirports | Reference coordinates; no inventory or commercial fuel price data |
+| JODI jet kerosene balances | National monthly context with reporting/assessment flags |
+
+Every record retains source, observation period and collection time. Every feed has refresh health and last-known data. A failed collection preserves the prior snapshot; missing data is not zero. JODI missing economies and unassessed zeros must not be interpreted as absent supply. See [source provenance and coverage](docs/data-sources.md).
+
+Asian supplier basis, available capacity, demand, stock, freight and contract prices remain **explicit assumptions**, not observations. IATA/Platts is marked restricted; Comtrade and executable supplier offers are not activated without a suitable access/configuration and product mapping. The UI distinguishes model input, context and reference feeds.
+
+## Data refresh
 
 ```sh
 npm run collect
+# Or one feed:
+python3 scripts/refresh_data.py --output-dir dist/data --only eia-jet
 ```
 
-The collector downloads EIA's public daily HTML and atomically updates `dist/data/market.json`. It requires outbound HTTPS access to www.eia.gov. Failed fetches or validation preserve the previous file. The checked-in initial snapshot was acquired from the official EIA page through a web connector; direct runtime fetching was not integration-tested in the restricted build environment.
+The collector needs HTTPS access to the official source hosts. The managed build environment has restricted outbound networking; real integration was verified in GitHub Actions. All sources have bounded responses, timeouts, schema/date validation and atomic writes.
 
-`.github/workflows/refresh-market.yml` provides weekday/manual refresh when present on the repository's default branch with Actions write permission. That workflow updates the source snapshot; it does not automatically republish the separately hosted Sites preview. Rebuild/redeploy that preview to carry a new snapshot. No schedule has been verified as running yet.
+The refresh workflow runs on weekdays at 22:17 UTC, supports manual dispatch, and runs on relevant source changes. Scheduled Actions run from the default branch. It commits only `dist/data/`, reports partial failures, and fails if no active feed refreshed.
 
-## Data and model boundaries
+The web app loads the latest collected dataset from GitHub `main`, then the working feature branch, then its bundled fallback. The Refresh data button repeats this process. Requests for all feeds use the same selected source location; each feed keeps its own observation date and freshness. These are periodic collected snapshots, not real-time exchange or supplier quotes. The hosted UI does not need to be redeployed for remote dataset updates.
 
-EIA is a **US Gulf Coast FOB benchmark**, not an Asian port or airport executable quote. All supply capacities, demand, inventory, reserve, regional basis, freight, handling and storage figures are **editable scenario assumptions**. The USD/tonne conversion assumes density 0.8 kg/L and 3.785411784 litres per US gallon.
+## Structure
 
-The optimization covers one common planning period and a single interchangeable product. It is a continuous transportation model with an inventory-adjusted delivery requirement. It does not model vessel scheduling, lead times, integer cargo lots, credit limits, tax treatment, quality/blending, multi-period storage, emissions, hedging, or execution. Those require additional data and constraints. Cost savings are comparisons with a disclosed shipping-cost-first heuristic, not realized trading profit.
+- `src/planner.js`: multi-period LP, validation, scenarios and diagnostics.
+- `dist/planner.js`: generated self-contained browser bundle (do not hand-edit).
+- `dist/index.html`, `styles.css`, `app.js`: constructivist UI and import/export.
+- `dist/data/`: verified source snapshots and health catalog.
+- `scripts/refresh_data.py`, `data_adapters.py`, `collect_market.py`: ingestion.
+- `scripts/build.mjs`: deterministic browser build and third-party license copy.
+- `tests/`: model, data and DOM interaction checks.
+- `dist/optimizer.js`, `model.js`: earlier single-period/aircraft examples, not the active planning engine.
 
-When infeasible, displayed delivery cost covers only the partial allocation; unmet requirements remain explicit and savings comparisons are suppressed. Animated routes depict model allocations, not observed ships or flights. Source dates and collection dates are distinct. Public benchmark observations are not a live tick feed.
-
-## Files
-
-- `dist/index.html`, `styles.css`, `app.js`: static browser interface.
-- `dist/optimizer.js`: physical procurement/transport solver and assumptions.
-- `dist/model.js`: separate simplified aircraft-tankering model, not operational dispatch advice.
-- `dist/asia-map.js`: offline Natural Earth map geometry.
-- `dist/data/market.json`: observed public benchmark snapshot.
-- `scripts/collect_market.py`: collector and validation.
-- `tests/`: solver, model, ingestion and interface checks.
-- `docs/data-sources.md`, `docs/map-source.md`: data provenance.
-
-No API keys are required, no orders are placed, and no third-party tracking or external map tiles are loaded.
+No orders are executed. Vessel lots, source inventories, blending, taxes, contract obligations, hedging and credit/accounting workflows are outside this model. Planning routes are schematic; they are not observed ship or aircraft positions. Browser DOM behavior is tested; visual cross-browser inspection remains a separate check.

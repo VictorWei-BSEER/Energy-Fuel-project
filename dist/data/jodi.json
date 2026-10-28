@@ -1,0 +1,1541 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "id": "jodi-jet-kerosene-monthly",
+    "title": "JODI East Asian jet kerosene balances",
+    "unit": "thousand metric tonnes",
+    "frequency": "monthly; country reporting lag",
+    "region": "JP, KR, CN, SG, HK, TW when reported",
+    "url": "https://www.jodidata.org/_resources/files/downloads/oil-data/annual-csv/secondary/secondaryyear2026.csv"
+  },
+  "fetchedAt": "2026-10-28T20:41:10.209882Z",
+  "observedAt": "2026-08",
+  "observations": [
+    {
+      "date": "2026-01",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 196.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 540.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 547.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 756.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 958.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 24.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 182.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 702.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 1619.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 628.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 867.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-01",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 412.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 325.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 319.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 41.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-01",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 35.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 225.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 481.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 572.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 708.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 876.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 55.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 245.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 580.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 1442.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 575.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 1031.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-02",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 444.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 334.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 282.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 64.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-02",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 36.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 303.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 516.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 610.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 836.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 1022.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 225.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 612.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 1547.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 619.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 925.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-03",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 473.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 323.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 321.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 30.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-03",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 35.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 292.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 513.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 639.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 770.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 863.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 32.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 143.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 556.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 1333.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 576.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 854.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-04",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 406.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 257.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 300.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 62.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-04",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 78.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 289.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 522.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 666.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 842.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 788.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 48.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 4.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 640.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 1610.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 559.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 1091.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-05",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 394.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 300.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 309.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 21.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-05",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 254.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 503.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 692.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 806.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 751.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 32.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 4.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 539.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 1540.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 571.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 1213.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-06",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 442.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 337.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 296.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 42.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-06",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 37.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 253.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 518.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 640.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 914.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 855.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 130.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 8.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 439.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 1751.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 629.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 1365.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-07",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 451.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 359.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 316.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 63.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-07",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 38.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 215.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "HK",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 527.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 602.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-08",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 919.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-08",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 831.0,
+      "assessmentCode": "2"
+    },
+    {
+      "date": "2026-08",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 137.0,
+      "assessmentCode": "2"
+    },
+    {
+      "date": "2026-08",
+      "country": "JP",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 5.0,
+      "assessmentCode": "2"
+    },
+    {
+      "date": "2026-08",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 560.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-08",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 1940.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-08",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 647.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-08",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 1236.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-08",
+      "country": "KR",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "1"
+    },
+    {
+      "date": "2026-08",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "SG",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 0.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "CLOSTLV",
+      "unit": "KTONS",
+      "value": 416.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "REFGROUT",
+      "unit": "KTONS",
+      "value": 367.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTDEMO",
+      "unit": "KTONS",
+      "value": 317.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTEXPSB",
+      "unit": "KTONS",
+      "value": 126.0,
+      "assessmentCode": "3"
+    },
+    {
+      "date": "2026-08",
+      "country": "TW",
+      "product": "JETKERO",
+      "flow": "TOTIMPSB",
+      "unit": "KTONS",
+      "value": 75.0,
+      "assessmentCode": "3"
+    }
+  ],
+  "latest": {
+    "date": "2026-08"
+  },
+  "collection": {
+    "method": "https",
+    "status": "ok",
+    "detail": "Public reference observation; not an executable quote.",
+    "limitations": "Strict JETKERO and KTONS selection with assessment codes retained. National totals are context, not terminal availability or supplier capacity. Current snapshot covers HK, JP, KR, SG and TW; CN is missing. Unassessed reported zeros must not imply absent supply capability. Official CSV HTTPS collection and schema validation succeeded in GitHub Actions.",
+    "transport": {
+      "sha256": "72a2994b9d91a17ac7cec272060067e501fb0ddc1cbf27f93bc1b9181398fb92",
+      "httpLastModified": "Wed, 21 Oct 2026 15:10:32 GMT"
+    }
+  },
+  "staleAfterDays": 90
+}

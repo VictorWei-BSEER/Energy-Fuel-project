@@ -1,146 +1,191 @@
-import { DEFAULT_NETWORK, SCENARIOS, makeScenario, optimizeNetwork } from './optimizer.js';
+import { DEFAULT_PLAN_NETWORK, buildDefaultPlan, solvePlan, runScenarios } from './planner.js';
 import { mapMarkup, project } from './asia-map.js';
 
-const $ = selector => document.querySelector(selector);
-const esc = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const usd = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
-const number = new Intl.NumberFormat('en-US',{maximumFractionDigits:1});
-const price = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-const state = {scenario:'baseline',demandScale:1,layer:'plan',selected:null,dirty:true,benchmarkKind:'assumed'};
-let currentInput = null;
-let result = null;
-let market = null;
-let network = structuredClone(DEFAULT_NETWORK);
-const svg = $('#atlas-map');
-const dialog = $('#method-dialog');
-
-for (const scenario of SCENARIOS) $('#scenario').add(new Option(scenario.name || scenario.label || scenario.id,scenario.id));
-const labels = [[107,35,'CHINA','country-label'],[137.8,41.8,'JAPAN','country-label'],[129.7,40.5,'KOREA','country-label'],[108.7,13,'South China Sea','sea-label'],[140,22,'Philippine Sea','sea-label']];
+const REMOTE_DATA_BASES=[
+ 'https://raw.githubusercontent.com/VictorWei-BSEER/Energy-Fuel-project/main/dist/',
+ 'https://raw.githubusercontent.com/VictorWei-BSEER/Energy-Fuel-project/codex/complete-energy-model/dist/',
+];
+const $=selector=>document.querySelector(selector);
+const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const usd=new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
+const num=new Intl.NumberFormat('en-US',{maximumFractionDigits:1});
+const price=new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const finite=Number.isFinite;
+const state={scenario:'baseline',demandScale:1,period:1,selected:null,dirty:true,benchmarkKind:'assumed',busy:false};
+let network=structuredClone(DEFAULT_PLAN_NETWORK);
+let baseInput=null,effectiveInput=null,result=null,comparison=null,market=null,catalog=null;
+let feedRecords=[];
+const svg=$('#atlas-map'),dialog=$('#method-dialog');
+const labels=[[107,35,'CHINA','country-label'],[137.8,41.8,'JAPAN','country-label'],[129.7,40.5,'KOREA','country-label'],[108.7,13,'South China Sea','sea-label'],[140,22,'Philippine Sea','sea-label']];
 svg.innerHTML=`<defs><marker id="route-arrow" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#d74329" stroke-width="1"/></marker></defs><g aria-hidden="true">${mapMarkup}${labels.map(([lon,lat,text,cls])=>{const[x,y]=project(lon,lat);return `<text class="${cls}" x="${x}" y="${y}">${text}</text>`;}).join('')}</g><g id="route-background" aria-hidden="true"></g><g id="active-route" aria-hidden="true"></g><g id="network-nodes"></g>`;
-
-function inputCell(value,group,index,field,label,{min=0,max=1000000}={}) {
-  return `<input type="number" value="${esc(value)}" min="${min}" max="${max}" step="any" inputmode="decimal" data-group="${group}" data-index="${index}" data-field="${field}" aria-label="${esc(label)}" required>`;
+const horizon=()=>Math.min(12,Math.max(1,Number($('#horizon').value)||4));
+const at=(value,period)=>Array.isArray(value)?value[period-1]??0:value??0;
+const displayProfile=value=>Array.isArray(value)?value.every(v=>v===value[0])?String(value[0]):value.join(', '):String(value??0);
+const entityName=n=>n.city||n.name||n.id;
+function field(value,group,index,key,label,{profile=false,min=0,max=1e9,step='any'}={}){return `<input ${profile?'type="text" class="profile-input"':`type="number" min="${min}" max="${max}" step="${step}"`} value="${esc(profile?displayProfile(value):value??0)}" data-group="${group}" data-index="${index}" data-field="${key}"${profile?' data-profile="true"':''} aria-label="${esc(label)}" required>`;}
+function renderAssumptions(){
+ $('#supply-inputs').innerHTML=network.suppliers.map((s,i)=>`<tr><td><b>${esc(s.id)}</b><small>${esc(entityName(s))}</small></td><td>${field(s.capacity,'suppliers',i,'capacity',`${entityName(s)} capacity profile`,{profile:true})}</td><td>${field(s.basisUsdPerTonne,'suppliers',i,'basisUsdPerTonne',`${entityName(s)} basis USD per tonne`,{min:-5000,max:5000})}</td></tr>`).join('');
+ $('#demand-inputs').innerHTML=network.destinations.map((d,i)=>`<tr><td><b>${esc(d.id)}</b><small>${esc(entityName(d))}</small></td><td>${field(d.demand,'destinations',i,'demand',`${entityName(d)} demand profile`,{profile:true})}</td><td>${field(d.initialInventory,'destinations',i,'initialInventory',`${entityName(d)} initial inventory`)}</td><td>${field(d.reserve,'destinations',i,'reserve',`${entityName(d)} reserve profile`,{profile:true})}</td><td>${field(d.storageCapacity,'destinations',i,'storageCapacity',`${entityName(d)} storage capacity`)}</td><td>${field(d.storageUsdPerTonnePerPeriod,'destinations',i,'storageUsdPerTonnePerPeriod',`${entityName(d)} holding cost`)}</td></tr>`).join('');
+ $('#lane-inputs').innerHTML=network.routes.map((r,i)=>`<tr><td>${esc(r.from)} → ${esc(r.to)}</td><td>${field(r.capacity,'routes',i,'capacity',`${r.from} to ${r.to} capacity profile`,{profile:true})}</td><td>${field(r.leadTime,'routes',i,'leadTime',`${r.from} to ${r.to} lead time`,{max:12,step:1})}</td><td>${field(r.freightUsdPerTonne,'routes',i,'freightUsdPerTonne',`${r.from} to ${r.to} freight`)}</td><td>${field(r.handlingUsdPerTonne,'routes',i,'handlingUsdPerTonne',`${r.from} to ${r.to} handling`)}</td><td>${field(r.emissionsKgPerTonne,'routes',i,'emissionsKgPerTonne',`${r.from} to ${r.to} emissions kg per tonne`)}</td></tr>`).join('');
+ const selected=$('#inventory-node').value;$('#inventory-node').replaceChildren(...network.destinations.map(d=>new Option(entityName(d),d.id)));if(network.destinations.some(d=>d.id===selected))$('#inventory-node').value=selected;
+ updatePeriodControl();
 }
-function renderAssumptions() {
-  $('#supply-inputs').innerHTML=network.supplies.map((s,i)=>`<tr><td>${esc(s.id)}<small>${esc(s.city)}</small></td><td>${inputCell(s.capacity,'supplies',i,'capacity',`${s.city} supply capacity tonnes`)}</td><td>${inputCell(s.basisUsdPerTonne,'supplies',i,'basisUsdPerTonne',`${s.city} supplier basis USD per tonne`,{min:-5000,max:5000})}</td></tr>`).join('');
-  $('#demand-inputs').innerHTML=network.demands.map((d,i)=>`<tr><td>${esc(d.id)}<small>${esc(d.city)}</small></td><td>${inputCell(d.demand,'demands',i,'demand',`${d.city} base demand tonnes`)}</td><td>${inputCell(d.inventory,'demands',i,'inventory',`${d.city} starting inventory tonnes`)}</td><td>${inputCell(d.reserve,'demands',i,'reserve',`${d.city} required reserve tonnes`)}</td></tr>`).join('');
-  $('#lane-inputs').innerHTML=network.routes.map((r,i)=>`<tr><td>${esc(r.from)} → ${esc(r.to)}</td><td>${inputCell(r.capacity,'routes',i,'capacity',`${r.from} to ${r.to} lane capacity tonnes`)}</td><td>${inputCell(r.shippingUsdPerTonne,'routes',i,'shippingUsdPerTonne',`${r.from} to ${r.to} shipping USD per tonne`,{min:0,max:10000})}</td><td>${inputCell(r.handlingUsdPerTonne,'routes',i,'handlingUsdPerTonne',`${r.from} to ${r.to} handling USD per tonne`,{min:0,max:10000})}</td><td>${inputCell(r.storageUsdPerTonne??0,'routes',i,'storageUsdPerTonne',`${r.from} to ${r.to} storage USD per tonne`,{min:0,max:10000})}</td></tr>`).join('');
+function updatePeriodControl(){const n=horizon();state.period=Math.min(state.period,n);$('#map-period').replaceChildren(...Array.from({length:n},(_,i)=>new Option(`PERIOD ${i+1}`,String(i+1))));$('#map-period').value=String(state.period);$('#period-prev').disabled=state.period<=1;$('#period-next').disabled=state.period>=n;$('#map-horizon').textContent=`${n} PLANNING PERIOD${n===1?'':'S'}`;}
+function nodeList(){const data=effectiveInput&&!state.dirty?effectiveInput:network;return [...data.suppliers.map(n=>({...n,type:'supply'})),...data.destinations.map(n=>({...n,type:'demand'}))];}
+function curve(a,b){const[ax,ay]=project(a.lon,a.lat),[bx,by]=project(b.lon,b.lat);return `M${ax},${ay} Q${(ax+bx)/2+(by-ay)*.13},${(ay+by)/2-(bx-ax)*.13} ${bx},${by}`;}
+function hasPlan(){return !state.dirty&&result&&['optimal','shortage'].includes(result.status)&&finite(result.totalCost);}
+function renderMap(){
+ const focused=document.activeElement?.closest('[data-node]')?.dataset.node;const nodes=nodeList();const find=id=>nodes.find(n=>n.id===id&&finite(n.lat)&&finite(n.lon));
+ $('#route-background').innerHTML=network.routes.map(r=>{const a=find(r.from),b=find(r.to);return a&&b?`<path class="background-route" d="${curve(a,b)}"/>`:'';}).join('');
+ const shipments=hasPlan()?result.routes.filter(r=>r.departurePeriod===state.period&&r.quantity>1e-6):[];
+ $('#active-route').innerHTML=shipments.map(r=>{const a=find(r.from),b=find(r.to);if(!a||!b)return '';const path=curve(a,b);const highlighted=!state.selected||state.selected===r.from||state.selected===r.to;return `<path class="route-line${highlighted?' highlighted':''}" d="${path}" marker-end="url(#route-arrow)" opacity="${highlighted?1:.2}"><title>${esc(r.from)} to ${esc(r.to)}: ${num.format(r.quantity)} t, period ${r.departurePeriod} to ${r.arrivalPeriod}</title></path><path class="route-flow" d="${path}" opacity="${highlighted?.7:.1}"/>`;}).join('');
+ $('#network-nodes').innerHTML=nodes.filter(n=>finite(n.lat)&&finite(n.lon)).map(n=>{const[x,y]=project(n.lon,n.lat);const left=['ULS','HKG'].includes(n.id),dx=left?-17:17,anchor=left?'end':'start';const line=state.dirty?n.type.toUpperCase():n.type==='supply'?`${num.format(at(n.capacity,state.period))} t CAPACITY`:`${num.format(at(n.demand,state.period))} t DEMAND`;const shape=n.type==='supply'?'<rect x="-5" y="-5" width="10" height="10" transform="rotate(45)" fill="#20221e"/>':'<circle r="5" fill="#efece1" stroke="#d74329" stroke-width="2.5"/>';return `<g class="airport-node${state.selected===n.id?' selected':''}" transform="translate(${x},${y})" role="button" tabindex="0" data-node="${esc(n.id)}" aria-label="Inspect ${esc(entityName(n))} ${n.type} center" aria-pressed="${state.selected===n.id}"><circle class="airport-hit" r="18"/><circle class="airport-ring" r="12" stroke-opacity="${state.selected===n.id?1:.35}"/>${shape}<text class="airport-code" x="${dx}" y="-2" text-anchor="${anchor}">${esc(entityName(n).toUpperCase())}</text><text class="network-quantity" x="${dx}" y="12" text-anchor="${anchor}">${line}</text></g>`;}).join('');
+ $('#map-status').textContent=state.dirty?'Inputs changed · solve to refresh':hasPlan()?`Period ${state.period} · ${shipments.length} departures · ${num.format(shipments.reduce((a,r)=>a+r.quantity,0))} t`:'No valid shipment plan for these constraints';
+ if(focused)svg.querySelector(`[data-node="${CSS.escape(focused)}"]`)?.focus({preventScroll:true});
 }
-function nodes() {return [...(currentInput?.supplies || network.supplies).map(n=>({...n,type:'supply'})),...(currentInput?.demands || network.demands).map(n=>({...n,type:'demand'}))];}
-function node(id) {return nodes().find(n=>n.id===id);}
-function pathBetween(a,b) {const[ax,ay]=project(a.lon,a.lat);const[bx,by]=project(b.lon,b.lat);return `M${ax},${ay} Q${(ax+bx)/2+(by-ay)*.13},${(ay+by)/2-(bx-ax)*.13} ${bx},${by}`;}
-function renderMap() {
-  const focused=document.activeElement?.closest('[data-node]')?.dataset.node;
-  const nodeList=nodes();
-  const input=currentInput || network;
-  $('#route-background').innerHTML=state.layer==='lanes'||!result ? input.routes.map(r=>{const a=nodeList.find(n=>n.id===r.from);const b=nodeList.find(n=>n.id===r.to);return a&&b?`<path class="background-route" d="${pathBetween(a,b)}"/>`:'';}).join(''):'';
-  $('#active-route').innerHTML=result&&!state.dirty ? result.routes.filter(r=>r.quantity>0.0001).map(r=>{const a=node(r.from),b=node(r.to);if(!a||!b)return '';const route=pathBetween(a,b);const selected=!state.selected||state.selected===r.from||state.selected===r.to;return `<path class="route-line${selected?' highlighted':''}" d="${route}" marker-end="url(#route-arrow)" opacity="${selected?1:.22}"/><path class="route-flow" d="${route}" opacity="${selected?.8:.15}"/>`;}).join(''):'';
-  $('#network-nodes').innerHTML=nodeList.map(n=>{
-    const[x,y]=project(n.lon,n.lat);const left=['ULS','HKG'].includes(n.id);const dx=left?-17:17;const anchor=left?'end':'start';
-    const required=result?.demandRequirements?.find(d=>d.id===n.id)?.requiredDelivery;
-    const quantity=state.dirty?(n.type==='supply'?'SUPPLY':'DEMAND'):n.type==='supply'?`${number.format(n.capacity)} t AVAILABLE`:`${number.format(required??Math.max(0,n.demand+n.reserve-n.inventory))} t REQUIRED`;
-    const shape=n.type==='supply'?'<rect x="-5" y="-5" width="10" height="10" transform="rotate(45)" fill="#20221e"/>':'<circle r="5" fill="#efece1" stroke="#d74329" stroke-width="2.5"/>';
-    return `<g class="airport-node${state.selected===n.id?' selected':''}" transform="translate(${x},${y})" role="button" tabindex="0" data-node="${esc(n.id)}" aria-label="Inspect ${esc(n.city)} ${n.type} center" aria-pressed="${state.selected===n.id}"><circle class="airport-hit" r="18"/><circle class="airport-ring" r="12" stroke-opacity="${state.selected===n.id?1:.35}"/>${shape}<text class="airport-code" x="${dx}" y="-2" text-anchor="${anchor}">${esc(n.city.toUpperCase())}</text><text class="network-quantity" x="${dx}" y="12" text-anchor="${anchor}">${quantity}</text></g>`;
-  }).join('');
-  if(focused)svg.querySelector(`[data-node="${focused}"]`)?.focus({preventScroll:true});
+function inspectNode(id){state.selected=state.selected===id?null:id;renderMap();if(!state.selected)return;const n=nodeList().find(n=>n.id===id);if(!n)return;const shipped=hasPlan()?result.routes.filter(r=>r.departurePeriod===state.period&&r.from===id).reduce((a,r)=>a+r.quantity,0):null;const inv=hasPlan()?result.inventory.find(i=>i.destination===id&&i.period===state.period):null;$('#map-status').textContent=state.dirty?`${entityName(n)} · inputs pending`:n.type==='supply'?`${entityName(n)} · P${state.period} departure ${num.format(shipped||0)} t`:inv?`${entityName(n)} · P${state.period} closing ${num.format(inv.closing)} t / unmet ${num.format(inv.unmet)} t`:`${entityName(n)} · no valid result`;}
+function parseProfile(text,periods,label){const values=String(text).split(',').map(v=>Number(v.trim()));if(!String(text).trim()||values.some(v=>!finite(v)||v<0)||String(text).split(',').some(v=>!v.trim()))throw new Error(`${label}: enter non-negative numbers separated by commas.`);if(values.length===1)return Array(periods).fill(values[0]);if(values.length!==periods)throw new Error(`${label}: enter one repeated value or exactly ${periods} period values.`);return values;}
+function readBase(){
+ const relevant=[...document.querySelectorAll('#model-form input,.assumptions-section input')];const invalid=relevant.find(el=>!el.validity.valid||el.required&&el.value==='');if(invalid){invalid.reportValidity();throw new Error(`Check ${invalid.getAttribute('aria-label')||invalid.id}: enter a valid value.`);}
+ const periods=horizon();const edited=structuredClone(network);for(const el of document.querySelectorAll('input[data-group]'))edited[el.dataset.group][Number(el.dataset.index)][el.dataset.field]=el.dataset.profile?parseProfile(el.value,periods,el.getAttribute('aria-label')):el.valueAsNumber;
+ const benchmark=$('#benchmark').valueAsNumber;const growth=$('#price-growth').valueAsNumber/100;const priceCurve=$('#price-curve').value.trim()?parseProfile($('#price-curve').value,periods,'Price curve'):Array.from({length:periods},(_,i)=>benchmark*(1+growth)**i);
+ const plan=buildDefaultPlan({periods,benchmarkUsdPerTonne:benchmark,priceCurve,...edited,budgetUsd:$('#budget').value===''?null:$('#budget').valueAsNumber,emissionsCapKg:$('#emissions-cap').value===''?null:$('#emissions-cap').valueAsNumber,scenario:'baseline',demandScale:1});plan.financingRatePerPeriod=$('#financing-rate').valueAsNumber/100;
+ network=edited;return plan;
 }
-function showNode(id) {
-  state.selected=state.selected===id?null:id;renderMap();
-  if(!state.selected){updateMapStatus();return;}
-  const n=node(id);if(!n)return;
-  const used=result?.supplyUsed?.find(s=>s.id===id)?.used||0;
-  const incoming=result?.routes?.filter(r=>r.to===id).reduce((a,r)=>a+r.quantity,0)||0;
-  $('#map-status').textContent=state.dirty?`${n.city} · ${n.type} center · inputs pending` : n.type==='supply'?`${n.city} · ${number.format(used)} / ${number.format(n.capacity)} t allocated`:`${n.city} · ${number.format(incoming)} t inbound`;
+function scenarioInput(base,scenario){const input=buildDefaultPlan({...base,scenario,demandScale:state.demandScale});input.financingRatePerPeriod=base.financingRatePerPeriod;return input;}
+const emptyRow=(columns,message)=>`<tr><td colspan="${columns}" class="empty-table">${esc(message)}</td></tr>`;
+function markDirty(){state.dirty=true;state.selected=null;comparison=null;$('#export-button').disabled=true;$('#export-json').disabled=true;$('#compare-scenarios').disabled=true;$('#total-cost').textContent='—';$('#fulfilled-total').textContent='—';$('#unmet-total').textContent='—';$('#emissions-total').textContent='—';$('#result-verdict').textContent='Inputs changed · solve to refresh';$('#result-verdict').classList.remove('warning');$('#result-indicator').textContent='';$('#allocation-rows').innerHTML=emptyRow(5,'Solve the model to calculate shipments.');$('#procurement-rows').innerHTML=emptyRow(4,'No current procurement schedule.');$('#unmet-rows').innerHTML=emptyRow(3,'No current shortage result.');$('#cost-breakdown').innerHTML='';$('#constraint-status').innerHTML='';$('#constraint-summary').textContent='';$('#procurement-count').textContent='';$('#scenario-rows').innerHTML='';$('#comparison-status').textContent='Solve a plan, then compare scenarios.';renderInventory();renderMap();}
+function renderResults(){
+ const valid=hasPlan();const structural=!valid;$('#cost-heading').textContent=result.status==='shortage'?'COST OF PARTIAL SERVICE':'TOTAL HORIZON COST';$('#total-cost').textContent=valid?usd.format(result.totalCost):'No plan';$('#fulfilled-total').textContent=valid?`${num.format(result.fulfilledDemand)} / ${num.format(result.totalDemand)} t`:'—';$('#unmet-total').textContent=valid?`${num.format(result.unmetDemandTotal)} t`:'—';$('#emissions-total').textContent=valid?`${num.format(result.emissionsKg/1000)} tCO₂`:'—';$('#result-verdict').textContent=result.status==='optimal'?'Feasible · full demand served':result.status==='shortage'?`Partial service · ${num.format(result.unmetDemandTotal)} t unmet`:result.status==='structural-infeasible'?'Infeasible · hard constraints conflict':'Solver did not return a validated plan';$('#result-verdict').classList.toggle('warning',result.status!=='optimal');$('#result-indicator').textContent=result.status==='optimal'?'↗':'!';
+ $('#allocation-rows').innerHTML=valid&&result.routes.length?result.routes.map(r=>`<tr><td>${esc(r.from)}<span>→</span>${esc(r.to)}</td><td>P${r.departurePeriod} → P${r.arrivalPeriod}</td><td>${num.format(r.quantity)}</td><td>${price.format(r.unitCost)}</td><td>${usd.format(r.cost)}</td></tr>`).join(''):emptyRow(5,structural?'No valid shipments. Review the diagnostic report.':'No shipments required.');
+ $('#procurement-rows').innerHTML=valid&&result.procurement.length?result.procurement.map(p=>`<tr><td>${esc(p.supplier)}</td><td>P${p.period}</td><td>${num.format(p.quantity)}</td><td>${usd.format(p.cost)}</td></tr>`).join(''):emptyRow(4,structural?'No valid procurement schedule.':'No new procurement required.');$('#procurement-count').textContent=valid?`${result.procurement.length} PURCHASES`:'';
+ const unmet=valid?result.unmet.filter(u=>u.quantity>1e-6):[];$('#unmet-rows').innerHTML=unmet.length?unmet.map(u=>`<tr><td>${esc(u.id)}</td><td>P${u.period}</td><td>${num.format(u.quantity)}</td></tr>`).join(''):emptyRow(3,valid?'All period demand fulfilled.':'Unmet quantities are undefined without a valid plan.');
+ const costs=result.costBreakdown;$('#cost-breakdown').innerHTML=valid?['procurement','shipping','handling','storage','financing'].map(key=>{const value=costs[key]||0;return `<div class="cost-row"><div><span>${key[0].toUpperCase()+key.slice(1)}</span><strong>${usd.format(value)}</strong></div><b><i style="width:${result.totalCost>0?Math.max(0,Math.min(100,value/result.totalCost*100)):0}%"></i></b></div>`;}).join(''):'';
+ const diagnostics=Array.isArray(result.diagnostics)?result.diagnostics.map(d=>typeof d==='string'?d:d.message||'Solver validation diagnostic'):[];
+ const budget=effectiveInput.budgetUsd;const emissions=effectiveInput.emissionsCapKg;
+ const lines=[['Model status',result.status,result.status!=='optimal'],['Budget',budget===null?'No cap':valid?`${usd.format(result.totalCost)} / ${usd.format(budget)}`:`Limit ${usd.format(budget)}`,false],['Transport emissions',emissions===null?'No cap':valid?`${num.format(result.emissionsKg)} / ${num.format(emissions)} kgCO₂`:`Limit ${num.format(emissions)} kgCO₂`,false]];
+ $('#constraint-status').innerHTML=lines.map(([label,value,bad])=>`<div class="constraint-line${bad?' bad':''}"><span>${label}</span><strong>${esc(value)}</strong></div>`).join('')+diagnostics.map(d=>`<div class="constraint-line${result.status==='optimal'?'':' bad'}"><strong>${esc(d)}</strong></div>`).join('');
+ const binding=result.bindingConstraints||[];if(binding.length)$('#constraint-status').insertAdjacentHTML('beforeend',`<details class="binding-details"><summary>${binding.length} binding limits</summary>${binding.map(c=>`<div class="constraint-line"><span>${esc(c.label||c.id)}</span><strong>${finite(c.used)?num.format(c.used):'—'} / ${finite(c.capacity)?num.format(c.capacity):'—'}</strong></div>`).join('')}</details>`);$('#constraint-summary').textContent=structural?diagnostics.join(' '):`${binding.length} binding constraints. ${finite(result.terminalStock?.reduce?.((s,n)=>s+n.quantity,0))?num.format(result.terminalStock.reduce((s,n)=>s+n.quantity,0))+' t terminal inventory.':''} No independent operational baseline supplied.`;
+ $('#export-button').disabled=!valid;$('#export-json').disabled=false;$('#compare-scenarios').disabled=false;renderMap();renderInventory();
 }
-function updateMapStatus(){ $('#map-status').textContent=state.dirty?'Inputs changed · optimize to refresh the plan':result?.feasible?'Feasible allocation · all required demand covered':'Supply shortfall · partial allocation shown'; }
-function clearResults() {
-  $('#total-cost').textContent='—';$('#delivered-total').textContent='—';$('#unmet-total').textContent='—';$('#baseline-savings').textContent='—';$('#active-lanes').textContent='—';$('#unit-cost').textContent='—';
-  $('#result-verdict').textContent='Inputs changed · optimize to refresh';$('#result-verdict').classList.remove('warning');$('#result-indicator').textContent='';
-  $('#allocation-rows').innerHTML='<tr><td colspan="4" class="empty-table">Choose “Optimize allocation” to calculate a plan.</td></tr>';
-  $('#cost-breakdown').innerHTML='';$('#constraint-summary').textContent='';$('#baseline-note').textContent='A baseline comparison requires a fresh feasible result.';
-  $('#export-button').disabled=true;$('#export-json').disabled=true;updateMapStatus();renderMap();
+async function optimize(){if(state.busy)return;state.busy=true;$('#optimize-button').disabled=true;$('#model-error').hidden=true;try{baseInput=readBase();effectiveInput=scenarioInput(baseInput,state.scenario);result=await solvePlan(effectiveInput);state.dirty=false;state.selected=null;comparison=null;$('#scenario-rows').innerHTML='';$('#comparison-status').textContent='Ready to compare stress scenarios using these base inputs.';renderResults();}catch(e){result=null;markDirty();$('#model-error').textContent=e.message;$('#model-error').hidden=false;$('#result-verdict').textContent='Please correct the inputs';}finally{state.busy=false;$('#optimize-button').disabled=false;}}
+function renderInventory(){
+ const id=$('#inventory-node').value;const rows=hasPlan()?result.inventory.filter(r=>r.destination===id):[];
+ $('#inventory-rows').innerHTML=rows.length?rows.map(r=>`<tr><td>P${r.period}</td>${['opening','arrivals','demand','fulfilled','unmet','closing','reserve','capacity'].map(k=>`<td>${finite(r[k])?num.format(r[k]):'—'}</td>`).join('')}</tr>`).join(''):emptyRow(9,'No current inventory trajectory. Solve the planning model.');
+ const chart=$('#inventory-chart');if(!rows.length){chart.innerHTML='<text x="450" y="125" text-anchor="middle" class="chart-axis">Inventory trajectory appears after a valid solve.</text>';return;}
+ const max=Math.max(1,...rows.flatMap(r=>[r.closing,r.reserve,r.capacity]));const x=i=>65+(rows.length===1?385:i/(rows.length-1)*770);const y=v=>195-v/max*160;
+ const grid=Array.from({length:5},(_,i)=>{const value=max*i/4;return `<line class="chart-grid" x1="60" y1="${y(value)}" x2="850" y2="${y(value)}"/><text class="chart-axis" x="50" y="${y(value)+3}" text-anchor="end">${num.format(value)}</text>`;}).join('');
+ const line=key=>rows.map((r,i)=>`${i?'L':'M'}${x(i)},${y(r[key])}`).join('');chart.innerHTML=`${grid}<path class="chart-capacity" d="${line('capacity')}"/><path class="chart-reserve" d="${line('reserve')}"/><path class="chart-stock" d="${line('closing')}"/>${rows.map((r,i)=>`<circle cx="${x(i)}" cy="${y(r.closing)}" r="3.5" fill="#d74329"><title>P${r.period}: ${num.format(r.closing)} tonnes closing stock</title></circle><text class="chart-axis" x="${x(i)}" y="220" text-anchor="middle">P${r.period}</text>`).join('')}<text class="chart-axis" x="18" y="19">TONNES</text>`;
 }
-function markDirty() { state.dirty=true;state.selected=null;clearResults(); }
-function readInputs() {
-  const invalid=[...document.querySelectorAll('#model-form input, .assumptions-section input')].find(el=>!el.validity.valid||el.value==='');
-  if(invalid){invalid.reportValidity();throw new Error(`Check ${invalid.getAttribute('aria-label')||invalid.id}: enter a valid value within its bounds.`);}
-  for(const input of document.querySelectorAll('.assumptions-section input'))network[input.dataset.group][Number(input.dataset.index)][input.dataset.field]=input.valueAsNumber;
-  return makeScenario({benchmarkUsdPerTonne:$('#benchmark').valueAsNumber,scenario:state.scenario,demandScale:state.demandScale,supplies:network.supplies,demands:network.demands,routes:network.routes});
+async function compareScenarios(){if(state.dirty||!baseInput||state.busy)return;$('#compare-scenarios').disabled=true;$('#comparison-status').textContent='Solving independent stress scenarios…';try{const base=scenarioInput(baseInput,'baseline');comparison=await runScenarios(base);$('#scenario-rows').innerHTML=comparison.scenarios.map(s=>{const r=s.result,valid=['optimal','shortage'].includes(r.status)&&finite(r.totalCost);const comparable=s.comparison?.comparable;const diff=s.comparison?.costDifferenceUsd;return `<tr><td>${esc(s.name||s.id)}</td><td><span class="comparison-badge${r.status==='optimal'?'':' warning'}">${esc(r.status)}</span></td><td>${valid?usd.format(r.totalCost):'No plan'}</td><td>${valid?num.format(r.fulfilledDemand):'—'}</td><td>${valid?num.format(r.unmetDemandTotal):'—'}</td><td>${valid?num.format(r.emissionsKg/1000):'—'}</td><td>${s.id==='baseline'?'Reference':comparable&&finite(diff)?`${diff>0?'+':''}${usd.format(diff)}`:'Not comparable'}</td></tr>`;}).join('');$('#comparison-status').textContent='Three independent runs completed. Cost differences are scenario effects, not guaranteed savings.';}catch(e){$('#comparison-status').textContent=`Comparison failed: ${e.message}`;}finally{$('#compare-scenarios').disabled=state.dirty;}}
+function safeUrl(value){try{const u=new URL(value);return u.protocol==='https:'?u.href:null;}catch{return null;}}
+function observationTime(date,dailyOnly=false){
+ if(typeof date!=='string')return null;
+ if(/^\d{4}-\d{2}-\d{2}$/.test(date)){const d=new Date(`${date}T00:00:00Z`);return finite(d.getTime())&&d.toISOString().slice(0,10)===date&&d.getTime()<=Date.now()?d.getTime():null;}
+ if(!dailyOnly&&/^\d{4}-\d{2}$/.test(date)){const first=new Date(`${date}-01T00:00:00Z`);if(!finite(first.getTime())||first.toISOString().slice(0,7)!==date||first.getTime()>Date.now())return null;const end=new Date(first);end.setUTCMonth(end.getUTCMonth()+1);end.setUTCDate(0);return end.getTime();}
+ return null;
 }
-function renderResults() {
-  const unmet=result.unmetDemand.reduce((a,d)=>a+d.quantity,0);
-  $('#cost-heading').textContent=result.feasible?'TOTAL DELIVERED COST':'PARTIAL ALLOCATION COST';
-  $('#total-cost').textContent=usd.format(result.totalCost);
-  $('#result-verdict').textContent=result.feasible?'Feasible · all required demand covered':`Infeasible · ${number.format(unmet)} t still unmet`;
-  $('#result-verdict').classList.toggle('warning',!result.feasible);$('#result-indicator').textContent=result.feasible?'↗':'!';
-  $('#delivered-total').textContent=`${number.format(result.delivered)} / ${number.format(result.requiredDemand)} t`;
-  $('#unmet-total').textContent=`${number.format(unmet)} t`;
-  const comparable=result.feasible&&result.baseline?.feasible&&Number.isFinite(result.baseline.savings);
-  $('#baseline-savings').textContent=comparable?`${usd.format(result.baseline.savings)}${Number.isFinite(result.baseline.savingsPct)?' ('+number.format(result.baseline.savingsPct)+'%)':''}`:'Not comparable';
-  $('#baseline-note').textContent=comparable?`Shipping-cost-first baseline: ${usd.format(result.baseline.totalCost)}. Same inputs and delivered demand.`:'Savings hidden: a complete feasible baseline and optimized plan are both required.';
-  const active=result.routes.filter(r=>r.quantity>0.0001);
-  $('#active-lanes').textContent=String(active.length);$('#unit-cost').textContent=result.delivered>0?`${usd.format(result.totalCost/result.delivered)}/t`:'No delivery';
-  $('#allocation-rows').innerHTML=active.length?active.map(r=>`<tr><td>${esc(r.from)}<span>→</span>${esc(r.to)}</td><td>${number.format(r.quantity)}</td><td>${price.format(r.unitCost)}</td><td>${usd.format(r.cost)}</td></tr>`).join(''):'<tr><td colspan="4" class="empty-table">No shipments allocated for these constraints.</td></tr>';
-  const breakdown=result.costBreakdown;
-  const categories=[['Procurement',(breakdown.benchmark||0)+(breakdown.basis||0)],['Shipping',breakdown.shipping||0],['Handling',breakdown.handling||0],['Storage',breakdown.storage||0]].filter(([,v],i)=>i<3||v>0);
-  $('#cost-breakdown').innerHTML=categories.map(([label,value])=>`<div class="cost-row"><div><span>${label}</span><strong>${usd.format(value)}</strong></div><b><i style="width:${Math.max(0,Math.min(100,result.totalCost>0?value/result.totalCost*100:0))}%"></i></b></div>`).join('');
-  const shortages=result.unmetDemand.filter(d=>d.quantity>0.001);
-  const limits=result.bindingConstraints?.filter(c=>c.type!=='demand')||[];
-  $('#constraint-summary').textContent=shortages.length?`Unmet: ${shortages.map(d=>`${d.id} ${number.format(d.quantity)} t`).join(' · ')}. ${limits.length} supply/lane constraints are binding.`:limits.length?`Binding: ${limits.slice(0,3).map(c=>c.label||c.id).join(' · ')}${limits.length>3?' …':''}`:'No supply or lane capacity is fully used.';
-  const selected=SCENARIOS.find(s=>s.id===state.scenario);$('#scenario-description').textContent=selected?.description||'Scenario parameters are estimated inputs, not a forecast.';
-  $('#export-button').disabled=false;$('#export-json').disabled=false;updateMapStatus();renderMap();
+function validObservation(date,dailyOnly=false){return observationTime(date,dailyOnly)!==null;}
+function ageDays(date){const time=observationTime(date);return time===null?null:Math.max(0,Math.floor((Date.now()-time)/86400000));}
+function feedValue(data,feed){if(!data)return 'No observation';if(finite(data.latest?.value))return `${data.latest.value.toFixed(3)} ${feed.unit||data.source?.unit||''}`;if(data.latest?.rates&&finite(data.latest.rates.USD))return `1 ${data.latest.base||'EUR'} = ${data.latest.rates.USD.toFixed(4)} USD`;if(Array.isArray(data.airports))return `${data.airports.length} airports`;if(Array.isArray(data.observations)&&/^\d{4}-\d{2}$/.test(data.latest?.date||'')){const current=data.observations.filter(r=>r.date===data.latest.date);return `${new Set(current.map(r=>r.country).filter(Boolean)).size} reporting economies`;}return 'Reference dataset';}
+function renderFeeds(){
+ $('#source-cards').innerHTML=feedRecords.map(({feed,data,origin,error})=>{const observation=data?.latest?.date||feed.observationDate;const age=ageDays(observation);const threshold=data?.staleAfterDays??(/monthly/i.test(feed.frequency||'')?90:/weekly/i.test(feed.frequency||'')?14:7);const stale=age!==null&&age>threshold;const failed=feed.lastAttemptStatus==='failed'||!!error;const invalidDate=!!observation&&!validObservation(observation);const available=!!data&&feed.status==='observed'&&!invalidDate;const health=invalidDate?'INVALID OBSERVATION DATE':!available?feed.status==='restricted'?'RESTRICTED':'UNAVAILABLE':failed?'CACHED · REFRESH FAILED':stale?`STALE · ${age} DAYS`:'OBSERVED SNAPSHOT';const role=feed.role==='model'?'ACTIVE MODEL INPUT':feed.role==='context'?'CONTEXT ONLY':'REFERENCE ONLY';const url=safeUrl(feed.sourceUrl||data?.source?.url);const limitations=Array.isArray(feed.limitations)?feed.limitations.join(' '):feed.limitations||'';return `<article class="feed-card${feed.role==='model'?' model-feed':''}"><div class="feed-card-header"><span class="feed-role">${role}</span><span class="feed-health${!available||stale||failed?' warning':''}">${esc(health)}</span></div><h3>${esc(feed.title)}</h3><div class="feed-value">${esc(available?feedValue(data,feed):feed.status==='restricted'?'Access required':'Not connected')}</div><div class="feed-meta">Observation: ${esc(observation||'Not available')}${/^\d{4}-\d{2}$/.test(observation||'')?' · monthly period, age from month-end':''}<br>Collected: ${esc(data?.fetchedAt||feed.fetchedAt||'Not collected')}<br>${esc(feed.frequency||'Frequency not specified')} · ${esc(feed.region||'')}<br>Loaded from: ${esc(origin)}</div><p class="feed-note">${esc(limitations)}</p>${failed?`<p class="source-use">${esc(error||feed.error||'Most recent source collection failed; retained data is not a new observation.')}</p>`:''}${feed.role==='model'?'<p class="source-use">USGC benchmark proxy. Asian basis, freight and operations remain estimated.</p>':''}${url?`<a class="feed-source" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Original source ↗</a>`:''}</article>`;}).join('');
 }
-function optimize() {
-  const error=$('#model-error');
-  try {currentInput=readInputs();result=optimizeNetwork(currentInput);state.dirty=false;state.selected=null;error.hidden=true;renderResults();}
-  catch(e){result=null;state.dirty=true;error.hidden=false;error.textContent=e.message;clearResults();$('#result-verdict').textContent='Please correct the inputs';}
+async function fetchJson(url){
+ const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),8000);const limit=2_000_000;
+ try{
+  const response=await fetch(url,{cache:'no-store',signal:controller.signal});
+  if(!response.ok){controller.abort();throw new Error(`HTTP ${response.status}`);}
+  const declared=Number(response.headers?.get?.('content-length'));
+  if(finite(declared)&&declared>limit){controller.abort();throw new Error('Source snapshot exceeds the 2 MB limit.');}
+  let text='';
+  if(response.body?.getReader){
+   const reader=response.body.getReader();const decoder=new TextDecoder('utf-8',{fatal:true});let bytes=0;
+   try{while(true){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>limit){controller.abort();throw new Error('Source snapshot exceeds the 2 MB limit.');}text+=decoder.decode(value,{stream:true});}text+=decoder.decode();}finally{reader.releaseLock();}
+  }else{
+   text=await response.text();if(new TextEncoder().encode(text).byteLength>limit){controller.abort();throw new Error('Source snapshot exceeds the 2 MB limit.');}
+  }
+  return JSON.parse(text);
+ }catch(error){if(error.name==='AbortError'&&controller.signal.aborted)throw new Error('Source request timed out after 8 seconds.');throw error;}
+ finally{clearTimeout(timeout);}
 }
-function safeUrl(raw) {try{const url=new URL(raw);return url.protocol==='https:'?url.href:null;}catch{return null;}}
-function renderMarketUnavailable(message) {
-  $('#source-status').textContent='SOURCE UNAVAILABLE';$('#source-status').classList.add('stale');$('#source-value').textContent='No observation';$('#source-date').textContent='An estimated benchmark is used instead.';$('#source-conversion').textContent='Model benchmark is a visible assumption; no observed price is being claimed.';$('#source-collected').textContent=message;
-  $('#ticker-values').innerHTML='<span class="ticker-item"><strong>ESTIMATED INPUT</strong><b>Enter benchmark in the model</b></span>';
+async function refreshData({remote=false,initial=false}={}){
+ const button=$('#refresh-data');button.disabled=true;button.classList.add('source-refresh-busy');$('#data-refresh-status').textContent=remote?'Checking public collected snapshots…':'Reading bundled source snapshots…';
+ const candidates=remote?[...REMOTE_DATA_BASES,'./']:['./'];let loaded=null;const failures=[];
+ try{
+   for(const base of candidates){
+     try{
+       const candidate=await fetchJson(base+'data/catalog.json');
+       if(!candidate||!Array.isArray(candidate.feeds)||candidate.feeds.length>50)throw new Error('Invalid source catalog.');
+       const origin=base==='./'?(remote?'Bundled fallback':'Bundled snapshot'):base.includes('/main/')?'Remote main snapshot':'Remote feature-branch snapshot';
+       const records=await Promise.all(candidate.feeds.map(async feed=>{
+         if(!feed.path)return {feed,data:null,origin,error:null};
+         if(!/^data\/[a-zA-Z0-9_-]+\.json$/.test(feed.path))throw new Error('Invalid feed path.');
+         return {feed,data:await fetchJson(base+feed.path),origin,error:null};
+       }));
+       loaded={candidate,records,base,origin};break;
+     }catch(e){failures.push(`${base==='./'?'bundled':base.includes('/main/')?'main':'feature branch'}: ${e.message}`);}
+   }
+   if(!loaded)throw new Error(failures.join('; '));
+   catalog=loaded.candidate;feedRecords=loaded.records;renderFeeds();
+   const record=feedRecords.find(r=>r.feed.role==='model'&&r.feed.status==='observed'&&finite(r.data?.conversion?.usdPerTonne)&&r.data.conversion.usdPerTonne>0&&finite(r.data?.latest?.value)&&r.data.latest.value>0&&validObservation(r.data?.latest?.date,true));
+   if(record){
+     market=record.data;const latest=market.latest,converted=market.conversion.usdPerTonne;const stale=ageDays(latest.date)>(market.staleAfterDays??7),failed=record.feed.lastAttemptStatus==='failed';
+     $('#ticker-values').innerHTML=`<span class="ticker-item"><strong>USGC</strong><b>$${latest.value.toFixed(3)}/gal</b></span><span class="ticker-item"><strong>PROXY</strong><b>${usd.format(converted)}/t</b></span><span class="ticker-item"><strong>${esc(latest.date)}</strong><i>${failed?'COLLECTION FAILED · CACHE':stale?'STALE SNAPSHOT':'OBSERVATION DATE'}</i></span>`;
+     if(state.benchmarkKind!=='manual'&&state.benchmarkKind!=='imported'){
+       const next=converted.toFixed(2),changed=Number($('#benchmark').value)!==Number(next);$('#benchmark').value=next;state.benchmarkKind='observed';
+       $('#benchmark-basis').textContent=`USGC proxy, ${latest.date}${stale?' · stale':''}${failed?' · cached after failed collection':''}. Custom curves override this input.`;
+       if(!initial&&changed&&!$('#price-curve').value.trim())markDirty();
+     }
+   }else{
+     $('#ticker-values').innerHTML='<span class="ticker-item"><strong>NO VALID MODEL OBSERVATION</strong><b>Use an explicit benchmark assumption</b></span>';
+     if(market){$('#benchmark-basis').textContent=state.benchmarkKind==='manual'||state.benchmarkKind==='imported'?'No valid replacement model observation. Your manual/imported inputs are retained.':`No valid replacement model observation. Previous valid benchmark from ${market.latest.date} is still used.`;}else $('#benchmark-basis').textContent='No valid observed source. The benchmark is an editable assumption.';
+   }
+   const failedFeeds=feedRecords.filter(r=>r.feed.lastAttemptStatus==='failed').length;
+   $('#data-refresh-status').textContent=loaded.base!=='./'?`${loaded.origin} loaded from the same source branch/location${failedFeeds?`; ${failedFeeds} source collection(s) failed and retain dated cache`:''}. These are collected snapshots, not live quotes.`:remote?`Remote snapshots unavailable (${failures.join('; ')}). All feeds use the bundled fallback; no new source collection is claimed.`:'Bundled source snapshots loaded. Refresh data checks main, then the working data branch; all feeds come from the same selected snapshot location.';
+   if(!record&&market)$('#data-refresh-status').textContent+=' No valid replacement model observation; the previous valid benchmark is retained unless manual/imported inputs override it.';
+ }catch(e){
+   $('#data-refresh-status').textContent=`Data loading failed: ${e.message}. Previously loaded data and explicit model inputs are retained.`;
+   if(!feedRecords.length){$('#source-cards').innerHTML='<article class="feed-card"><h3>No source catalog available</h3><p class="feed-note">The model can run with explicitly estimated inputs. No observed market price is claimed.</p></article>';$('#ticker-values').innerHTML='<span class="ticker-item"><strong>ESTIMATED BENCHMARK</strong><b>No valid source snapshot loaded</b></span>';}
+ }finally{button.disabled=false;button.classList.remove('source-refresh-busy');if(initial)await optimize();}
 }
-async function loadMarket() {
-  try {
-    const response=await fetch('./data/market.json',{cache:'no-store'});if(!response.ok)throw new Error('Saved market snapshot is unavailable.');
-    const data=await response.json();const latest=data.latest;const converted=Number(data.conversion?.usdPerTonne);
-    if(!latest||!/^\d{4}-\d{2}-\d{2}$/.test(latest.date)||!Number.isFinite(latest.value)||latest.value<=0||!Number.isFinite(converted)||converted<=0)throw new Error('Saved snapshot has no valid observation or conversion.');
-    const observedAt=new Date(`${latest.date}T00:00:00Z`);if(!Number.isFinite(observedAt.getTime())||observedAt.toISOString().slice(0,10)!==latest.date)throw new Error('Saved observation date is invalid.');
-    if(observedAt.getTime()>Date.now())throw new Error('Saved observation date is in the future.');
-    market=data;const age=Math.max(0,Math.floor((Date.now()-observedAt.getTime())/86400000));const stale=age>(data.staleAfterDays??7);
-    $('#source-status').textContent=stale?`OBSERVED · STALE (${age} DAYS)`:'OBSERVED · SAVED SNAPSHOT';$('#source-status').classList.toggle('stale',stale);
-    $('#source-value').textContent=`$${latest.value.toFixed(3)} / gal`;$('#source-date').textContent=`Observation: ${latest.date} · ${data.source?.region||'U.S. Gulf Coast'}`;
-    const link=safeUrl(data.source?.url);if(link)$('#source-link').href=link;$('#source-link').textContent=`${data.source?.title||'EIA · U.S. Gulf Coast jet fuel'} ↗`;
-    $('#source-conversion').textContent=`${usd.format(converted)}/t at assumed density ${data.conversion.densityKgPerLitre} kg/L; ${data.conversion.litresPerUsGallon} L/US gallon. Not an Asian delivered quote.`;
-    const fetched=new Date(data.fetchedAt);const collected=Number.isFinite(fetched.getTime())?fetched.toISOString().slice(0,16).replace('T',' ')+' UTC':'time unavailable';
-    $('#source-collected').textContent=`Collected: ${collected}. Snapshot ${stale?'is older than the '+(data.staleAfterDays??7)+'-day freshness threshold':'is within the '+(data.staleAfterDays??7)+'-day freshness threshold'}. No continuous live feed.`;
-    $('#ticker-values').innerHTML=`<span class="ticker-item"><strong>USGC</strong><b>$${latest.value.toFixed(3)}/gal</b></span><span class="ticker-item"><strong>PROXY</strong><b>${usd.format(converted)}/t</b></span><span class="ticker-item"><strong>${esc(latest.date)}</strong><i>${stale?'STALE SNAPSHOT':'OBSERVATION DATE'}</i></span>`;
-    if(state.benchmarkKind==='assumed'){$('#benchmark').value=converted.toFixed(2);state.benchmarkKind='observed';$('#benchmark-basis').textContent=`Observed USGC proxy, ${latest.date}${stale?' · stale snapshot':''}. Editable; Asian basis and logistics are estimated.`;}
-  } catch(e) {renderMarketUnavailable(e.message);}
-  optimize();
-}
-
-$('#model-form').addEventListener('submit',event=>{event.preventDefault();optimize();});
-$('#scenario').addEventListener('change',()=>{state.scenario=$('#scenario').value;markDirty();});
-$('#benchmark').addEventListener('input',()=>{state.benchmarkKind='manual';$('#benchmark-basis').textContent='Manual scenario input · this overrides the saved benchmark for the model.';markDirty();});
-$('#demand-scale').addEventListener('input',()=>{state.demandScale=Number($('#demand-scale').value);$('#demand-scale-label').value=`${state.demandScale.toFixed(1)}×`;markDirty();});
-$('.assumptions-section').addEventListener('input',event=>{if(event.target.matches('input[data-group]'))markDirty();});
-$('#reset-assumptions').addEventListener('click',()=>{network=structuredClone(DEFAULT_NETWORK);renderAssumptions();markDirty();});
-for(const layer of ['plan','lanes']) $(`#layer-${layer}`).addEventListener('click',()=>{state.layer=layer;for(const other of ['plan','lanes']){$(`#layer-${other}`).classList.toggle('selected',other===layer);$(`#layer-${other}`).setAttribute('aria-pressed',String(other===layer));}renderMap();});
-svg.addEventListener('click',event=>{const target=event.target.closest('[data-node]');if(target)showNode(target.dataset.node);});
-svg.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){const target=event.target.closest('[data-node]');if(target){event.preventDefault();showNode(target.dataset.node);}}});
-let dialogOpener=null;
-for(const button of document.querySelectorAll('[data-open-method]'))button.addEventListener('click',()=>{dialogOpener=button;dialog.showModal();});
-$('#close-method').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>dialogOpener?.focus());
-dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});
-const scrollToSection=selector=>$(selector).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
-$('#nav-map').addEventListener('click',()=>scrollToSection('#main'));$('#nav-markets').addEventListener('click',()=>scrollToSection('#markets'));
-function download(text,name,type){const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-$('#export-button').addEventListener('click',()=>{
-  if(state.dirty||!result)return;
-  const rows=[['data_status','scenario','feasible','origin','destination','quantity_t','unit_cost_usd_per_t','total_cost_usd','benchmark_usd_per_t','benchmark_kind','source_observation_date'],...result.routes.map(r=>['ESTIMATED_NETWORK',state.scenario,result.feasible,r.from,r.to,r.quantity,r.unitCost,r.cost,currentInput.benchmarkUsdPerTonne,state.benchmarkKind,market?.latest?.date||'unavailable'])];
-  for(const d of result.unmetDemand.filter(d=>d.quantity>0))rows.push(['UNMET_DEMAND',state.scenario,result.feasible,'',d.id,d.quantity,'','',currentInput.benchmarkUsdPerTonne,state.benchmarkKind,market?.latest?.date||'unavailable']);
-  const csv=rows.map(row=>row.map(cell=>`"${String(cell).replaceAll('"','""')}"`).join(',')).join('\r\n');download('\uFEFF'+csv,`fuel-atlas-${state.scenario}-allocation.csv`,'text/csv;charset=utf-8');
+function selectTab(name){for(const tab of document.querySelectorAll('[data-tab]')){const selected=tab.dataset.tab===name;tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;$(`#view-${tab.dataset.tab}`).hidden=!selected;}if(name==='inventory')renderInventory();}
+for(const tab of document.querySelectorAll('[data-tab]')){tab.addEventListener('click',()=>selectTab(tab.dataset.tab));tab.addEventListener('keydown',event=>{const tabs=[...document.querySelectorAll('[data-tab]')];let index=tabs.indexOf(tab);if(event.key==='ArrowRight')index=(index+1)%tabs.length;else if(event.key==='ArrowLeft')index=(index+tabs.length-1)%tabs.length;else if(event.key==='Home')index=0;else if(event.key==='End')index=tabs.length-1;else return;event.preventDefault();selectTab(tabs[index].dataset.tab);tabs[index].focus();});}
+$('#model-form').addEventListener('submit',event=>{event.preventDefault();optimize();});$('#scenario').addEventListener('change',()=>{state.scenario=$('#scenario').value;markDirty();});$('#benchmark').addEventListener('input',()=>{state.benchmarkKind='manual';$('#benchmark-basis').textContent='Manual benchmark input. A custom price curve, if present, takes precedence.';markDirty();});$('#horizon').addEventListener('input',()=>{updatePeriodControl();markDirty();});$('#demand-scale').addEventListener('input',()=>{state.demandScale=Number($('#demand-scale').value);$('#demand-scale-label').value=`${state.demandScale.toFixed(1)}×`;markDirty();});$('.assumptions-section').addEventListener('input',event=>{if(event.target.matches('input'))markDirty();});$('#reset-assumptions').addEventListener('click',()=>{network=structuredClone(DEFAULT_PLAN_NETWORK);$('#price-growth').value='0';$('#price-curve').value='';$('#financing-rate').value=String((DEFAULT_PLAN_NETWORK.financingRatePerPeriod||0)*100);$('#budget').value='';$('#emissions-cap').value='';renderAssumptions();markDirty();});$('#map-period').addEventListener('change',()=>{state.period=Number($('#map-period').value);updatePeriodControl();renderMap();});for(const[id,delta]of[['#period-prev',-1],['#period-next',1]])$(id).addEventListener('click',()=>{state.period=Math.min(horizon(),Math.max(1,state.period+delta));updatePeriodControl();renderMap();});$('#inventory-node').addEventListener('change',renderInventory);$('#compare-scenarios').addEventListener('click',compareScenarios);$('#refresh-data').addEventListener('click',()=>refreshData({remote:true}));
+svg.addEventListener('click',event=>{const n=event.target.closest('[data-node]');if(n)inspectNode(n.dataset.node);});svg.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){const n=event.target.closest('[data-node]');if(n){event.preventDefault();inspectNode(n.dataset.node);}}});
+let dialogOpener=null;for(const button of document.querySelectorAll('[data-open-method]'))button.addEventListener('click',()=>{dialogOpener=button;dialog.showModal();});$('#close-method').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>dialogOpener?.focus());dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close();}});const scrollTo=selector=>$(selector).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});$('#nav-map').addEventListener('click',()=>scrollTo('#main'));$('#nav-markets').addEventListener('click',()=>scrollTo('#markets'));
+function csvCell(value){const safe=typeof value==='string'&&/^[=+\-@\t\r]/.test(value)?"'"+value:value;return `"${String(safe).replaceAll('"','""')}"`;}
+function download(content,name,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$('#export-button').addEventListener('click',()=>{if(!hasPlan())return;const rows=[['record_type','scenario','model_status','from','to','departure_period','arrival_period','quantity_t','unit_cost_usd_t','cost_usd'],...result.routes.map(r=>['shipment',state.scenario,result.status,r.from,r.to,r.departurePeriod,r.arrivalPeriod,r.quantity,r.unitCost,r.cost]),...result.procurement.map(p=>['procurement',state.scenario,result.status,p.supplier,'',p.period,'',p.quantity,'',p.cost]),...result.unmet.filter(u=>u.quantity>1e-6).map(u=>['unmet_demand',state.scenario,result.status,'',u.id,'',u.period,u.quantity,'',''])];download('\uFEFF'+rows.map(row=>row.map(csvCell).join(',')).join('\r\n'),`fuel-atlas-${state.scenario}-${horizon()}periods.csv`,'text/csv;charset=utf-8');});
+$('#export-json').addEventListener('click',()=>{if(state.dirty||!baseInput||!result)return;const data={type:'fuel-atlas-multiperiod-scenario',version:1,exportedAt:new Date().toISOString(),baseInputs:baseInput,effectiveInputs:effectiveInput,controls:{scenario:state.scenario,demandScale:state.demandScale,benchmarkKind:state.benchmarkKind,benchmark:Number($('#benchmark').value),priceGrowth:Number($('#price-growth').value),customPriceCurve:$('#price-curve').value},result,comparison,sources:{catalog,market,loadStatus:feedRecords.map(({feed,origin,error})=>({id:feed.id,origin,error}))}};download(JSON.stringify(data,null,2),`fuel-atlas-${state.scenario}-${horizon()}periods.json`,'application/json');});
+$('#import-trigger').addEventListener('click',()=>$('#import-scenario').click());
+$('#import-scenario').addEventListener('change',async event=>{
+ const file=event.target.files?.[0];if(!file)return;const status=$('#import-status');status.hidden=false;status.classList.remove('error');
+ try{
+  if(file.size>2_000_000)throw new Error('Scenario file is larger than 2 MB.');
+  const data=JSON.parse(await file.text());
+  if(data.type!=='fuel-atlas-multiperiod-scenario'||data.version!==1||!data.baseInputs||!data.controls)throw new Error('Choose a Fuel Atlas multi-period scenario JSON export.');
+  const base=data.baseInputs,controls=data.controls;
+  if(!Number.isInteger(base.periods)||base.periods<1||base.periods>12||!['baseline','gulf-disruption','refinery-outage'].includes(controls.scenario)||!finite(controls.demandScale)||controls.demandScale<.5||controls.demandScale>2||Math.abs(controls.demandScale*10-Math.round(controls.demandScale*10))>1e-8)throw new Error('Scenario controls are invalid.');
+  if(!finite(controls.benchmark)||controls.benchmark<0||controls.benchmark>10000)throw new Error('Imported benchmark must be between 0 and 10,000 USD/t.');
+  for(const key of ['suppliers','destinations','routes'])if(!Array.isArray(base[key])||!base[key].length||base[key].length>100)throw new Error(`Invalid ${key} collection.`);
+  const validated=buildDefaultPlan({...base,scenario:'baseline',demandScale:1});
+  const bound=(value,min,max,label)=>{if(!finite(value)||value<min||value>max)throw new Error(`Imported ${label} is outside the supported input bounds.`);};
+  bound(validated.financingRatePerPeriod,0,.5,'financing rate');
+  for(const n of validated.suppliers)bound(n.basisUsdPerTonne,-5000,5000,`${n.id} basis`);
+  for(const n of validated.destinations)for(const key of ['initialInventory','storageCapacity','storageUsdPerTonnePerPeriod'])bound(n[key],0,1e9,`${n.id} ${key}`);
+  for(const r of validated.routes){bound(r.leadTime,0,12,`${r.from} to ${r.to} lead time`);for(const key of ['freightUsdPerTonne','handlingUsdPerTonne','emissionsKgPerTonne'])bound(r[key],0,1e9,`${r.from} to ${r.to} ${key}`);}
+  const candidateInput=buildDefaultPlan({...validated,scenario:controls.scenario,demandScale:controls.demandScale});
+  const candidateResult=await solvePlan(candidateInput);
+  if(candidateResult.status==='solver-error')throw new Error('Imported plan did not pass solver validation. Existing inputs are unchanged.');
+  // Commit the import only after all schema, model, UI-bound and solver checks.
+  network={suppliers:structuredClone(validated.suppliers),destinations:structuredClone(validated.destinations),routes:structuredClone(validated.routes)};
+  $('#horizon').value=base.periods;$('#benchmark').value=controls.benchmark;$('#price-growth').value='0';$('#price-curve').value=validated.priceCurve.join(', ');$('#financing-rate').value=validated.financingRatePerPeriod*100;$('#budget').value=validated.budgetUsd??'';$('#emissions-cap').value=validated.emissionsCapKg??'';
+  state.scenario=controls.scenario;state.demandScale=controls.demandScale;state.benchmarkKind='imported';state.period=1;state.selected=null;
+  $('#scenario').value=state.scenario;$('#demand-scale').value=state.demandScale;$('#demand-scale-label').value=`${state.demandScale.toFixed(1)}×`;$('#benchmark-basis').textContent='Imported scenario. The exported price curve is preserved; source refresh will not replace it.';
+  baseInput=validated;effectiveInput=candidateInput;result=candidateResult;comparison=null;state.dirty=false;
+  renderAssumptions();$('#model-error').hidden=true;$('#scenario-rows').innerHTML='';$('#comparison-status').textContent='Imported plan solved. Ready to compare the restored base inputs.';renderResults();
+  status.textContent=`Imported ${file.name}. Inputs restored and solved again; saved results were not blindly reused.`;
+ }catch(e){status.textContent=`Import failed: ${e.message}`;status.classList.add('error');}finally{event.target.value='';}
 });
-$('#export-json').addEventListener('click',()=>{if(state.dirty||!result)return;download(JSON.stringify({exportedAt:new Date().toISOString(),dataStatus:'Estimated physical network; USGC reference proxy only',benchmarkKind:state.benchmarkKind,marketSource:market,baseInputs:network,inputs:currentInput,results:result},null,2),`fuel-atlas-${state.scenario}-scenario.json`,'application/json');});
-renderAssumptions();renderMap();loadMarket();
+$('#financing-rate').value=String((DEFAULT_PLAN_NETWORK.financingRatePerPeriod||0)*100);renderAssumptions();markDirty();refreshData({remote:true,initial:true});

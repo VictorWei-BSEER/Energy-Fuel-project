@@ -67,7 +67,9 @@ class TableParser(HTMLParser):
             self.rows.append(self.row_stack.pop())
 
 
-def parse_eia_html(html: str, *, as_of: date | None = None) -> list[dict]:
+def parse_eia_html(html: str, *, as_of: date | None = None,
+                   expected_title: str = SOURCE_TITLE,
+                   expected_units: str = "Dollars per Gallon") -> list[dict]:
     """Parse Monday–Friday EIA historical rows, retaining actual observations.
 
     EIA labels each row with the Monday year; December/January rollover is
@@ -81,8 +83,8 @@ def parse_eia_html(html: str, *, as_of: date | None = None) -> list[dict]:
     if parser.row_stack or parser.cell_stack:
         raise DataError("Unclosed table rows or cells; response may be truncated")
     text = " ".join(parser.text)
-    if SOURCE_TITLE.casefold() not in text.casefold() or "dollars per gallon" not in text.casefold():
-        raise DataError("Response does not identify the expected EIA jet-fuel series and units")
+    if expected_title.casefold() not in text.casefold() or expected_units.casefold() not in text.casefold():
+        raise DataError("Response does not identify the expected EIA series and units")
     observations = {}
     weekly_rows = 0
     for row in parser.rows:
@@ -115,7 +117,7 @@ def parse_eia_html(html: str, *, as_of: date | None = None) -> list[dict]:
             except InvalidOperation as exc:
                 raise DataError(f"Invalid price: {cell!r}") from exc
             if not value.is_finite() or value <= 0 or value > 1000:
-                raise DataError(f"Price outside validation range (0, 1000] USD/US gal: {cell!r}")
+                raise DataError(f"Price outside validation range (0, 1000] source units: {cell!r}")
             observed = start + timedelta(days=weekday)
             if observed > as_of:
                 raise DataError(f"Future-dated observation: {observed.isoformat()}")
@@ -174,7 +176,7 @@ def fetch_html() -> str:
         "Accept": "text/html",
     })
     # urllib honors configured HTTPS_PROXY and CA trust; never bypass them.
-    with urlopen(request, timeout=30) as response:
+    with urlopen(request, timeout=20) as response:
         if response.status != 200:
             raise DataError(f"Unexpected HTTP status: {response.status}")
         content_type = response.headers.get_content_type()

@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "id": "ecb-reference-fx",
+    "title": "ECB euro foreign exchange reference rates",
+    "unit": "currency units per EUR",
+    "frequency": "ECB business days",
+    "region": "International currencies",
+    "url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+    "referencePage": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html"
+  },
+  "fetchedAt": "2026-10-28T20:41:10.209882Z",
+  "observedAt": "2026-10-28",
+  "observations": [
+    {
+      "date": "2026-10-28",
+      "base": "EUR",
+      "rates": {
+        "EUR": 1.0,
+        "USD": 1.1133,
+        "JPY": 175.86,
+        "CZK": 24.367,
+        "DKK": 7.4741,
+        "GBP": 0.83785,
+        "HUF": 366.88,
+        "PLN": 4.4045,
+        "RON": 5.3508,
+        "SEK": 11.056,
+        "CHF": 0.9247,
+        "ISK": 135.8,
+        "NOK": 10.3475,
+        "TRY": 55.4846,
+        "AUD": 1.583,
+        "BRL": 5.9307,
+        "CAD": 1.5638,
+        "CNY": 7.4217,
+        "HKD": 8.7339,
+        "IDR": 20235.79,
+        "ILS": 3.4801,
+        "INR": 106.0095,
+        "KRW": 1492.35,
+        "MXN": 20.7416,
+        "MYR": 4.5389,
+        "NZD": 1.9833,
+        "PHP": 71.24,
+        "SGD": 1.4274,
+        "THB": 37.602,
+        "ZAR": 18.5339
+      }
+    }
+  ],
+  "latest": {
+    "date": "2026-10-28",
+    "base": "EUR",
+    "rates": {
+      "EUR": 1.0,
+      "USD": 1.1133,
+      "JPY": 175.86,
+      "CZK": 24.367,
+      "DKK": 7.4741,
+      "GBP": 0.83785,
+      "HUF": 366.88,
+      "PLN": 4.4045,
+      "RON": 5.3508,
+      "SEK": 11.056,
+      "CHF": 0.9247,
+      "ISK": 135.8,
+      "NOK": 10.3475,
+      "TRY": 55.4846,
+      "AUD": 1.583,
+      "BRL": 5.9307,
+      "CAD": 1.5638,
+      "CNY": 7.4217,
+      "HKD": 8.7339,
+      "IDR": 20235.79,
+      "ILS": 3.4801,
+      "INR": 106.0095,
+      "KRW": 1492.35,
+      "MXN": 20.7416,
+      "MYR": 4.5389,
+      "NZD": 1.9833,
+      "PHP": 71.24,
+      "SGD": 1.4274,
+      "THB": 37.602,
+      "ZAR": 18.5339
+    }
+  },
+  "collection": {
+    "method": "https",
+    "status": "ok",
+    "detail": "Public reference observation; not an executable quote.",
+    "limitations": "Reference rates for information only, not transaction rates. Cross conversion through EUR is indicative; quotes and benchmark dates may differ.",
+    "transport": {
+      "sha256": "3dec724a631c4a448596a2b90ac1d839728d871353fc8fdd4555ca3456776d15",
+      "httpLastModified": "Wed, 28 Oct 2026 14:56:18 GMT"
+    }
+  },
+  "staleAfterDays": 7
+}
