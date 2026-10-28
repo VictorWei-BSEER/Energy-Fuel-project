@@ -1,6 +1,21 @@
-# Live market data: connection state and requirements
+# Public market display and data-feed access
 
-The default monitor displays real published observations, **not a real-time price stream**. No live pricing credentials are configured and no live provider adapter is running. The `DISCONNECTED` indicator is intentional. The application does not generate ticks, forward-date values, use futures as airport quotes, or replace missing commercial data with modeled numbers on the homepage.
+The homepage embeds public **WTI and Brent crude CFD charts**, alongside its five collected public datasets. The charts use TradingView's official widget and OANDA instruments; they do not require a key in the application. No airport supplier quote feed or executable offer API is connected. The application never generates ticks, advances quote timestamps, or fills missing commercial observations with modeled values.
+
+## Public market charts
+
+| Instrument | TradingView symbol | Meaning |
+| --- | --- | --- |
+| WTI crude | `OANDA:WTICOUSD` | OANDA West Texas Oil CFD, not a NYMEX futures contract or physical cargo offer |
+| Brent crude | `OANDA:BCOUSD` | OANDA Brent Crude Oil CFD, separate from the EIA Brent FOB spot observation below |
+
+TradingView's [official widget market list](https://www.tradingview.com/widget-docs/markets/worldwide/) lists OANDA commodity coverage, and its symbol pages identify [WTI](https://www.tradingview.com/symbols/WTICOUSD/?exchange=OANDA) and [Brent](https://www.tradingview.com/symbols/BCOUSD/?exchange=OANDA). The [official widgets](https://www.tradingview.com/widget/) are supplied for embedding with TradingView attribution retained. The app appends the documented `https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js` script with an explicit container size and no credential.
+
+The provider controls quote time, market status and delay indicators. We do not infer a fixed 10- or 15-minute delay. The default `interval: "15"` selects **15-minute candles**, and `timezone: "Asia/Shanghai"` displays chart times in UTC+8. Neither setting changes feed latency. A loaded script or frame only confirms that the external display loaded, not that an instrument is trading or its last quote is fresh. Timeouts and loading errors leave the source links and retry control available.
+
+These charts are **display only**. The [data FAQ](https://www.tradingview.com/widget-docs/faq/data/) does not provide a widget data-export/API facility; [TradingView terms](https://www.tradingview.com/policies/) restrict non-display use of its market data. The application therefore does not read iframe prices, persist them in GitHub, add them to CSV/JSON exports, or use them as optimizer inputs. The existing EIA/ECB/JODI datasets remain the independently collected and exportable observations.
+
+The official documentation, symbols, configuration and local loading/failure behavior were verified. The managed execution environment has no supported browser QA facility, so an actual cross-origin quote render was not visually verified here. Availability can depend on the visitor's network, browser policy and provider.
 
 ## What updates now
 
@@ -11,7 +26,7 @@ The default monitor displays real published observations, **not a real-time pric
 | JODI jet kerosene | Monthly national reports with reporting lag and assessment flags | Daily collector check |
 | OurAirports | Community-maintained reference coordinates, no record-level observation time | Daily collector check |
 
-GitHub Actions schedules are best effort. The visible page checks these stored snapshots every 60 seconds; it does not poll an exchange or the source websites. Source observation time, retrieval time and page-check time remain separate. Refreshing a file never makes its underlying observation newer.
+GitHub Actions schedules are best effort. The visible page checks these stored snapshots every 60 seconds; that timer is independent of the TradingView chart's own connection. Source observation time, retrieval time and page-check time remain separate. Refreshing a file never makes its underlying observation newer.
 
 ## Verified paths to a real stream
 
@@ -21,7 +36,7 @@ GitHub Actions schedules are best effort. The visible page checks these stored s
 
 **Airport uplift and logistics:** supplier/counterparty offers must provide grade, delivery location and basis, currency and unit, price, available volume, validity/expiry and material supply conditions. Contracted freight, storage and inventory inputs are also needed for an actionable procurement plan. A crude futures stream or national balance cannot supply these inputs.
 
-Do not put credentials in frontend JavaScript, exported scenario files, public GitHub data or chat. A live integration requires a server runtime and a secure server-side configuration. The current site is static; its public reference feeds require no secret.
+Do not put credentials in frontend JavaScript, exported scenario files, public GitHub data or chat. A credentialed numerical market-data API requires a server runtime and secure server-side configuration. The current site is static; its official public chart embed and collected reference feeds require no secret.
 
 ## Why the free demo is not connected
 

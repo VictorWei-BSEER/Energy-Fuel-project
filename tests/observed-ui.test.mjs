@@ -128,10 +128,10 @@ test('default monitor displays published observations without model assumptions'
     assert.equal(document.querySelector('a[href="./planner.html"]').textContent.includes('assumptions required'), true);
   });
 
-  await t.test('live provider is explicitly disconnected and published cadence stays distinct from refresh', () => {
-    assert.equal($('#live-status').textContent, 'DISCONNECTED');
-    assert.equal($('#live-provider').textContent, 'Not configured');
-    assert.match($('#live-asof').textContent, /No quote/);
+  await t.test('airport quotes remain disconnected and published cadence stays distinct from the public chart', () => {
+    assert.match($('#airport-api-status').textContent, /未连接/);
+    assert.equal($('#live-provider').textContent, 'TradingView / OANDA CFDs');
+    assert.equal($('#live-asof').textContent, '请查看图表内时间');
     assert.match(document.querySelector('.observed-disclosure').textContent, /not real-time airport quotes/);
     assert.match($('#ticker-values').textContent, /DAILY · REPORTING LAG/);
     assert.match($('#ticker-values').textContent, /MONTHLY/);
@@ -184,7 +184,7 @@ test('default monitor displays published observations without model assumptions'
     assert.match($('#refresh-status').textContent, /Observation and collection dates have not been replaced by page time/);
     const after = await exportJSON();
     assert.deepEqual(after.snapshots, before.snapshots);
-    assert.equal($('#live-status').textContent, 'DISCONNECTED');
+    assert.match($('#airport-api-status').textContent, /未连接/);
     const hiddenRequests = requests.length;
     Object.defineProperty(document, 'hidden', { configurable: true, value: true });
     intervals[0].callback();
@@ -222,7 +222,7 @@ test('default monitor displays published observations without model assumptions'
     assert.match($('#refresh-status').textContent, /bundled data retained/);
     assert.ok([...document.querySelectorAll('.feed-meta')].every(el => el.textContent.includes('Bundled fallback')));
     remote.fixture.set('data/fx.json', removed);
-    assert.equal($('#live-status').textContent, 'DISCONNECTED');
+    assert.match($('#airport-api-status').textContent, /未连接/);
   });
 
   await t.test('exports and navigation remain observation-only', async () => {
@@ -246,8 +246,52 @@ test('unavailable observations remain missing, with no substituted benchmark or 
   assert.match(ui.$('#source-cards').textContent, /No invented prices/);
   assert.equal(ui.$('#export-csv').disabled, true);
   assert.equal(ui.$('#export-json').disabled, true);
-  assert.equal(ui.$('#live-status').textContent, 'DISCONNECTED');
+  assert.match(ui.$('#airport-api-status').textContent, /未连接/);
   assert.equal(ui.$('#refresh-data').disabled, false);
+});
+
+test('public chart activity stays separate from airport observations and raw source exports', async t => {
+  const ui = await mount(t);
+  const { $, document, window, click, downloads, requests, exportJSON } = ui;
+  const before = await exportJSON();
+  click('#export-csv');
+  const csvBefore = await downloads.at(-1).blob.text();
+  const prices = ['jet', 'brent', 'fx'].map(key => $(`#${key}-value`).textContent);
+  const sourceRequestCount = requests.length;
+  const originalObserver = Object.getOwnPropertyDescriptor(globalThis, 'MutationObserver');
+  const originalTimeout = globalThis.setTimeout, originalClearTimeout = globalThis.clearTimeout;
+  const timers = new Map(); let timerId = 0;
+  globalThis.MutationObserver = window.MutationObserver;
+  globalThis.setTimeout = (callback, delay) => { const id = ++timerId; timers.set(id, { callback, delay }); return id; };
+  globalThis.clearTimeout = id => timers.delete(id);
+  t.after(() => {
+    if (originalObserver) Object.defineProperty(globalThis, 'MutationObserver', originalObserver);
+    else delete globalThis.MutationObserver;
+    globalThis.setTimeout = originalTimeout; globalThis.clearTimeout = originalClearTimeout;
+  });
+  await import(`../dist/public-market.js?observed-export-isolation=${mountId}`);
+  click('#public-brent');
+  const frame = document.createElement('iframe');
+  Object.defineProperty(frame, 'contentDocument', { get() { throw new Error('Host must not extract third-party quote values'); } });
+  Object.defineProperty(frame, 'contentWindow', { get() { throw new Error('Host must not inspect third-party quote timestamps'); } });
+  $('#public-market-chart .tradingview-widget-container__widget').append(frame);
+  await new Promise(resolve => setImmediate(resolve));
+  frame.dispatchEvent(new window.Event('load'));
+  assert.equal($('#live-status').textContent, 'MARKET VIEW LOADED');
+  assert.equal(requests.length, sourceRequestCount, 'chart selection never requests data through the snapshot collector');
+  assert.deepEqual(['jet', 'brent', 'fx'].map(key => $(`#${key}-value`).textContent), prices);
+  assert.match(document.querySelector('.airport-facts').textContent, /No verified quote/);
+  assert.equal($('#optimize-button'), null);
+  assert.equal($('#model-form'), null);
+  const after = await exportJSON();
+  assert.deepEqual(after.snapshots, before.snapshots);
+  assert.deepEqual(after.catalog, before.catalog);
+  assert.doesNotMatch(JSON.stringify(after), /OANDA:|WTICOUSD|BCOUSD|TradingView/);
+  assert.equal(Object.hasOwn(after, 'baseInputs'), false);
+  assert.equal(Object.hasOwn(after, 'result'), false);
+  click('#export-csv');
+  assert.equal(await downloads.at(-1).blob.text(), csvBefore);
+  assert.equal($('#live-asof').textContent, '请查看图表内时间');
 });
 
 test('a transient main-source failure cannot roll current observations back or erase them', async t => {

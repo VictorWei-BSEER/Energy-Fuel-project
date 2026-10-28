@@ -1,5 +1,7 @@
 # Market data and collection
 
+The homepage also has an official TradingView/OANDA public chart for WTI and Brent crude CFDs. This is a separate display integration: chart prices are not scraped, saved in these snapshots, exported or used in the LP. Provider quote times, delay and market-closed indicators remain visible in the chart. See [public market display](live-data.md) for exact symbols, source documentation and latency semantics.
+
 The homepage displays original-unit observed values. The separate scenario laboratory uses a converted proxy; its assumptions never populate the default airport map.
 
 The procurement-model benchmark is the **U.S. Gulf Coast Kerosene-Type Jet Fuel Spot Price FOB**, published on the [official EIA daily history page](https://www.eia.gov/dnav/pet/hist/eer_epjk_pf4_rgc_dpgD.htm). Its unit is USD per **US gallon**. It is a regional wholesale reference, not an East Asian price, delivered cargo quote, airport refuelling offer, or executable transaction.
