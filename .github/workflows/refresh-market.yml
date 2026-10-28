@@ -9,7 +9,8 @@ on:
       - 'scripts/**'
       - '.github/workflows/refresh-market.yml'
   schedule:
-    - cron: '17 22 * * 1-5'
+    - cron: '17 * * * *'
+    - cron: '47 22 * * *'
 
 permissions:
   contents: read
@@ -36,7 +37,14 @@ jobs:
       - name: Refresh source snapshots and health catalog
         id: refresh
         continue-on-error: true
-        run: python scripts/refresh_data.py --output-dir dist/data
+        env:
+          REFRESH_SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          if [ "$REFRESH_SCHEDULE" = '17 * * * *' ]; then
+            python scripts/refresh_data.py --output-dir dist/data --only eia-jet eia-brent ecb-fx
+          else
+            python scripts/refresh_data.py --output-dir dist/data
+          fi
       - name: Report source freshness and refresh outcomes
         if: ${{ !cancelled() && steps.refresh.outcome != 'skipped' }}
         shell: bash

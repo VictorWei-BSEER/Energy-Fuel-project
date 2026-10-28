@@ -1,6 +1,8 @@
 # FUEL ATLAS / 东亚能源流向
 
-An interactive, single-product **multi-period jet-fuel procurement and distribution model** with real public data collection, an East Asia map, and reproducible scenario files.
+An **observed energy-data monitor** with public source collection, an East Asia airport map and visible source timestamps. The homepage shows raw published values and missing coverage; it does not infer airport fuel prices, stock or demand. The multi-period planning model lives separately in the **Scenario laboratory** at `/planner.html`.
+
+**No real-time quote provider is connected.** Page polling and collector refreshes do not change the publication frequency of EIA, ECB or JODI. See [real-time access and current limits](docs/live-data.md).
 
 ## Run and verify
 
@@ -21,7 +23,7 @@ npm run check
 
 ## The model
 
-Plan 1–12 equal periods. Edit supplier capacity/basis, period demand, initial stock, reserve targets, storage size/cost, route capacity/lead time/freight/handling, financing, budget and transport-emissions caps. Provide a flat benchmark, a growth assumption or an explicit price curve.
+Open `/planner.html` to plan 1–12 equal periods with explicitly assumed inputs. Edit supplier capacity/basis, period demand, initial stock, reserve targets, storage size/cost, route capacity/lead time/freight/handling, financing, budget and transport-emissions caps. Provide a flat benchmark, a growth assumption or an explicit price curve. These are scenario calculations, not an executable trading recommendation from observed supplier offers.
 
 The continuous LP first minimizes unmet demand, then minimizes cost while preserving that service optimum within a disclosed numerical tolerance. Results include dated departures/arrivals, procurement, stock balances, shortages, binding constraints, costs and emissions. Supply arriving late never fulfills an earlier period's demand. Infeasible hard constraints produce diagnostics, not fabricated allocations.
 
@@ -33,9 +35,9 @@ See [model formulation](docs/model.md) for equations, timing, costs, tolerances 
 
 Five official-source adapters have completed a real GitHub Actions HTTPS run:
 
-| Feed | Model role |
+| Feed | Observed monitor role |
 | --- | --- |
-| EIA US Gulf Coast jet fuel | Observed geographic benchmark proxy for the user-editable future curve |
+| EIA US Gulf Coast jet fuel | U.S. wholesale benchmark in original USD/US gallon; no airport allocation or density conversion |
 | EIA Brent spot | Market context; different product/geography from USGC jet |
 | ECB reference FX | Context; reference rates, not executable quotes |
 | OurAirports | Reference coordinates; no inventory or commercial fuel price data |
@@ -55,15 +57,16 @@ python3 scripts/refresh_data.py --output-dir dist/data --only eia-jet
 
 The collector needs HTTPS access to the official source hosts. The managed build environment has restricted outbound networking; real integration was verified in GitHub Actions. All sources have bounded responses, timeouts, schema/date validation and atomic writes.
 
-The refresh workflow runs on weekdays at 22:17 UTC, supports manual dispatch, and runs on relevant source changes. Scheduled Actions run from the default branch. It commits only `dist/data/`, reports partial failures, and fails if no active feed refreshed.
+The refresh workflow checks the three EIA/ECB market feeds hourly at minute 17, checks all five sources daily at 22:47 UTC, supports manual dispatch, and runs on relevant source changes. GitHub schedules are best effort and may run late. Scheduled Actions run from the default branch. It commits only `dist/data/`, reports partial failures, and fails if no selected feed refreshed.
 
-The web app loads the latest collected dataset from GitHub `main`, then the working feature branch, then its bundled fallback. The Refresh data button repeats this process. Requests for all feeds use the same selected source location; each feed keeps its own observation date and freshness. These are periodic collected snapshots, not real-time exchange or supplier quotes. The hosted UI does not need to be redeployed for remote dataset updates.
+The web app loads the latest collected dataset from GitHub `main`, then the previous data branch, then its bundled fallback. The observed monitor checks every 60 seconds while visible and has a manual check button; hidden pages pause automatic checks. Requests for all feeds use the same selected source location; each feed keeps its own observation date and freshness. These are periodic collected snapshots, not real-time exchange or supplier quotes. The hosted UI does not need to be redeployed for remote dataset updates. A failed check retains the last loaded observations and their timestamps.
 
 ## Structure
 
 - `src/planner.js`: multi-period LP, validation, scenarios and diagnostics.
 - `dist/planner.js`: generated self-contained browser bundle (do not hand-edit).
-- `dist/index.html`, `styles.css`, `app.js`: constructivist UI and import/export.
+- `dist/index.html`, `observed-app.js`, `styles.css`: observed monitor, original-unit tables, source health and export.
+- `dist/planner.html`, `planner-app.js`: separate scenario laboratory and import/export; `app.js` is its retained prior source.
 - `dist/data/`: verified source snapshots and health catalog.
 - `scripts/refresh_data.py`, `data_adapters.py`, `collect_market.py`: ingestion.
 - `scripts/build.mjs`: deterministic browser build and third-party license copy.

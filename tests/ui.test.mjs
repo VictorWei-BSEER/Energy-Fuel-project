@@ -17,7 +17,7 @@ async function until(predicate, message = 'asynchronous UI settled') {
 }
 
 async function mountApp(t, { noCatalog = false, remoteMode = 'unavailable' } = {}) {
-  const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../dist/planner.html', import.meta.url), 'utf8');
   const sourceCatalog = JSON.parse(await readFile(new URL('../dist/data/catalog.json', import.meta.url), 'utf8'));
   const fixture = new Map([['data/catalog.json', sourceCatalog]]);
   for (const feed of sourceCatalog.feeds) {
@@ -96,7 +96,7 @@ async function mountApp(t, { noCatalog = false, remoteMode = 'unavailable' } = {
     URL.createObjectURL = originalCreate; URL.revokeObjectURL = originalRevoke;
     window.HTMLAnchorElement.prototype.click = originalClick; Date.now = originalNow;
   });
-  await import(`../dist/app.js?dom-integration=${++mountId}`);
+  await import(`../dist/planner-app.js?dom-integration=${++mountId}`);
   const $ = selector => document.querySelector(selector);
   await until(() => !$('#optimize-button').disabled && !/Inputs changed/.test($('#result-verdict').textContent), 'initial source loading and optimization complete');
   const emit = (selector, type) => {
