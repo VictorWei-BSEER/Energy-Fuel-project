@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "id": "ecb-reference-fx",
+    "title": "ECB euro foreign exchange reference rates",
+    "unit": "currency units per EUR",
+    "frequency": "ECB business days",
+    "region": "International currencies",
+    "url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+    "referencePage": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html"
+  },
+  "fetchedAt": "2026-10-28T20:39:02.712366Z",
+  "observedAt": "2026-10-28",
+  "observations": [
+    {
+      "date": "2026-10-28",
+      "base": "EUR",
+      "rates": {
+        "EUR": 1.0,
+        "USD": 1.1133,
+        "JPY": 175.86,
+        "CNY": 7.4217,
+        "HKD": 8.7339,
+        "KRW": 1492.35,
+        "SGD": 1.4274,
+        "THB": 37.602,
+        "PHP": 71.24,
+        "GBP": 0.83785
+      }
+    }
+  ],
+  "latest": {
+    "date": "2026-10-28",
+    "base": "EUR",
+    "rates": {
+      "EUR": 1.0,
+      "USD": 1.1133,
+      "JPY": 175.86,
+      "CNY": 7.4217,
+      "HKD": 8.7339,
+      "KRW": 1492.35,
+      "SGD": 1.4274,
+      "THB": 37.602,
+      "PHP": 71.24,
+      "GBP": 0.83785
+    }
+  },
+  "collection": {
+    "method": "web_connector",
+    "status": "ok",
+    "detail": "Selected 2026-10-28 reference rates read from the official ECB HTML reference-rate page. XML download is the configured refresh endpoint; this initial read used the web connector HTML page.",
+    "limitations": "Reference rates for information only, not transaction rates. Cross conversion through EUR is indicative; quotes and benchmark dates may differ."
+  },
+  "staleAfterDays": 7
+}

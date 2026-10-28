@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "id": "ourairports-coordinates",
+    "title": "OurAirports selected airport coordinates",
+    "unit": "WGS84 decimal degrees",
+    "frequency": "nightly upstream dataset",
+    "region": "East and Southeast Asia",
+    "url": "https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv",
+    "license": "Public Domain",
+    "referencePage": "https://ourairports.com/data/"
+  },
+  "fetchedAt": "2026-10-28T20:39:02.748816Z",
+  "observedAt": null,
+  "airports": [
+    {
+      "iata": "SIN",
+      "icao": "WSSS",
+      "name": "Singapore Changi Airport",
+      "city": "Singapore",
+      "country": "SG",
+      "lat": 1.35019,
+      "lon": 103.994003,
+      "elevationFt": 22.0
+    },
+    {
+      "iata": "HKG",
+      "icao": "VHHH",
+      "name": "Hong Kong International Airport",
+      "city": "Hong Kong",
+      "country": "HK",
+      "lat": 22.31184,
+      "lon": 113.914862,
+      "elevationFt": 28.0
+    },
+    {
+      "iata": "ICN",
+      "icao": "RKSI",
+      "name": "Incheon International Airport",
+      "city": "Seoul",
+      "country": "KR",
+      "lat": 37.469101,
+      "lon": 126.450996,
+      "elevationFt": 23.0
+    },
+    {
+      "iata": "NRT",
+      "icao": "RJAA",
+      "name": "Narita International Airport",
+      "city": "Narita",
+      "country": "JP",
+      "lat": 35.76858,
+      "lon": 140.388714,
+      "elevationFt": 141.0
+    },
+    {
+      "iata": "PVG",
+      "icao": "ZSPD",
+      "name": "Shanghai Pudong International Airport",
+      "city": "Shanghai (Pudong)",
+      "country": "CN",
+      "lat": 31.1434,
+      "lon": 121.805,
+      "elevationFt": 13.0
+    },
+    {
+      "iata": "PEK",
+      "icao": "ZBAA",
+      "name": "Beijing Capital International Airport",
+      "city": "Beijing",
+      "country": "CN",
+      "lat": 40.077349,
+      "lon": 116.596702,
+      "elevationFt": 116.0
+    },
+    {
+      "iata": "TPE",
+      "icao": "RCTP",
+      "name": "Taiwan Taoyuan International Airport",
+      "city": "Taoyuan",
+      "country": "TW",
+      "lat": 25.0777,
+      "lon": 121.233002,
+      "elevationFt": 106.0
+    },
+    {
+      "iata": "BKK",
+      "icao": "VTBS",
+      "name": "Suvarnabhumi Airport",
+      "city": "Bangkok",
+      "country": "TH",
+      "lat": 13.6811,
+      "lon": 100.747002,
+      "elevationFt": 5.0
+    },
+    {
+      "iata": "MNL",
+      "icao": "RPLL",
+      "name": "Ninoy Aquino International Airport",
+      "city": "Manila (Pasay)",
+      "country": "PH",
+      "lat": 14.5086,
+      "lon": 121.019997,
+      "elevationFt": 75.0
+    },
+    {
+      "iata": "KIX",
+      "icao": "RJBB",
+      "name": "Kansai International Airport",
+      "city": "Osaka",
+      "country": "JP",
+      "lat": 34.427299,
+      "lon": 135.244003,
+      "elevationFt": 26.0
+    }
+  ],
+  "collection": {
+    "method": "https",
+    "status": "ok",
+    "detail": "Actual coordinates from the official OurAirports GitHub dataset. No per-record observation timestamp is provided.",
+    "limitations": "Community-maintained airport geometry only; does not establish inventory, fuel availability, demand, storage capacity, or airport contract prices.",
+    "transport": {
+      "sha256": "9c1f3295b59f84c475f8c8555fa102505d7b4af0f931002cc5558dfeee1e43aa",
+      "httpLastModified": null
+    }
+  }
+}

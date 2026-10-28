@@ -1,7 +1,14 @@
-name: Refresh public jet-fuel benchmark
+name: Refresh public energy data
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - codex/complete-energy-model
+    paths:
+      - 'scripts/**'
+      - '.github/workflows/refresh-market.yml'
   schedule:
     - cron: '17 22 * * 1-5'
 
@@ -9,33 +16,69 @@ permissions:
   contents: read
 
 concurrency:
-  group: refresh-public-market
+  group: refresh-public-market-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   refresh:
-    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Test the collector offline
-        run: python -m unittest discover -s tests -p 'test_collect_market.py' -v
-      - name: Retrieve the official public EIA benchmark
-        run: python scripts/collect_market.py --output dist/data/market.json
-      - name: Commit only the verified market snapshot
+      - name: Test data collectors offline
+        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Refresh source snapshots and health catalog
+        id: refresh
+        continue-on-error: true
+        run: python scripts/refresh_data.py --output-dir dist/data
+      - name: Report source freshness and refresh outcomes
+        if: ${{ !cancelled() && steps.refresh.outcome != 'skipped' }}
         shell: bash
         run: |
-          if git diff --quiet -- dist/data/market.json; then
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          catalog_path = Path('dist/data/catalog.json')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('### Public data refresh\n\n')
+              if not catalog_path.is_file():
+                  summary.write('No catalog was produced. See the refresh step for the failure.\n')
+              else:
+                  catalog = json.loads(catalog_path.read_text())
+                  def cell(value):
+                      return str(value or '—').replace('|', '\\|').replace('\n', ' ').replace('\r', ' ')
+                  summary.write('| Feed | Role | Data status | Attempt | Observation | Error / limitation |\n')
+                  summary.write('| --- | --- | --- | --- | --- | --- |\n')
+                  for feed in catalog.get('feeds', []):
+                      values = [feed.get('title', feed.get('id')), feed.get('role'),
+                                feed.get('status'), feed.get('lastAttemptStatus'),
+                                feed.get('observationDate'), feed.get('error') or feed.get('limitations')]
+                      summary.write('| ' + ' | '.join(cell(value) for value in values) + ' |\n')
+                  summary.write('\nObserved describes the saved snapshot; a failed attempt retains its original observation and collection dates. Partial source failures remain visible above.\n')
+          PY
+      - name: Commit only source data and health status
+        if: ${{ !cancelled() && steps.refresh.outcome != 'skipped' }}
+        shell: bash
+        run: |
+          git add -- dist/data/
+          if git diff --cached --quiet -- dist/data/; then
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- dist/data/market.json
-          git commit -m 'data: refresh observed EIA jet-fuel benchmark'
+          git commit -m 'data: refresh public source snapshots and health status' -- dist/data/
           git push
+      - name: Fail when no active source could refresh
+        if: ${{ !cancelled() && steps.refresh.outcome == 'failure' }}
+        run: |
+          echo 'All active sources failed to refresh, or the collector could not finish. Last-known snapshots and any available health status were preserved.'
+          exit 1
