@@ -86,7 +86,7 @@
       "frequency": "monthly; country reporting lag",
       "unit": "thousand metric tonnes",
       "region": "JP, KR, CN, SG, HK, TW when reported",
-      "limitations": "Strict JETKERO and KTONS selection with assessment codes retained. Country totals do not establish airport demand or available terminal inventories. Official CSV endpoint verified; initial download/schema integration remains unverified.",
+      "limitations": "National JETKERO/KTONS context with quality flags retained. Current coverage: HK, JP, KR, SG, TW; CN is missing. Unassessed reported zeros are not evidence of absent supply capability. Country totals do not establish terminal inventories or available supplier capacity.",
       "collectionMethod": "https",
       "lastAttemptAt": "2026-10-28T20:41:10.209882Z",
       "lastAttemptStatus": "success",

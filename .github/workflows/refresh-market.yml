@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - codex/complete-energy-model
     paths:
       - 'scripts/**'
       - '.github/workflows/refresh-market.yml'

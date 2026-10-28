@@ -34,7 +34,7 @@ SOURCES = {
     'jodi': {'id': 'jodi-jet-kerosene-monthly', 'title': 'JODI East Asian jet kerosene balances', 'path': 'jodi.json', 'role': 'context',
              'url': 'https://www.jodidata.org/_resources/files/downloads/oil-data/annual-csv/secondary/secondaryyear{year}.csv',
              'unit': 'thousand metric tonnes', 'frequency': 'monthly; country reporting lag', 'region': 'JP, KR, CN, SG, HK, TW when reported',
-             'limitations': 'Strict JETKERO and KTONS selection with assessment codes retained. Country totals do not establish airport demand or available terminal inventories. Official CSV endpoint verified; initial download/schema integration remains unverified.'},
+             'limitations': 'Strict JETKERO and KTONS selection with assessment codes retained. Country totals do not establish airport demand or available terminal inventories. Monthly country reports can be delayed or revised; assessment codes and missing coverage must be retained.'},
 }
 PLANNED = [
     {'id': 'iata-regional-jet', 'title': 'IATA / Platts regional jet-fuel monitor', 'status': 'restricted', 'role': 'context',

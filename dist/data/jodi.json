@@ -1531,7 +1531,7 @@
     "method": "https",
     "status": "ok",
     "detail": "Public reference observation; not an executable quote.",
-    "limitations": "Strict JETKERO and KTONS selection with assessment codes retained. Country totals do not establish airport demand or available terminal inventories. Official CSV endpoint verified; initial download/schema integration remains unverified.",
+    "limitations": "Strict JETKERO and KTONS selection with assessment codes retained. National totals are context, not terminal availability or supplier capacity. Current snapshot covers HK, JP, KR, SG and TW; CN is missing. Unassessed reported zeros must not imply absent supply capability. Official CSV HTTPS collection and schema validation succeeded in GitHub Actions.",
     "transport": {
       "sha256": "72a2994b9d91a17ac7cec272060067e501fb0ddc1cbf27f93bc1b9181398fb92",
       "httpLastModified": "Wed, 21 Oct 2026 15:10:32 GMT"
