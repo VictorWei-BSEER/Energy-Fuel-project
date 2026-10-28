@@ -1,0 +1,41 @@
+name: Refresh public jet-fuel benchmark
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 22 * * 1-5'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-public-market
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test the collector offline
+        run: python -m unittest discover -s tests -p 'test_collect_market.py' -v
+      - name: Retrieve the official public EIA benchmark
+        run: python scripts/collect_market.py --output dist/data/market.json
+      - name: Commit only the verified market snapshot
+        shell: bash
+        run: |
+          if git diff --quiet -- dist/data/market.json; then
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- dist/data/market.json
+          git commit -m 'data: refresh observed EIA jet-fuel benchmark'
+          git push
