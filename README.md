@@ -2,7 +2,7 @@
 
 An **observed energy-data monitor** with public source collection, an East Asia airport map and visible source timestamps. The homepage shows raw published values and missing coverage; it does not infer airport fuel prices, stock or demand. The multi-period planning model lives separately in the **Scenario laboratory** at `/planner.html`.
 
-**No real-time quote provider is connected.** Page polling and collector refreshes do not change the publication frequency of EIA, ECB or JODI. See [real-time access and current limits](docs/live-data.md).
+The homepage also embeds **WTI and Brent crude CFD charts from TradingView / OANDA**, with no API key required. Provider timestamps, delay indicators and market-closed states remain inside the original chart. This is a public market display, not an airport fuel quote or a numerical feed into the optimizer. See [market access, latency and current limits](docs/live-data.md).
 
 ## Run and verify
 
@@ -32,6 +32,8 @@ Three stress cases share the same underlying assumptions. Cost comparisons appea
 See [model formulation](docs/model.md) for equations, timing, costs, tolerances and limits.
 
 ## Connected data
+
+Public market display: `OANDA:WTICOUSD` (WTI crude CFD) and `OANDA:BCOUSD` (Brent crude CFD). Select either chart on the homepage. TradingView serves the chart directly to the visitor; the app does not copy or export its prices. The chart defaults to 15-minute candles and UTC+8; **15 minutes is the candle interval, not the data delay**. Source delay and market status are shown by the provider. Script/frame loading status does not prove a fresh quote has arrived. If the external chart is blocked or slow, use the retry control or its always-visible source links.
 
 Five official-source adapters have completed a real GitHub Actions HTTPS run:
 
@@ -66,6 +68,7 @@ The web app loads the latest collected dataset from GitHub `main`, then the prev
 - `src/planner.js`: multi-period LP, validation, scenarios and diagnostics.
 - `dist/planner.js`: generated self-contained browser bundle (do not hand-edit).
 - `dist/index.html`, `observed-app.js`, `styles.css`: observed monitor, original-unit tables, source health and export.
+- `dist/public-market.js`: official TradingView display integration, instrument selection and bounded loading/error/retry handling; no price extraction.
 - `dist/planner.html`, `planner-app.js`: separate scenario laboratory and import/export; `app.js` is its retained prior source.
 - `dist/data/`: verified source snapshots and health catalog.
 - `scripts/refresh_data.py`, `data_adapters.py`, `collect_market.py`: ingestion.
