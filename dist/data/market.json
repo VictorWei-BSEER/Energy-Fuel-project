@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "id": "eia-usgc-jet-fuel-daily",
+    "title": "U.S. Gulf Coast Kerosene-Type Jet Fuel Spot Price FOB",
+    "url": "https://www.eia.gov/dnav/pet/hist/eer_epjk_pf4_rgc_dpgD.htm",
+    "region": "US Gulf Coast",
+    "unit": "USD/US gallon",
+    "frequency": "daily observations; published with a reporting lag",
+    "releaseDate": "2026-10-28",
+    "nextReleaseDate": "2026-11-04"
+  },
+  "fetchedAt": "2026-10-28T20:29:55.699970Z",
+  "observedAt": "2026-10-27",
+  "observations": [
+    {
+      "date": "2026-09-21",
+      "value": 4.397
+    },
+    {
+      "date": "2026-09-22",
+      "value": 4.354
+    },
+    {
+      "date": "2026-09-23",
+      "value": 4.35
+    },
+    {
+      "date": "2026-09-24",
+      "value": 4.291
+    },
+    {
+      "date": "2026-09-25",
+      "value": 4.365
+    },
+    {
+      "date": "2026-09-28",
+      "value": 4.343
+    },
+    {
+      "date": "2026-09-29",
+      "value": 4.399
+    },
+    {
+      "date": "2026-09-30",
+      "value": 4.677
+    },
+    {
+      "date": "2026-10-01",
+      "value": 4.355
+    },
+    {
+      "date": "2026-10-02",
+      "value": 4.307
+    },
+    {
+      "date": "2026-10-05",
+      "value": 4.35
+    },
+    {
+      "date": "2026-10-06",
+      "value": 4.342
+    },
+    {
+      "date": "2026-10-07",
+      "value": 4.384
+    },
+    {
+      "date": "2026-10-08",
+      "value": 4.588
+    },
+    {
+      "date": "2026-10-09",
+      "value": 4.36
+    },
+    {
+      "date": "2026-10-12",
+      "value": 4.374
+    },
+    {
+      "date": "2026-10-13",
+      "value": 4.624
+    },
+    {
+      "date": "2026-10-14",
+      "value": 4.562
+    },
+    {
+      "date": "2026-10-15",
+      "value": 4.426
+    },
+    {
+      "date": "2026-10-16",
+      "value": 4.516
+    },
+    {
+      "date": "2026-10-19",
+      "value": 4.567
+    },
+    {
+      "date": "2026-10-20",
+      "value": 4.632
+    },
+    {
+      "date": "2026-10-21",
+      "value": 4.548
+    },
+    {
+      "date": "2026-10-22",
+      "value": 4.68
+    },
+    {
+      "date": "2026-10-23",
+      "value": 4.686
+    },
+    {
+      "date": "2026-10-26",
+      "value": 4.585
+    },
+    {
+      "date": "2026-10-27",
+      "value": 4.444
+    }
+  ],
+  "latest": {
+    "date": "2026-10-27",
+    "value": 4.444
+  },
+  "conversion": {
+    "densityKgPerLitre": 0.8,
+    "litresPerUsGallon": 3.785411784,
+    "usdPerTonne": 1467.48,
+    "assumption": "Density of 0.8 kg/L is a model assumption, not a measured cargo specification."
+  },
+  "collection": {
+    "method": "web_connector",
+    "status": "ok",
+    "detail": "Initial 27-observation snapshot transcribed from the official EIA historical table via the web connector. The local collector has offline test coverage; outbound EIA HTTPS has not been run in this restricted environment. EIA page release: 2026-10-28; next release shown: 2026-11-04. This is a US Gulf Coast benchmark, not an Asian or airport executable quote."
+  },
+  "staleAfterDays": 7
+}
