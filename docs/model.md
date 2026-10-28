@@ -1,5 +1,7 @@
 # Multi-period procurement and distribution formulation
 
+This model is available only in the separate `/planner.html` scenario laboratory. Its commercial inputs remain assumptions. The homepage is an observed-data monitor and does not invoke the optimizer or assign this model's prices, demand, inventories or routes to airport coordinates.
+
 The implemented model is a continuous, single-product LP over 1–12 equal user-defined periods. All quantities are metric tonnes. Financial inputs and outputs use USD; transport factors use kg CO2e/tonne. Internal node identifiers are illustrative, not official port codes.
 
 ## Timing and decisions

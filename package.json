@@ -1,13 +1,13 @@
 {
   "name": "fuel-atlas",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
-  "description": "East Asian jet fuel procurement and logistics optimization",
+  "description": "Observed energy markets and a separate jet fuel scenario laboratory",
   "scripts": {
     "dev": "python3 -m http.server 4173 --bind 0.0.0.0 --directory dist",
     "test": "node --test tests/*.test.mjs && python3 -m unittest discover -s tests -p 'test_*.py'",
-    "check": "node --check dist/app.js && node --check dist/planner.js && node --check src/planner.js && node --check dist/model.js && node --check dist/optimizer.js && node --check dist/asia-map.js",
+    "check": "node --check dist/observed-app.js && node --check dist/planner-app.js && node --check dist/app.js && node --check dist/planner.js && node --check src/planner.js && node --check dist/model.js && node --check dist/optimizer.js && node --check dist/asia-map.js",
     "collect": "python3 scripts/refresh_data.py --output-dir dist/data",
     "build": "node scripts/build.mjs",
     "predev": "npm run build"

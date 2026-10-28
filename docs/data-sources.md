@@ -1,5 +1,7 @@
 # Market data and collection
 
+The homepage displays original-unit observed values. The separate scenario laboratory uses a converted proxy; its assumptions never populate the default airport map.
+
 The procurement-model benchmark is the **U.S. Gulf Coast Kerosene-Type Jet Fuel Spot Price FOB**, published on the [official EIA daily history page](https://www.eia.gov/dnav/pet/hist/eer_epjk_pf4_rgc_dpgD.htm). Its unit is USD per **US gallon**. It is a regional wholesale reference, not an East Asian price, delivered cargo quote, airport refuelling offer, or executable transaction.
 
 The checked-in `dist/data/market.json` contains 90 actual daily observations. The latest observation is **27 October 2026: 4.444 USD/US gallon**. The source page showed a release date of 28 October and a next release date of 4 November 2026 when read. Dates reflect the market observation; they must not be replaced with the app's current clock.
@@ -23,7 +25,7 @@ python scripts/collect_market.py --input-html /absolute/path/to/eia.html --outpu
 
 The collector retains the most recent 90 actual observations by default (`--keep` changes this). It uses a bounded request and timeout, verifies series title and units, validates calendar dates and positive finite values, and skips documented missing markers without shifting weekday columns. It rejects ambiguous rows rather than inventing data. A failed fetch, malformed response, invalid value or regressed latest observation leaves the previous JSON file unchanged. Writes use a temporary file and atomic replacement. Genuine revisions to existing observation dates are allowed.
 
-A daily schedule is sufficient to detect newly published data. Daily observations do not imply same-day publishing or a streaming quotation service. The multi-source workflow refreshes files under `dist/data/` and records per-source success or failure. Installing workflow source does not prove a scheduled run has occurred. Updating GitHub data alone does not redeploy the private Sites preview; the app may explicitly refresh the published branch snapshots, or a separate publishing workflow is needed.
+The collector checks EIA/ECB hourly and all five feeds daily. These checks discover published changes; they do not turn the sources into a live stream. Daily observations do not imply same-day publishing or a streaming quotation service. The multi-source workflow refreshes files under `dist/data/` and records per-source success or failure. Installing workflow source does not prove a scheduled run has occurred. Updating GitHub data alone does not redeploy the private Sites preview; the app may explicitly refresh the published branch snapshots, or a separate publishing workflow is needed.
 
 ## JSON contract
 
