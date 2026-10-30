@@ -8,7 +8,7 @@
     "region": "Europe / North Sea",
     "url": "https://www.eia.gov/dnav/pet/hist/RBRTED.htm"
   },
-  "fetchedAt": "2026-10-29T20:21:06.391882Z",
+  "fetchedAt": "2026-10-30T01:06:07.749055Z",
   "observedAt": "2026-10-27",
   "observations": [
     {
@@ -382,7 +382,7 @@
     "detail": "Public reference observation; not an executable quote.",
     "limitations": "Different commodity and geography from USGC jet. Any jet-minus-Brent comparison is a cross-market indicative spread, not a refinery margin or executable arbitrage.",
     "transport": {
-      "sha256": "dc2bf6fcb24e1418758e4705bb340adaa8830f30418090b45fd636aca93b5324",
+      "sha256": "b3d06b7c0deaf752991cd8cb926b057fb30e778b046a7242221f777314587ff4",
       "httpLastModified": "Wed, 28 Oct 2026 13:51:04 GMT"
     }
   },
