@@ -8,9 +8,10 @@ import { parseHTML } from 'linkedom';
 let mountId = 0;
 const officialScript = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
 const flush = () => new Promise(resolve => setImmediate(resolve));
-async function mount(t) {
+async function mount(t, { hidden = false } = {}) {
   const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
   const { document, window } = parseHTML(html);
+  document.querySelector('#workspace-oil-markets').hidden = hidden;
   const originals = new Map(), timers = new Map();
   let timerId = 0, quoteRequests = 0;
   const setGlobal = (name, value) => {
@@ -18,6 +19,7 @@ async function mount(t) {
     Object.defineProperty(globalThis, name, { value, configurable: true, writable: true });
   };
   setGlobal('window', window); setGlobal('document', document);
+  setGlobal('CustomEvent', window.CustomEvent);
   setGlobal('MutationObserver', window.MutationObserver);
   setGlobal('setTimeout', (callback, delay) => { const id = ++timerId; timers.set(id, { callback, delay }); return id; });
   setGlobal('clearTimeout', id => timers.delete(id));
@@ -64,6 +66,18 @@ async function mount(t) {
   };
   return { $, html, document, timers, emit, script, config, addFrame, expire, assertNoQuoteClaim };
 }
+
+test('oil charts initialize on their first workspace visit and survive tab switches', async t => {
+  const { $, document } = await mount(t, { hidden: true });
+  assert.equal($('#public-market-chart script'), null);
+  $('#workspace-oil-markets').hidden = false;
+  document.dispatchEvent(new CustomEvent('workspacechange', { detail: { workspace: 'oil-markets' } }));
+  const script = $('#public-market-chart script');
+  assert.ok(script);
+  document.dispatchEvent(new CustomEvent('workspacechange', { detail: { workspace: 'calculations' } }));
+  document.dispatchEvent(new CustomEvent('workspacechange', { detail: { workspace: 'oil-markets' } }));
+  assert.equal($('#public-market-chart script'), script, 'returning does not recreate the provider widget');
+});
 
 test('public oil charts use the official widget without claiming independently verified quotes', async t => {
   const ui = await mount(t);

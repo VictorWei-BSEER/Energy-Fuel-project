@@ -65,4 +65,9 @@ for(const tab of document.querySelectorAll('[data-market]')){
  tab.addEventListener('keydown',event=>{const tabs=[...document.querySelectorAll('[data-market]')];let index=tabs.indexOf(tab);if(event.key==='ArrowRight'||event.key==='ArrowLeft')index=1-index;else if(event.key==='Home')index=0;else if(event.key==='End')index=tabs.length-1;else return;event.preventDefault();loadMarket(tabs[index].dataset.market);tabs[index].focus();});
 }
 $('#public-market-retry').addEventListener('click',()=>loadMarket(selected));
-loadMarket(selected);
+// Initialize the provider only when its workspace has a visible chart area.
+const marketWorkspace=$('#workspace-oil-markets');
+if(!marketWorkspace||!marketWorkspace.hidden)loadMarket(selected);
+document.addEventListener('workspacechange',event=>{
+ if(event.detail.workspace==='oil-markets'&&!mount.dataset.loadStage)loadMarket(selected);
+});
