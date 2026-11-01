@@ -1,0 +1,751 @@
+{
+  "year": 2024,
+  "metric": "Annual total passenger traffic",
+  "sources": {
+    "china-2024": {
+      "title": "CAAC 2024 airport throughput ranking",
+      "url": "https://www.caac.gov.cn/XXGK/XXGK/TJSJ/202503/t20250314_226932.html",
+      "tableUrl": "https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_China#2024_final_statistics"
+    },
+    "japan-2024": {
+      "title": "MLIT calendar-year airport management statistics",
+      "url": "https://www.mlit.go.jp/koku/15_bf_000185.html",
+      "tableUrl": "https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Japan#Busiest_Japanese_airports_by_passenger_traffic"
+    },
+    "asia-2024": {
+      "title": "2024 Asian airport traffic compilation",
+      "url": "https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_Asia#2024_statistics",
+      "note": "Reported values include rounded airport totals. Used for regional coverage; national tables take precedence."
+    },
+    "korea-2024": {
+      "title": "2024 South Korea airport traffic compilation",
+      "url": "https://en.wikipedia.org/wiki/List_of_the_busiest_airports_in_South_Korea#2024_final_statistics"
+    },
+    "aot-calendar-2024": {
+      "title": "Airports of Thailand, calendar year 2024 (January–December)",
+      "url": "https://aot.listedcompany.com/misc/statistic/2025/20250117-aot-traffic-fiscal-2024-12m.pdf"
+    }
+  },
+  "candidates": [
+    {
+      "iata": "ACX",
+      "passengers": 1359410,
+      "source": "china-2024"
+    },
+    {
+      "iata": "AKU",
+      "passengers": 2506854,
+      "source": "china-2024"
+    },
+    {
+      "iata": "AUH",
+      "passengers": 29400000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "AYT",
+      "passengers": 38133273,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "BAV",
+      "passengers": 2164827,
+      "source": "china-2024"
+    },
+    {
+      "iata": "BHY",
+      "passengers": 2517871,
+      "source": "china-2024"
+    },
+    {
+      "iata": "BKK",
+      "passengers": 62234693,
+      "source": "aot-calendar-2024"
+    },
+    {
+      "iata": "BLR",
+      "passengers": 41875620,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "BOM",
+      "passengers": 54800000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "CAN",
+      "passengers": 76364767,
+      "source": "china-2024"
+    },
+    {
+      "iata": "CEI",
+      "passengers": 1912859,
+      "source": "aot-calendar-2024"
+    },
+    {
+      "iata": "CGK",
+      "passengers": 54809500,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "CGO",
+      "passengers": 28510891,
+      "source": "china-2024"
+    },
+    {
+      "iata": "CGQ",
+      "passengers": 17607456,
+      "source": "china-2024"
+    },
+    {
+      "iata": "CIF",
+      "passengers": 2049547,
+      "source": "china-2024"
+    },
+    {
+      "iata": "CJU",
+      "passengers": 29619606,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "CKG",
+      "passengers": 48676973,
+      "source": "china-2024"
+    },
+    {
+      "iata": "CNX",
+      "passengers": 9082071,
+      "source": "aot-calendar-2024"
+    },
+    {
+      "iata": "CSX",
+      "passengers": 31218109,
+      "source": "china-2024"
+    },
+    {
+      "iata": "CTS",
+      "passengers": 23968186,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "CTU",
+      "passengers": 32430354,
+      "source": "china-2024"
+    },
+    {
+      "iata": "CZX",
+      "passengers": 4562418,
+      "source": "china-2024"
+    },
+    {
+      "iata": "DAT",
+      "passengers": 1169474,
+      "source": "china-2024"
+    },
+    {
+      "iata": "DEL",
+      "passengers": 77820834,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "DLC",
+      "passengers": 19288910,
+      "source": "china-2024"
+    },
+    {
+      "iata": "DLU",
+      "passengers": 3248424,
+      "source": "china-2024"
+    },
+    {
+      "iata": "DMK",
+      "passengers": 30490635,
+      "source": "aot-calendar-2024"
+    },
+    {
+      "iata": "DNH",
+      "passengers": 1169408,
+      "source": "china-2024"
+    },
+    {
+      "iata": "DOH",
+      "passengers": 52700000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "DOY",
+      "passengers": 1163287,
+      "source": "china-2024"
+    },
+    {
+      "iata": "DPS",
+      "passengers": 23900000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "DSN",
+      "passengers": 3033405,
+      "source": "china-2024"
+    },
+    {
+      "iata": "DXB",
+      "passengers": 92300000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "DYG",
+      "passengers": 1964015,
+      "source": "china-2024"
+    },
+    {
+      "iata": "DZH",
+      "passengers": 1364864,
+      "source": "china-2024"
+    },
+    {
+      "iata": "ENH",
+      "passengers": 1787408,
+      "source": "china-2024"
+    },
+    {
+      "iata": "FOC",
+      "passengers": 15299802,
+      "source": "china-2024"
+    },
+    {
+      "iata": "FUG",
+      "passengers": 1271090,
+      "source": "china-2024"
+    },
+    {
+      "iata": "FUK",
+      "passengers": 26765836,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "FUO",
+      "passengers": 1329381,
+      "source": "china-2024"
+    },
+    {
+      "iata": "GMP",
+      "passengers": 22990599,
+      "source": "korea-2024"
+    },
+    {
+      "iata": "HAK",
+      "passengers": 26890365,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HAN",
+      "passengers": 30000000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "HDY",
+      "passengers": 3098213,
+      "source": "aot-calendar-2024"
+    },
+    {
+      "iata": "HET",
+      "passengers": 13166230,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HFE",
+      "passengers": 12481354,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HGH",
+      "passengers": 48053915,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HIA",
+      "passengers": 1833050,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HKG",
+      "passengers": 53100000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "HKT",
+      "passengers": 17215315,
+      "source": "aot-calendar-2024"
+    },
+    {
+      "iata": "HLD",
+      "passengers": 3227793,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HND",
+      "passengers": 85906170,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "HRB",
+      "passengers": 23797643,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HSN",
+      "passengers": 2633186,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HTN",
+      "passengers": 1576227,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HUZ",
+      "passengers": 2875813,
+      "source": "china-2024"
+    },
+    {
+      "iata": "HYD",
+      "passengers": 27873202,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "HYN",
+      "passengers": 2142200,
+      "source": "china-2024"
+    },
+    {
+      "iata": "ICN",
+      "passengers": 71156947,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "INC",
+      "passengers": 8982751,
+      "source": "china-2024"
+    },
+    {
+      "iata": "ITM",
+      "passengers": 15157501,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "JED",
+      "passengers": 49100000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "JHG",
+      "passengers": 7163490,
+      "source": "china-2024"
+    },
+    {
+      "iata": "JJN",
+      "passengers": 8842486,
+      "source": "china-2024"
+    },
+    {
+      "iata": "JNG",
+      "passengers": 1407536,
+      "source": "china-2024"
+    },
+    {
+      "iata": "KHG",
+      "passengers": 4497137,
+      "source": "china-2024"
+    },
+    {
+      "iata": "KHN",
+      "passengers": 11267923,
+      "source": "china-2024"
+    },
+    {
+      "iata": "KIX",
+      "passengers": 30643513,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "KMG",
+      "passengers": 47178347,
+      "source": "china-2024"
+    },
+    {
+      "iata": "KMI",
+      "passengers": 3116019,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "KMJ",
+      "passengers": 3544043,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "KOJ",
+      "passengers": 5637891,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "KOW",
+      "passengers": 1938089,
+      "source": "china-2024"
+    },
+    {
+      "iata": "KRL",
+      "passengers": 2834317,
+      "source": "china-2024"
+    },
+    {
+      "iata": "KUL",
+      "passengers": 57044869,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "KWE",
+      "passengers": 22313353,
+      "source": "china-2024"
+    },
+    {
+      "iata": "KWL",
+      "passengers": 5932075,
+      "source": "china-2024"
+    },
+    {
+      "iata": "LHW",
+      "passengers": 17000963,
+      "source": "china-2024"
+    },
+    {
+      "iata": "LJG",
+      "passengers": 8092935,
+      "source": "china-2024"
+    },
+    {
+      "iata": "LUM",
+      "passengers": 2653668,
+      "source": "china-2024"
+    },
+    {
+      "iata": "LXA",
+      "passengers": 6018814,
+      "source": "china-2024"
+    },
+    {
+      "iata": "LYA",
+      "passengers": 1192259,
+      "source": "china-2024"
+    },
+    {
+      "iata": "LYG",
+      "passengers": 1561569,
+      "source": "china-2024"
+    },
+    {
+      "iata": "LYI",
+      "passengers": 2468403,
+      "source": "china-2024"
+    },
+    {
+      "iata": "LZH",
+      "passengers": 1230842,
+      "source": "china-2024"
+    },
+    {
+      "iata": "LZO",
+      "passengers": 2435108,
+      "source": "china-2024"
+    },
+    {
+      "iata": "MIG",
+      "passengers": 3020074,
+      "source": "china-2024"
+    },
+    {
+      "iata": "MNL",
+      "passengers": 50100000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "NGB",
+      "passengers": 14733364,
+      "source": "china-2024"
+    },
+    {
+      "iata": "NGO",
+      "passengers": 11038828,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "NGS",
+      "passengers": 3065040,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "NKG",
+      "passengers": 31179654,
+      "source": "china-2024"
+    },
+    {
+      "iata": "NNG",
+      "passengers": 14005332,
+      "source": "china-2024"
+    },
+    {
+      "iata": "NRT",
+      "passengers": 39807651,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "NTG",
+      "passengers": 4102477,
+      "source": "china-2024"
+    },
+    {
+      "iata": "OKA",
+      "passengers": 21705234,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "PEK",
+      "passengers": 67367428,
+      "source": "china-2024"
+    },
+    {
+      "iata": "PKX",
+      "passengers": 49441029,
+      "source": "china-2024"
+    },
+    {
+      "iata": "PUS",
+      "passengers": 15752458,
+      "source": "korea-2024"
+    },
+    {
+      "iata": "PVG",
+      "passengers": 76787039,
+      "source": "china-2024"
+    },
+    {
+      "iata": "RUH",
+      "passengers": 37200000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "SAW",
+      "passengers": 41449044,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "SDJ",
+      "passengers": 3778423,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "SGN",
+      "passengers": 39800000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "SHA",
+      "passengers": 47944067,
+      "source": "china-2024"
+    },
+    {
+      "iata": "SHE",
+      "passengers": 23744323,
+      "source": "china-2024"
+    },
+    {
+      "iata": "SIN",
+      "passengers": 67700000,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "SJW",
+      "passengers": 11314852,
+      "source": "china-2024"
+    },
+    {
+      "iata": "SWA",
+      "passengers": 8665819,
+      "source": "china-2024"
+    },
+    {
+      "iata": "SYX",
+      "passengers": 21425941,
+      "source": "china-2024"
+    },
+    {
+      "iata": "SZX",
+      "passengers": 61477337,
+      "source": "china-2024"
+    },
+    {
+      "iata": "TAO",
+      "passengers": 26180661,
+      "source": "china-2024"
+    },
+    {
+      "iata": "TFU",
+      "passengers": 54905784,
+      "source": "china-2024"
+    },
+    {
+      "iata": "TGO",
+      "passengers": 1446962,
+      "source": "china-2024"
+    },
+    {
+      "iata": "TNA",
+      "passengers": 20012106,
+      "source": "china-2024"
+    },
+    {
+      "iata": "TPE",
+      "passengers": 44921996,
+      "source": "asia-2024"
+    },
+    {
+      "iata": "TSN",
+      "passengers": 20063745,
+      "source": "china-2024"
+    },
+    {
+      "iata": "TYN",
+      "passengers": 14775147,
+      "source": "china-2024"
+    },
+    {
+      "iata": "UKB",
+      "passengers": 3576118,
+      "source": "japan-2024"
+    },
+    {
+      "iata": "URC",
+      "passengers": 27765723,
+      "source": "china-2024"
+    },
+    {
+      "iata": "UYN",
+      "passengers": 2590139,
+      "source": "china-2024"
+    },
+    {
+      "iata": "WEH",
+      "passengers": 2708807,
+      "source": "china-2024"
+    },
+    {
+      "iata": "WMT",
+      "passengers": 1553868,
+      "source": "china-2024"
+    },
+    {
+      "iata": "WNZ",
+      "passengers": 12532569,
+      "source": "china-2024"
+    },
+    {
+      "iata": "WUH",
+      "passengers": 31406186,
+      "source": "china-2024"
+    },
+    {
+      "iata": "WUX",
+      "passengers": 10504277,
+      "source": "china-2024"
+    },
+    {
+      "iata": "XFN",
+      "passengers": 1764575,
+      "source": "china-2024"
+    },
+    {
+      "iata": "XIL",
+      "passengers": 1120787,
+      "source": "china-2024"
+    },
+    {
+      "iata": "XIY",
+      "passengers": 47030407,
+      "source": "china-2024"
+    },
+    {
+      "iata": "XMN",
+      "passengers": 27906964,
+      "source": "china-2024"
+    },
+    {
+      "iata": "XNN",
+      "passengers": 7026023,
+      "source": "china-2024"
+    },
+    {
+      "iata": "XUZ",
+      "passengers": 3428248,
+      "source": "china-2024"
+    },
+    {
+      "iata": "YBP",
+      "passengers": 2092465,
+      "source": "china-2024"
+    },
+    {
+      "iata": "YCU",
+      "passengers": 2545241,
+      "source": "china-2024"
+    },
+    {
+      "iata": "YIH",
+      "passengers": 3072981,
+      "source": "china-2024"
+    },
+    {
+      "iata": "YIN",
+      "passengers": 2510780,
+      "source": "china-2024"
+    },
+    {
+      "iata": "YIW",
+      "passengers": 3402188,
+      "source": "china-2024"
+    },
+    {
+      "iata": "YNJ",
+      "passengers": 1795943,
+      "source": "china-2024"
+    },
+    {
+      "iata": "YNT",
+      "passengers": 8633572,
+      "source": "china-2024"
+    },
+    {
+      "iata": "YNZ",
+      "passengers": 1766350,
+      "source": "china-2024"
+    },
+    {
+      "iata": "YTY",
+      "passengers": 3648564,
+      "source": "china-2024"
+    },
+    {
+      "iata": "ZHA",
+      "passengers": 3218648,
+      "source": "china-2024"
+    },
+    {
+      "iata": "ZUH",
+      "passengers": 12970873,
+      "source": "china-2024"
+    },
+    {
+      "iata": "ZYI",
+      "passengers": 1313034,
+      "source": "china-2024"
+    }
+  ]
+}

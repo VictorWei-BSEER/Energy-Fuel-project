@@ -15,6 +15,8 @@ npm run dev
 
 Open http://localhost:4173. The planning engine is bundled automatically before local serving. The deployed application runs entirely in the browser; no keys are exposed.
 
+The planning map includes 50 airports within the existing East/Southeast Asia frame, selected using 2024 total passenger traffic. The cutoff is 15.2 million passengers per year. Select an airport for its traffic context, or use the map zoom controls to inspect dense areas. Selection methodology and references are available in Sources and [the airport directory notes](docs/airport-directory.md). Traffic rankings do not supply airport fuel prices or model demand.
+
 ```sh
 npm run build
 npm test
@@ -68,6 +70,8 @@ The web app loads the latest collected dataset from GitHub `main`, then the prev
 - `src/planner.js`: multi-period LP, validation, scenarios and diagnostics.
 - `dist/planner.js`: generated self-contained browser bundle (do not hand-edit).
 - `dist/index.html`, `workspace.js`, `styles.css`: three-tab workspace, with calculations selected by default and persistent form state across tabs.
+- `dist/dashboard.css`: dashboard typography, neutral surfaces, readable controls and responsive presentation.
+- `dist/airport-map.js`, `src/airport-directory.js`, `dist/data/airport-directory.json`: the versioned 50-airport directory, marker layout, selection, zoom and source table. `scripts/build_airport_directory.py` rebuilds the coordinate join from an OurAirports CSV; `src/airport-traffic-2024.json` preserves the traffic candidates and references.
 - `dist/observed-app.js`: observed market summaries, original-unit tables, source health, reference geography and exports.
 - `dist/public-market.js`: official TradingView display integration, instrument selection and bounded loading/error/retry handling; no price extraction.
 - `dist/planner-app.js`: scenario calculations and import/export inside the Calculations tab; `planner.html` redirects there and `app.js` is the retained prior source.

@@ -15,6 +15,16 @@ await build({
   banner: { js: '/* Fuel Atlas planning engine. Source: src/planner.js. Third-party license: vendor-licenses.txt */' },
 });
 const require = createRequire(import.meta.url);
+await build({
+  entryPoints: ['src/airport-directory.js'],
+  outfile: 'dist/airport-directory.js',
+  bundle: true,
+  format: 'esm',
+  platform: 'browser',
+  target: ['es2022'],
+  minify: true,
+  banner: { js: '/* Airport directory. Sources and cutoff: data/airport-directory.json; coordinates: OurAirports, Public Domain. */' },
+});
 const solverRoot = dirname(require.resolve('javascript-lp-solver/package.json'));
 const license = await readFile(join(solverRoot, 'LICENSE'), 'utf8');
 await writeFile('dist/vendor-licenses.txt', `javascript-lp-solver\nhttps://github.com/JWally/jsLPSolver\n\n${license}\n`);
