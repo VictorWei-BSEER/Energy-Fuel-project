@@ -70,15 +70,15 @@ async function mount(t, { mode = 'unavailable', noData = false, prepareRemote = 
   });
   await import(`../dist/observed-app.js?dom-observed=${++mountId}`);
   const $ = selector => document.querySelector(selector);
-  await until(() => !$('#refresh-data').disabled && !/^Checking/.test($('#refresh-status').textContent));
+  await until(() => !$('#observed-refresh-data').disabled && !/^Checking/.test($('#refresh-status').textContent));
   const emit = (selector, type) => {
     const target = $(selector), event = new window.Event(type, { bubbles: true, cancelable: true });
     const result = target.dispatchEvent(event); event.target = target; return result;
   };
   const click = selector => emit(selector, 'click');
   const select = (selector, value) => { $(selector).value = value; emit(selector, 'change'); };
-  const refresh = async () => { click('#refresh-data'); await until(() => !$('#refresh-data').disabled); };
-  const exportJSON = async () => { const before = downloads.length; click('#export-json'); assert.equal(downloads.length, before + 1); return JSON.parse(await downloads.at(-1).blob.text()); };
+  const refresh = async () => { click('#observed-refresh-data'); await until(() => !$('#observed-refresh-data').disabled); };
+  const exportJSON = async () => { const before = downloads.length; click('#observed-export-json'); assert.equal(downloads.length, before + 1); return JSON.parse(await downloads.at(-1).blob.text()); };
   return { $, html, document, window, fixture, remote, requests, intervals, downloads, scrolls, click, select, refresh, exportJSON };
 }
 
@@ -89,7 +89,7 @@ test('default monitor displays published observations without model assumptions'
 
   await t.test('published prices retain their original units and observation dates', async () => {
     assert.match(html, /src="\.\/observed-app\.js"/);
-    assert.doesNotMatch(html, /src="\.\/(?:planner|planner-app|app)\.js"/);
+    assert.match(html, /src="\.\/workspace\.js"/);
     assert.equal($('#jet-value').textContent, `$${jet.latest.value.toFixed(3)}`);
     assert.equal($('#brent-value').textContent, `$${brent.latest.value.toFixed(2)}`);
     assert.equal($('#fx-value').textContent, fx.latest.rates.USD.toFixed(4));
@@ -97,9 +97,9 @@ test('default monitor displays published observations without model assumptions'
     assert.match($('#jet-rows').textContent, /USD\/US gallon/);
     assert.match($('#brent-rows').textContent, /USD\/barrel/);
     assert.doesNotMatch($('#jet-rows').textContent, /tonne|USD\/t/);
-    assert.ok($('#source-cards').textContent.includes(jet.fetchedAt));
-    assert.ok($('#source-cards').textContent.includes(jet.latest.date));
-    assert.match($('#source-cards').textContent, /Cadence:.*daily/);
+    assert.ok($('#observed-source-cards').textContent.includes(jet.fetchedAt));
+    assert.ok($('#observed-source-cards').textContent.includes(jet.latest.date));
+    assert.match($('#observed-source-cards').textContent, /Cadence:.*daily/);
     const exported = await exportJSON();
     const rawJet = exported.snapshots.find(r => r.sourceId === 'eia-usgc-jet-fuel-daily').snapshot;
     assert.deepEqual(rawJet.observations, jet.observations);
@@ -111,21 +111,21 @@ test('default monitor displays published observations without model assumptions'
   await t.test('airport markers describe sourced locations and never inherit benchmark prices', () => {
     const airports = fixture.get('data/airports.json').airports;
     assert.equal(document.querySelectorAll('#airport-nodes [data-airport]').length, airports.length);
-    assert.equal(document.querySelectorAll('#atlas-map .route-line, #atlas-map .route-flow').length, 0);
-    assert.equal($('#model-form'), null);
-    assert.equal($('#total-cost'), null);
-    assert.equal($('#optimize-button'), null);
-    assert.equal($('#benchmark'), null);
+    assert.equal(document.querySelectorAll('#observed-atlas-map .route-line, #observed-atlas-map .route-flow').length, 0);
+    assert.equal($('#workspace-oil-markets').querySelector('#model-form'), null);
+    assert.equal($('#workspace-oil-markets').querySelector('#total-cost'), null);
+    assert.equal($('#workspace-oil-markets').querySelector('#optimize-button'), null);
+    assert.equal($('#workspace-oil-markets').querySelector('#benchmark'), null);
     select('#airport-select', 'HKG');
     const hkg = airports.find(a => a.iata === 'HKG');
     assert.ok($('#airport-name').textContent.includes(hkg.name));
     assert.match($('#airport-coordinates').textContent, /22\.31184/);
     assert.match(document.querySelector('.airport-facts').textContent, /No verified quote/);
     assert.match(document.querySelector('.airport-facts').textContent, /No verified observation/);
-    assert.doesNotMatch($('#atlas-map').textContent, /\$|\bt CAPACITY\b|\bt DEMAND\b/);
+    assert.doesNotMatch($('#observed-atlas-map').textContent, /\$|\bt CAPACITY\b|\bt DEMAND\b/);
     click('#airport-nodes [data-airport="SIN"]');
-    assert.match($('#map-status').textContent, /SIN.*no price or stock observation/);
-    assert.equal(document.querySelector('a[href="./planner.html"]').textContent.includes('assumptions required'), true);
+    assert.match($('#observed-map-status').textContent, /SIN.*no price or stock observation/);
+    assert.equal($('#workspace-calculations').hidden, false, 'calculations are the primary workspace');
   });
 
   await t.test('airport quotes remain disconnected and published cadence stays distinct from the public chart', () => {
@@ -133,8 +133,8 @@ test('default monitor displays published observations without model assumptions'
     assert.equal($('#live-provider').textContent, 'TradingView / OANDA CFDs');
     assert.equal($('#live-asof').textContent, '请查看图表内时间');
     assert.match(document.querySelector('.observed-disclosure').textContent, /not real-time airport quotes/);
-    assert.match($('#ticker-values').textContent, /DAILY · REPORTING LAG/);
-    assert.match($('#ticker-values').textContent, /MONTHLY/);
+    assert.match($('#observed-ticker-values').textContent, /DAILY · REPORTING LAG/);
+    assert.match($('#observed-ticker-values').textContent, /MONTHLY/);
     assert.match($('#last-check').textContent, /Page checked:/);
     assert.equal(intervals.length, 1);
     assert.equal(intervals[0].delay, 60000);
@@ -146,7 +146,7 @@ test('default monitor displays published observations without model assumptions'
     click('#tab-jodi');
     assert.equal($('#view-jodi').hidden, false);
     assert.match($('#jodi-rows').textContent, /KTONS/);
-    assert.doesNotMatch($('#source-cards').textContent, /INVALID OBSERVATION DATE/);
+    assert.doesNotMatch($('#observed-source-cards').textContent, /INVALID OBSERVATION DATE/);
     select('#jodi-country', 'HK');
     assert.match($('#jodi-rows').textContent, /unassessed/);
     click('#export-csv');
@@ -178,7 +178,7 @@ test('default monitor displays published observations without model assumptions'
     const before = await exportJSON();
     const requestCount = requests.length;
     intervals[0].callback();
-    await until(() => !$('#refresh-data').disabled);
+    await until(() => !$('#observed-refresh-data').disabled);
     assert.ok(requests.length > requestCount);
     assert.equal($('#jet-value').textContent, originalPrice);
     assert.match($('#refresh-status').textContent, /Observation and collection dates have not been replaced by page time/);
@@ -205,16 +205,16 @@ test('default monitor displays published observations without model assumptions'
     assert.match(catalogRequests[1].url, /\/codex\/complete-energy-model\/dist\//);
     assert.match($('#refresh-status').textContent, /retain cache/);
     assert.match($('#refresh-status').textContent, /main:.*HTTP 404/, 'feature fallback explains why the primary source was unavailable');
-    assert.match($('#source-cards').textContent, /CACHED · COLLECTION FAILED/);
+    assert.match($('#observed-source-cards').textContent, /CACHED · COLLECTION FAILED/);
     assert.equal($('#jet-value').textContent, `$${jet.latest.value.toFixed(3)}`);
-    assert.ok($('#source-cards').textContent.includes(jet.fetchedAt));
+    assert.ok($('#observed-source-cards').textContent.includes(jet.fetchedAt));
   });
 
   await t.test('timeouts and missing remote feeds recover to a complete bundled dataset', async () => {
     remote.mode = 'timeout';
     await refresh();
     assert.match($('#refresh-status').textContent, /bundled data retained/);
-    assert.equal($('#refresh-data').disabled, false);
+    assert.equal($('#observed-refresh-data').disabled, false);
     remote.mode = 'feature';
     const removed = remote.fixture.get('data/fx.json');
     remote.fixture.delete('data/fx.json');
@@ -230,8 +230,7 @@ test('default monitor displays published observations without model assumptions'
     const csv = await downloads.at(-1).blob.text();
     assert.match(csv, /"NO_VERIFIED_QUOTE"/);
     assert.doesNotMatch(csv, /allocation|savings|demand_t|procurement/i);
-    click('#nav-data'); click('#nav-sources');
-    assert.deepEqual(ui.scrolls, ['observations', 'data-sources']);
+    assert.equal(document.querySelector('.rail'), null, 'the sidebar has been removed');
   });
 });
 
@@ -243,11 +242,11 @@ test('unavailable observations remain missing, with no substituted benchmark or 
   assert.equal(ui.$('#jodi-value').textContent, 'Unavailable');
   assert.equal(ui.document.querySelectorAll('#airport-nodes [data-airport]').length, 0);
   assert.match(ui.$('#refresh-status').textContent, /No verified source values/);
-  assert.match(ui.$('#source-cards').textContent, /No invented prices/);
+  assert.match(ui.$('#observed-source-cards').textContent, /No invented prices/);
   assert.equal(ui.$('#export-csv').disabled, true);
-  assert.equal(ui.$('#export-json').disabled, true);
+  assert.equal(ui.$('#observed-export-json').disabled, true);
   assert.match(ui.$('#airport-api-status').textContent, /未连接/);
-  assert.equal(ui.$('#refresh-data').disabled, false);
+  assert.equal(ui.$('#observed-refresh-data').disabled, false);
 });
 
 test('public chart activity stays separate from airport observations and raw source exports', async t => {
@@ -281,8 +280,8 @@ test('public chart activity stays separate from airport observations and raw sou
   assert.equal(requests.length, sourceRequestCount, 'chart selection never requests data through the snapshot collector');
   assert.deepEqual(['jet', 'brent', 'fx'].map(key => $(`#${key}-value`).textContent), prices);
   assert.match(document.querySelector('.airport-facts').textContent, /No verified quote/);
-  assert.equal($('#optimize-button'), null);
-  assert.equal($('#model-form'), null);
+  assert.equal($('#workspace-oil-markets').querySelector('#optimize-button'), null);
+  assert.equal($('#workspace-oil-markets').querySelector('#model-form'), null);
   const after = await exportJSON();
   assert.deepEqual(after.snapshots, before.snapshots);
   assert.deepEqual(after.catalog, before.catalog);
@@ -359,12 +358,12 @@ test('a transient main-source failure cannot roll current observations back or e
     assert.equal(catalogs.length, 3, 'main failure, invalid data branch and older bundled snapshot all checked');
     assert.equal($('#jet-value').textContent, '$7.123');
     assert.ok($('#jet-date').textContent.includes(currentJet.latest.date));
-    assert.ok($('#source-cards').textContent.includes(currentJet.fetchedAt));
+    assert.ok($('#observed-source-cards').textContent.includes(currentJet.fetchedAt));
     assert.equal($('#refresh-status').classList.contains('error'), true);
     assert.match($('#refresh-status').textContent, /failed/i);
     assert.match($('#refresh-status').textContent, /retained/i);
     assert.match($('#refresh-status').textContent, /main:.*data branch:.*bundled:/);
-    assert.equal($('#refresh-data').disabled, false);
+    assert.equal($('#observed-refresh-data').disabled, false);
     const retained = await exportJSON();
     assert.deepEqual(retained.snapshots, current.snapshots, 'all source observations and collection timestamps stay unchanged');
     assert.deepEqual(retained.catalog, current.catalog, 'failed candidate cannot partially mutate source metadata');

@@ -1,8 +1,8 @@
 # FUEL ATLAS / 东亚能源流向
 
-An **observed energy-data monitor** with public source collection, an East Asia airport map and visible source timestamps. The homepage shows raw published values and missing coverage; it does not infer airport fuel prices, stock or demand. The multi-period planning model lives separately in the **Scenario laboratory** at `/planner.html`.
+An energy planning workspace organized into three top tabs: **Oil market live information**, **Predictions & flight calculations**, and **Sources**. Calculations open by default; switching tabs preserves editable inputs and results. Published market observations remain separate from scenario assumptions, and no airport fuel prices, stock or demand are inferred from them. The former `/planner.html` address redirects to the Calculations tab.
 
-The homepage also embeds **WTI and Brent crude CFD charts from TradingView / OANDA**, with no API key required. Provider timestamps, delay indicators and market-closed states remain inside the original chart. This is a public market display, not an airport fuel quote or a numerical feed into the optimizer. See [market access, latency and current limits](docs/live-data.md).
+The Oil market tab embeds **WTI and Brent crude CFD charts from TradingView / OANDA**, with no API key required. Provider timestamps, delay indicators and market-closed states remain inside the original chart. This is a public market display, not an airport fuel quote or a numerical feed into the optimizer. Sources contains feed health, raw observation exports, the airport reference map and model methodology. See [market access, latency and current limits](docs/live-data.md).
 
 ## Run and verify
 
@@ -15,6 +15,8 @@ npm run dev
 
 Open http://localhost:4173. The planning engine is bundled automatically before local serving. The deployed application runs entirely in the browser; no keys are exposed.
 
+The planning map includes 50 airports within the existing East/Southeast Asia frame, selected using 2024 total passenger traffic. The cutoff is 15.2 million passengers per year. Select an airport for its traffic context, or use the map zoom controls to inspect dense areas. Selection methodology and references are available in Sources and [the airport directory notes](docs/airport-directory.md). Traffic rankings do not supply airport fuel prices or model demand.
+
 ```sh
 npm run build
 npm test
@@ -23,7 +25,7 @@ npm run check
 
 ## The model
 
-Open `/planner.html` to plan 1–12 equal periods with explicitly assumed inputs. Edit supplier capacity/basis, period demand, initial stock, reserve targets, storage size/cost, route capacity/lead time/freight/handling, financing, budget and transport-emissions caps. Provide a flat benchmark, a growth assumption or an explicit price curve. These are scenario calculations, not an executable trading recommendation from observed supplier offers.
+Open the default Calculations tab (`/#calculations`) to plan 1–12 equal periods with explicitly assumed inputs. Edit supplier capacity/basis, period demand, initial stock, reserve targets, storage size/cost, route capacity/lead time/freight/handling, financing, budget and transport-emissions caps. Provide a flat benchmark, a growth assumption or an explicit price curve. These are scenario calculations, not an executable trading recommendation from observed supplier offers. The navigation label groups this existing planning model under predictions and flight calculations; the UI reorganization does not add a new forecasting model or flight-performance data.
 
 The continuous LP first minimizes unmet demand, then minimizes cost while preserving that service optimum within a disclosed numerical tolerance. Results include dated departures/arrivals, procurement, stock balances, shortages, binding constraints, costs and emissions. Supply arriving late never fulfills an earlier period's demand. Infeasible hard constraints produce diagnostics, not fabricated allocations.
 
@@ -67,9 +69,12 @@ The web app loads the latest collected dataset from GitHub `main`, then the prev
 
 - `src/planner.js`: multi-period LP, validation, scenarios and diagnostics.
 - `dist/planner.js`: generated self-contained browser bundle (do not hand-edit).
-- `dist/index.html`, `observed-app.js`, `styles.css`: observed monitor, original-unit tables, source health and export.
+- `dist/index.html`, `workspace.js`, `styles.css`: three-tab workspace, with calculations selected by default and persistent form state across tabs.
+- `dist/dashboard.css`: dashboard typography, neutral surfaces, readable controls and responsive presentation.
+- `dist/airport-map.js`, `src/airport-directory.js`, `dist/data/airport-directory.json`: the versioned 50-airport directory, marker layout, selection, zoom and source table. `scripts/build_airport_directory.py` rebuilds the coordinate join from an OurAirports CSV; `src/airport-traffic-2024.json` preserves the traffic candidates and references.
+- `dist/observed-app.js`: observed market summaries, original-unit tables, source health, reference geography and exports.
 - `dist/public-market.js`: official TradingView display integration, instrument selection and bounded loading/error/retry handling; no price extraction.
-- `dist/planner.html`, `planner-app.js`: separate scenario laboratory and import/export; `app.js` is its retained prior source.
+- `dist/planner-app.js`: scenario calculations and import/export inside the Calculations tab; `planner.html` redirects there and `app.js` is the retained prior source.
 - `dist/data/`: verified source snapshots and health catalog.
 - `scripts/refresh_data.py`, `data_adapters.py`, `collect_market.py`: ingestion.
 - `scripts/build.mjs`: deterministic browser build and third-party license copy.

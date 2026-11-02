@@ -17,7 +17,7 @@ async function until(predicate, message = 'asynchronous UI settled') {
 }
 
 async function mountApp(t, { noCatalog = false, remoteMode = 'unavailable' } = {}) {
-  const html = await readFile(new URL('../dist/planner.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
   const sourceCatalog = JSON.parse(await readFile(new URL('../dist/data/catalog.json', import.meta.url), 'utf8'));
   const fixture = new Map([['data/catalog.json', sourceCatalog]]);
   for (const feed of sourceCatalog.feeds) {
@@ -353,7 +353,7 @@ test('multi-period planner UI validates source, scheduling, constraints, exports
     assert.ok($('#inventory-chart').querySelector('.chart-stock'));
     click('[data-open-method]'); assert.equal($('#method-dialog').hasAttribute('open'), true);
     click('#close-method'); assert.equal($('#method-dialog').hasAttribute('open'), false);
-    click('#nav-markets'); assert.deepEqual(ui.scrollTargets, ['markets']);
+    assert.equal(document.querySelector('.rail'), null, 'navigation lives in the top tabs');
   });
 });
 
