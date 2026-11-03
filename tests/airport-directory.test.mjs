@@ -39,7 +39,7 @@ test('airport labels avoid each other and retain a label for a selected dense-ci
 });
 
 test('airport selection, zoom, and keyboard inspection preserve calculation inputs', async t => {
-  const { document, window } = parseHTML(await readFile(new URL('../dist/index.html', import.meta.url), 'utf8'));
+  const { document, window } = parseHTML(await readFile(new URL('../dist/network.html', import.meta.url), 'utf8'));
   const originals = new Map();
   for (const [name, value] of Object.entries({ document, window, Option: function Option(text, value) { const option = document.createElement('option'); option.textContent = text; option.value = value; return option; } })) {
     originals.set(name, Object.getOwnPropertyDescriptor(globalThis, name));
