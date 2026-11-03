@@ -1,4 +1,5 @@
 import { mapMarkup, project } from "./asia-map.js";
+import { createRotationMotion } from "./rotation-motion.js";
 import { optimizeRotation, defaultRotation } from "./flight-optimizer.js";
 import {
   parseQuoteCsv,
@@ -74,11 +75,19 @@ let mode = "demo",
   dirty = false,
   strategy = "optimized",
   region = "all";
-let playbackFrame = null,
-  playing = false;
-const initialHash = window.location.hash;
-if (["#calculations", "#oil-markets"].includes(initialHash))
-  window.location.replace("./network.html" + initialHash);
+let motion = null;
+let motionGeneration = 0;
+let userPausedMotion = false;
+let motionFrame = null;
+let motionHudTime = -Infinity;
+let lastMotionPhase = "";
+let cameraFrame = null;
+let hasPresentedMap = false;
+const reducedMotionPreference = window.matchMedia(
+  "(prefers-reduced-motion: reduce)",
+);
+const mapView = { x: 300, y: 35, width: 510, height: 390 };
+const motionLabels = { refuel: "加油中", flight: "飞行中", arrival: "已抵达" };
 const dialog = $("#import-dialog");
 
 function activeQuote(code) {
@@ -135,15 +144,299 @@ function renderForm() {
     .map((c) => airports[c]?.city ?? c)
     .join(" → ");
 }
+function canShowMotion() {
+  const panel = $("#workspace-calculations");
+  return !document.hidden && !dialog.open && (!panel || !panel.hidden);
+}
+function currentMotionPlan() {
+  return strategy === "optimized" ? result : result?.baseline;
+}
+function setMotionControls(state = "unavailable") {
+  const active = state === "playing";
+  const unavailable = state === "unavailable";
+  const reduced = state === "reduced";
+  const toggle = $("#motion-toggle");
+  if (toggle) {
+    toggle.disabled = unavailable || reduced;
+    toggle.dataset.state = state;
+    toggle.setAttribute("aria-pressed", String(active));
+    toggle.setAttribute(
+      "aria-label",
+      active ? "暂停轮转动画" : reduced ? "已减少动态效果" : "继续轮转动画",
+    );
+    toggle.innerHTML = active
+      ? "Ⅱ <span>暂停</span>"
+      : reduced
+        ? "<span>静态查看</span>"
+        : "▶ <span>继续</span>";
+  }
+  if ($("#motion-restart")) $("#motion-restart").disabled = unavailable;
+  if ($("#motion-progress")) $("#motion-progress").disabled = unavailable;
+  $("#play-route").disabled = unavailable;
+  $("#play-route").innerHTML = reduced
+    ? "→ <span>下一航段</span>"
+    : "↺ <span>重播轮转</span>";
+  $("#map-stage").classList.toggle("is-playing", active);
+  const autoLabel = $(".motion-auto-label");
+  if (autoLabel)
+    autoLabel.innerHTML = `<i aria-hidden="true"></i>${active ? "自动播放 · 航班模拟" : reduced ? "减少动态 · 逐段查看" : unavailable ? "等待可行方案" : "已暂停 · 航班模拟"}`;
+}
 function stopPlayback() {
-  if (playbackFrame !== null) cancelAnimationFrame(playbackFrame);
-  playbackFrame = null;
-  playing = false;
+  motionGeneration++;
+  const previous = motion;
+  motion = null;
+  previous?.destroy();
+  if (cameraFrame !== null) cancelAnimationFrame(cameraFrame);
+  cameraFrame = null;
+  motionFrame = null;
+  lastMotionPhase = "";
+  $("#animated-plane")?.remove();
+  $("#plane-position-halo")?.remove();
   $("#flight-playback").hidden = true;
-  $("#play-route").innerHTML = "▶ <span>播放轮转</span>";
-  const plane = $("#animated-plane");
-  if (plane) plane.remove();
+  $("#flight-map").dataset.phase = "idle";
+  $("#flight-map").dataset.activeLeg = "";
+  $("#map-stage").classList.remove("is-refueling", "is-flying", "is-arriving");
   $$(".route-path").forEach((p) => p.classList.remove("inactive"));
+  $$(".map-airport").forEach((p) =>
+    p.classList.remove("motion-active", "is-refueling"),
+  );
+  $$(".motion-active,.active-leg").forEach((p) =>
+    p.classList.remove("motion-active", "active-leg"),
+  );
+  if ($("#motion-fuel")) $("#motion-fuel").textContent = "— t";
+  if ($("#motion-cost")) $("#motion-cost").textContent = "—";
+  if ($("#motion-phase")) $("#motion-phase").textContent = "等待计算";
+  if ($("#motion-summary"))
+    $("#motion-summary").textContent =
+      "计算可行方案后，自动演示每站加油和飞行耗油。";
+  if ($("#motion-leg-buttons")) $("#motion-leg-buttons").innerHTML = "";
+  if ($("#motion-progress")) $("#motion-progress").value = "0";
+  setMotionControls();
+}
+function animateViewport(target = mapView, entrance = false) {
+  const svg = $("#flight-map");
+  if (cameraFrame !== null) cancelAnimationFrame(cameraFrame);
+  const finish = () =>
+    svg.setAttribute(
+      "viewBox",
+      `${target.x} ${target.y} ${target.width} ${target.height}`,
+    );
+  if (reducedMotionPreference.matches) {
+    finish();
+    return;
+  }
+  const raw = (svg.getAttribute("viewBox") || "300 35 510 390")
+    .split(/\s+/)
+    .map(Number);
+  const start = entrance ? [270, 15, 570, 430] : raw;
+  const goal = [target.x, target.y, target.width, target.height];
+  const began = performance.now();
+  const frame = (time) => {
+    const fraction = Math.min(
+      1,
+      Math.max(0, (time - began) / (entrance ? 1200 : 600)),
+    );
+    const eased = 1 - Math.pow(1 - fraction, 3);
+    svg.setAttribute(
+      "viewBox",
+      start.map((v, i) => v + (goal[i] - v) * eased).join(" "),
+    );
+    cameraFrame = fraction < 1 ? requestAnimationFrame(frame) : null;
+  };
+  svg.setAttribute("viewBox", start.join(" "));
+  cameraFrame = requestAnimationFrame(frame);
+}
+function focusMotionLeg(index) {
+  const leg = currentMotionPlan()?.legs[index];
+  if (!leg) return;
+  const [x1, y1] = project(airports[leg.from].lon, airports[leg.from].lat);
+  const [x2, y2] = project(airports[leg.to].lon, airports[leg.to].lat);
+  const width = Math.max(285, Math.abs(x2 - x1) + 170);
+  const height = Math.max(230, (width * mapView.height) / mapView.width);
+  animateViewport({
+    x: (x1 + x2) / 2 - width / 2,
+    y: (y1 + y2) / 2 - height / 2,
+    width,
+    height,
+  });
+}
+function renderMotionFrame(frame, plan, lengths) {
+  motionFrame = frame;
+  const leg = plan.legs[frame.legIndex];
+  const svg = $("#flight-map");
+  svg.dataset.phase = frame.phase;
+  svg.dataset.activeLeg = String(frame.legIndex);
+  const plane = $("#animated-plane");
+  plane?.setAttribute(
+    "transform",
+    `translate(${frame.x},${frame.y}) rotate(${frame.angle}) scale(.58)`,
+  );
+  if (plane) plane.dataset.phase = frame.phase;
+  $("#plane-position-halo")?.setAttribute(
+    "transform",
+    `translate(${frame.x},${frame.y})`,
+  );
+  const routeProgress =
+    frame.phase === "refuel"
+      ? 0
+      : frame.phase === "arrival"
+        ? 1
+        : frame.phaseProgress;
+  $$(".route-trail").forEach((path, index) => {
+    const progress =
+      index < frame.legIndex ? 1 : index === frame.legIndex ? routeProgress : 0;
+    path.style.strokeDasharray = String(lengths[index]);
+    path.style.strokeDashoffset = String(lengths[index] * (1 - progress));
+    path.classList.toggle("completed", index < frame.legIndex);
+  });
+  const key = `${frame.legIndex}:${frame.phase}`;
+  if (key !== lastMotionPhase) {
+    lastMotionPhase = key;
+    $("#map-stage").classList.toggle("is-refueling", frame.phase === "refuel");
+    $("#map-stage").classList.toggle("is-flying", frame.phase === "flight");
+    $("#map-stage").classList.toggle("is-arriving", frame.phase === "arrival");
+    $$(".route-path").forEach((path, index) =>
+      path.classList.toggle("inactive", index !== frame.legIndex),
+    );
+    $$(".map-airport").forEach((node) => {
+      node.classList.toggle(
+        "motion-active",
+        node.dataset.airport ===
+          (frame.phase === "arrival" ? leg.to : leg.from),
+      );
+      node.classList.toggle(
+        "is-refueling",
+        frame.phase === "refuel" &&
+          node.dataset.airport === leg.from &&
+          leg.upliftT > 0.001,
+      );
+    });
+    $$("#leg-rows tr,.strategy-card").forEach((row) =>
+      row.classList.remove("motion-active", "active-leg"),
+    );
+    $$("#leg-rows tr")[frame.legIndex]?.classList.add(
+      "motion-active",
+      "active-leg",
+    );
+    $$(".strategy-card")[frame.legIndex]?.classList.add(
+      "motion-active",
+      "active-leg",
+    );
+    $$("[data-motion-leg]").forEach((button, index) => {
+      button.setAttribute("aria-current", String(index === frame.legIndex));
+      button.classList.toggle("completed", index < frame.legIndex);
+    });
+    if ($("#motion-current-leg"))
+      $("#motion-current-leg").textContent = `${leg.from} → ${leg.to}`;
+    if ($("#motion-phase"))
+      $("#motion-phase").textContent =
+        frame.phase === "refuel" && leg.upliftT < 0.001
+          ? "无需加油"
+          : motionLabels[frame.phase];
+    if ($("#motion-summary"))
+      $("#motion-summary").textContent =
+        frame.phase === "refuel"
+          ? `${leg.from} ${leg.upliftT < 0.001 ? "利用已携带燃油，本次无需补油。" : `计划加油 ${tonnes(leg.upliftT)} t，采购 ${money(leg.costUsd)}。`}`
+          : frame.phase === "flight"
+            ? `${leg.from} 飞往 ${leg.to}，燃油随航段消耗；本段落地目标 ${tonnes(leg.landingFuelT)} t。`
+            : `已抵达 ${leg.to}，落地燃油 ${tonnes(leg.landingFuelT)} t。`;
+  }
+  const now = performance.now();
+  if (now - motionHudTime > 55 || !frame.playing || frame.phaseProgress === 0) {
+    motionHudTime = now;
+    if ($("#motion-fuel"))
+      $("#motion-fuel").textContent = `${tonnes(frame.fuelT)} t`;
+    if ($("#motion-cost"))
+      $("#motion-cost").textContent = money(frame.cumulativeCostUsd);
+    if ($("#motion-progress"))
+      $("#motion-progress").value = String(frame.totalProgress * 100);
+    $("#motion-detail")?.style.setProperty(
+      "--fuel-level",
+      `${Math.min(100, (frame.fuelT / input.aircraft.tankCapacityT) * 100)}%`,
+    );
+  }
+}
+function setupMotion(progress = 0, autoplay = true) {
+  const plan = currentMotionPlan();
+  if (
+    !plan?.feasible ||
+    dirty ||
+    plan.legs.length !== input.legs.length ||
+    plan.legs.some(
+      (l, i) => l.from !== input.legs[i].from || l.to !== input.legs[i].to,
+    )
+  )
+    return;
+  const paths = plan.legs.map((_, i) => $(`#route-${i}`));
+  if (paths.some((path) => typeof path?.getTotalLength !== "function")) return;
+  const svg = $("#flight-map"),
+    ns = "http://www.w3.org/2000/svg";
+  const halo = document.createElementNS(ns, "g");
+  halo.id = "plane-position-halo";
+  halo.innerHTML = '<circle r="17" fill="url(#plane-aura)"/>';
+  const plane = document.createElementNS(ns, "g");
+  plane.id = "animated-plane";
+  plane.setAttribute("class", "motion-plane plane-shape");
+  plane.innerHTML =
+    '<path class="plane-shadow" d="M22 0C22-1 9-2 4-2L-7-15H-11L-5-3L-17-2L-21-7H-24L-21 0L-24 7H-21L-17 2L-5 3L-11 15H-7L4 2C9 2 22 1 22 0Z"/><path d="M22 0C22-1 9-2 4-2L-7-15H-11L-5-3L-17-2L-21-7H-24L-21 0L-24 7H-21L-17 2L-5 3L-11 15H-7L4 2C9 2 22 1 22 0Z"/>';
+  svg.append(halo, plane);
+  if ($("#motion-leg-buttons"))
+    $("#motion-leg-buttons").innerHTML = plan.legs
+      .map(
+        (leg, index) =>
+          `<button type="button" data-motion-leg="${index}" aria-current="${index === 0}"><span>${String(index + 1).padStart(2, "0")}</span><strong>${leg.from} → ${leg.to}</strong><small>${leg.upliftT < 0.001 ? "无需加油" : `+${tonnes(leg.upliftT)} t`}</small></button>`,
+      )
+      .join("");
+  const lengths = paths.map((path) => Math.max(0.001, path.getTotalLength()));
+  const generation = motionGeneration;
+  motionHudTime = -Infinity;
+  motion = createRotationMotion({
+    paths,
+    legs: plan.legs,
+    reducedMotion: reducedMotionPreference.matches,
+    legDurationMs: 5800,
+    loop: true,
+    onFrame: (frame) => {
+      if (generation === motionGeneration)
+        renderMotionFrame(frame, plan, lengths);
+    },
+    onStateChange: (state) => {
+      if (generation === motionGeneration)
+        setMotionControls(
+          state.reducedMotion
+            ? "reduced"
+            : state.playing
+              ? "playing"
+              : "paused",
+        );
+    },
+  });
+  motion.seek(progress);
+  setMotionControls(reducedMotionPreference.matches ? "reduced" : "paused");
+  if (autoplay && !userPausedMotion && canShowMotion()) motion.play();
+  if (!hasPresentedMap && canShowMotion()) {
+    hasPresentedMap = true;
+    animateViewport(mapView, true);
+  }
+}
+function toggleMotion() {
+  if (!motion || dirty) return;
+  if (reducedMotionPreference.matches) {
+    userPausedMotion = true;
+    const next =
+      (Math.min(input.legs.length - 1, (motionFrame?.legIndex ?? 0) + 1) +
+        0.2) /
+      input.legs.length;
+    motion.seek(next);
+    return;
+  }
+  if (motion.getState().playing) {
+    userPausedMotion = true;
+    motion.pause();
+  } else {
+    userPausedMotion = false;
+    if (canShowMotion()) motion.play();
+  }
 }
 function setDirty(message = "参数已修改，重新计算以更新方案") {
   stopPlayback();
@@ -307,14 +600,14 @@ function routeCurve(from, to, i) {
   const bend = Math.min(40, len * 0.15) * (i % 2 ? 1 : -1);
   return `M ${x1} ${y1} Q ${(x1 + x2) / 2 - (dy / len) * bend} ${(y1 + y2) / 2 + (dx / len) * bend} ${x2} ${y2}`;
 }
-function renderMap() {
+function renderMap({ progress = 0, autoplay = true } = {}) {
   stopPlayback();
   $("#airport-tooltip").hidden = true;
   const selected = new Set(input.legs.flatMap((l) => [l.from, l.to]));
   const routes = input.legs
     .map((l, i) => {
       const d = routeCurve(l.from, l.to, i);
-      return `<path class="route-shadow" d="${d}"/><path id="route-${i}" class="route-path" d="${d}"/>`;
+      return `<path class="route-halo route-shadow" d="${d}"/><path id="route-${i}" class="route-path" d="${d}"/><path class="route-trail" data-trail="${i}" d="${d}"/>`;
     })
     .join("");
   const nodes = airportData
@@ -327,11 +620,11 @@ function renderMap() {
       const label = show
         ? `<text x="${dx}" y="${dy}" class="airport-code">${a.code}<tspan class="airport-city" dx="4">${a.city}</tspan></text>${active ? `<text x="${dx}" y="${dy + 11}" class="airport-price">${Number.isFinite(price) ? "$" + Math.round(price).toLocaleString("en-US") : "待报价"}<tspan class="airport-city"> /t${mode === "demo" ? " · 示例" : ""}</tspan></text>` : ""}`
         : "";
-      return `<g class="map-airport ${active ? "selected" : ""}" data-airport="${a.code}" transform="translate(${x},${y})" tabindex="0" role="button" aria-label="${a.name} ${a.code}，${mode === "demo" ? "示例价格" : "用户报价"}${Number.isFinite(price) ? Math.round(price) + "美元每吨" : "缺失"}"><circle class="ring" r="${active ? 7 : 4}"/><circle class="marker" r="${active ? 3 : 1.7}"/>${label}</g>`;
+      return `<g class="map-airport ${active ? "selected" : ""}" data-airport="${a.code}" transform="translate(${x},${y})" tabindex="0" role="button" aria-label="${a.name} ${a.code}，${mode === "demo" ? "示例价格" : "用户报价"}${Number.isFinite(price) ? Math.round(price) + "美元每吨" : "缺失"}"><circle class="ring" r="${active ? 7 : 4}"/><circle class="marker" r="${active ? 3 : 1.7}"/>${active ? '<circle class="airport-pulse" r="7"/>' : ""}${label}</g>`;
     })
     .join("");
   $("#flight-map").innerHTML =
-    `<defs><radialGradient id="map-glow"><stop stop-color="#c5efab" stop-opacity=".13"/><stop offset="1" stop-color="#c5efab" stop-opacity="0"/></radialGradient></defs><circle cx="550" cy="220" r="210" fill="url(#map-glow)"/><g>${mapMarkup}</g><g>${routes}</g><g>${nodes}</g>`;
+    `<defs><radialGradient id="plane-aura"><stop stop-color="#a4edff" stop-opacity=".55"/><stop offset="1" stop-color="#a4edff" stop-opacity="0"/></radialGradient><radialGradient id="map-glow"><stop stop-color="#c5efab" stop-opacity=".13"/><stop offset="1" stop-color="#c5efab" stop-opacity="0"/></radialGradient></defs><circle cx="550" cy="220" r="210" fill="url(#map-glow)"/><g class="map-terrain">${mapMarkup}</g><g class="rotation-routes">${routes}</g><g>${nodes}</g>`;
   $("#map-mode").textContent =
     mode === "demo" ? "DEMO / 示例价格" : "QUOTES / 用户报价";
   const showAirport = (code) => {
@@ -363,57 +656,17 @@ function renderMap() {
     },
     { once: true },
   );
+  setupMotion(progress, autoplay);
 }
 function playRotation() {
-  if (playing) {
-    stopPlayback();
+  if (!motion || dirty) return;
+  if (reducedMotionPreference.matches) {
+    toggleMotion();
     return;
   }
-  const plan = strategy === "optimized" ? result : result?.baseline;
-  if (!plan?.feasible || dirty) return;
-  playing = true;
-  $("#play-route").innerHTML = "Ⅱ <span>暂停播放</span>";
-  const svg = $("#flight-map"),
-    ns = "http://www.w3.org/2000/svg";
-  const plane = document.createElementNS(ns, "path");
-  plane.id = "animated-plane";
-  plane.setAttribute("class", "plane-shape");
-  plane.setAttribute(
-    "d",
-    "M9 0 -3 -2 -6 -7 -8 -7 -6 -1 -10 0 -10 1 -6 2 -8 7 -6 7 -3 2Z",
-  );
-  svg.append(plane);
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const perLeg = reduce ? 1 : 3500,
-    start = performance.now();
-  const animate = (now) => {
-    const elapsed = now - start,
-      index = Math.min(plan.legs.length - 1, Math.floor(elapsed / perLeg)),
-      progress = Math.min(1, (elapsed - index * perLeg) / perLeg);
-    const path = $(`#route-${index}`),
-      length = path.getTotalLength(),
-      point = path.getPointAtLength(length * progress),
-      ahead = path.getPointAtLength(Math.min(length, length * progress + 1));
-    const angle =
-      (Math.atan2(ahead.y - point.y, ahead.x - point.x) * 180) / Math.PI;
-    plane.setAttribute(
-      "transform",
-      `translate(${point.x},${point.y}) rotate(${angle}) scale(.65)`,
-    );
-    $$(".route-path").forEach((p, i) =>
-      p.classList.toggle("inactive", i !== index),
-    );
-    const leg = plan.legs[index];
-    $("#flight-playback").hidden = false;
-    $("#flight-playback").innerHTML =
-      `<strong>${leg.from} → ${leg.to}</strong>本站加油 ${tonnes(leg.upliftT)} t<br>航段燃油 ${tonnes(leg.takeoffFuelT - leg.airborneBurnT * progress)} t · 采购 ${money(leg.costUsd)}${mode === "demo" ? " · 示例" : ""}`;
-    if (elapsed >= plan.legs.length * perLeg) {
-      stopPlayback();
-      return;
-    }
-    playbackFrame = requestAnimationFrame(animate);
-  };
-  playbackFrame = requestAnimationFrame(animate);
+  userPausedMotion = false;
+  animateViewport(mapView);
+  motion.restart();
 }
 function renderAirports() {
   const query = $("#airport-search").value.trim().toLowerCase();
@@ -434,6 +687,9 @@ function renderAirports() {
     '<tr><td colspan="5" class="missing">没有匹配的机场。</td></tr>';
 }
 function changeMode(next) {
+  stopPlayback();
+  result = null;
+  dirty = true;
   mode = next;
   $("#mode-demo").classList.toggle("selected", mode === "demo");
   $("#mode-quotes").classList.toggle("selected", mode === "quotes");
@@ -555,6 +811,7 @@ $("#add-leg").addEventListener("click", () => {
   setDirty("已添加示例航段，请设定本段耗油与约束");
 });
 $("#reset-plan").addEventListener("click", () => {
+  userPausedMotion = false;
   input = defaultRotation();
   $("#aircraft").value = "b787";
   Object.assign(illustrativePrices, { PVG: 860, ICN: 980, HND: 1120 });
@@ -571,8 +828,10 @@ $$("[data-strategy]").forEach((button) =>
       b.classList.toggle("selected", b === button);
       b.setAttribute("aria-pressed", String(b === button));
     });
+    const progress = motion?.getState().totalProgress ?? 0;
     stopPlayback();
     renderStrategies();
+    renderMap({ progress });
     $("#play-route").disabled =
       !result || (strategy === "baseline" && !result.baseline?.feasible);
   }),
@@ -588,7 +847,10 @@ $$("[data-region]").forEach((button) =>
   }),
 );
 $$("[data-import]").forEach((button) =>
-  button.addEventListener("click", () => dialog.showModal()),
+  button.addEventListener("click", () => {
+    dialog.showModal();
+    syncMotionVisibility();
+  }),
 );
 $("#close-import").addEventListener("click", () => dialog.close());
 $("#use-quotes").addEventListener("click", () => {
@@ -691,19 +953,42 @@ async function renderSources() {
       '<p class="micro">来源目录暂时无法加载。可先查看台湾中油官方价格表和项目研究文档。</p>';
   }
 }
-const observer = new IntersectionObserver(
-  (entries) => {
-    for (const e of entries)
-      if (e.isIntersecting)
-        $$("[data-section]").forEach((a) =>
-          a.classList.toggle("active", a.dataset.section === e.target.id),
-        );
-  },
-  { rootMargin: "-10% 0px -65% 0px" },
-);
-["planner", "airports", "sources"].forEach((id) =>
-  observer.observe(document.getElementById(id)),
-);
+$("#motion-toggle")?.addEventListener("click", toggleMotion);
+$("#motion-restart")?.addEventListener("click", playRotation);
+$("#motion-progress")?.addEventListener("input", (event) => {
+  if (!motion) return;
+  const progress = Number(event.target.value) / 100;
+  userPausedMotion = true;
+  motion.pause();
+  motion.seek(progress);
+});
+$("#motion-leg-buttons")?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-motion-leg]");
+  if (!button || !motion) return;
+  const index = Number(button.dataset.motionLeg);
+  userPausedMotion = true;
+  motion.pause();
+  motion.seek((index + 0.2) / input.legs.length);
+  focusMotionLeg(index);
+});
+function syncMotionVisibility() {
+  if (!motion) return;
+  if (!canShowMotion()) {
+    motion.pause();
+    if (cameraFrame !== null) cancelAnimationFrame(cameraFrame);
+    cameraFrame = null;
+  } else if (!userPausedMotion && !reducedMotionPreference.matches)
+    motion.play();
+}
+dialog.addEventListener("close", syncMotionVisibility);
+document.addEventListener("visibilitychange", syncMotionVisibility);
+document.addEventListener("workspacechange", syncMotionVisibility);
+reducedMotionPreference.addEventListener?.("change", () => {
+  const progress = motion?.getState().totalProgress ?? 0;
+  stopPlayback();
+  renderMap({ progress });
+});
+window.addEventListener("pagehide", () => stopPlayback());
 syncAircraftInputs();
 renderForm();
 renderAirports();

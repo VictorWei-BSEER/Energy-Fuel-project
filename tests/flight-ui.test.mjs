@@ -15,6 +15,40 @@ async function mount(t) {
   const { document, window } = parseHTML(html);
   window.location = { hash: "", replace() {} };
   window.matchMedia = () => ({ matches: false });
+  // Linkedom has no SVG geometry. A straight endpoint adapter exercises the
+  // controller integration; browser QA verifies the real curved SVG geometry.
+  const geometryPrototypes = [
+    window.SVGElement.prototype,
+    window.HTMLElement.prototype,
+  ];
+  const geometryDescriptors = [];
+  const endpoints = (path) => {
+    const values = (path.getAttribute("d") || "")
+      .match(/-?\d+(?:\.\d+)?/g)
+      ?.map(Number) || [0, 0, 1, 1];
+    return [values[0], values[1], ...values.slice(-2)];
+  };
+  for (const [name, value] of Object.entries({
+    getTotalLength() {
+      const [x1, y1, x2, y2] = endpoints(this);
+      return Math.hypot(x2 - x1, y2 - y1);
+    },
+    getPointAtLength(distance) {
+      const [x1, y1, x2, y2] = endpoints(this);
+      const length = Math.hypot(x2 - x1, y2 - y1);
+      const progress = length ? Math.max(0, Math.min(1, distance / length)) : 0;
+      return { x: x1 + (x2 - x1) * progress, y: y1 + (y2 - y1) * progress };
+    },
+  })) {
+    for (const prototype of geometryPrototypes) {
+      geometryDescriptors.push([
+        prototype,
+        name,
+        Object.getOwnPropertyDescriptor(prototype, name),
+      ]);
+      Object.defineProperty(prototype, name, { value, configurable: true });
+    }
+  }
   const originals = new Map();
   for (const [name, value] of Object.entries({
     document,
@@ -38,6 +72,11 @@ async function mount(t) {
     });
   }
   t.after(() => {
+    window.dispatchEvent(new window.Event("pagehide"));
+    for (const [prototype, name, descriptor] of geometryDescriptors) {
+      if (descriptor) Object.defineProperty(prototype, name, descriptor);
+      else delete prototype[name];
+    }
     for (const [name, descriptor] of originals) {
       if (descriptor) Object.defineProperty(globalThis, name, descriptor);
       else delete globalThis[name];

@@ -2,17 +2,19 @@
 
 首页回答一个具体问题：**在既定的 2–5 航段轮转中，应该在哪一站加油、加多少，才能在满足油量与重量限制的同时降低新购燃油成本？** 航线保持不变；优化的是各站加油量与提前携油量。
 
-主界面将东亚地图、飞机沿航线播放、成本比较和逐段加油建议放在一起。默认示例为 PVG → ICN → HND → PVG。价格和机型性能明确标为可编辑示例；导入用户报价后，价格与示例数据分开使用。
+主界面保留原来的三页签工作台：油市、预测与航班计算、来源。默认打开航班计算，沿用紧凑标题、左侧地图、右侧决策卡以及下方输入与结果表的结构。有效示例方案加载后，飞机会直接沿 PVG → ICN → HND → PVG 轮转自动演示；逐站加油、燃油消耗和累计采购成本同步变化。价格和机型性能明确标为可编辑示例；导入用户报价后，价格与示例数据分开使用。
 
 | 入口 | 用途 |
 | --- | --- |
-| `/`、`/index.html` | 新首页：固定轮转加油优化、17 个东亚机场、机场报价与来源 |
+| `/`、`/index.html`、`/#calculations` | 默认航班计算页签：固定轮转优化、17 个可选东亚机场、地图演示与逐段结果 |
+| `/#oil-markets` | 原油市页签：WTI / Brent 公共图表与已采集的市场观测 |
+| `/#sources` | 报价与来源页签：用户报价、数据时效、原始观测、50 机场参考目录与方法 |
 | `/network.html#calculations` | 保留的多期供应链情景模型 |
 | `/network.html#oil-markets` | 保留的 WTI / Brent 公共油市图表 |
 | `/network.html#sources` | 原观测数据、刷新状态、50 机场目录与模型来源 |
 | `/planner.html` | 跳转到 `/network.html#calculations` |
 
-旧的首页 `#calculations` 和 `#oil-markets` 深链接会转到 `network.html` 对应页签；新首页 `#sources` 指向机场供油资料与方法。原供应链与油市的说明保留在下文，不代表首页飞机模型的数据或性能来源。
+首页的三个页签直接响应 `#calculations`、`#oil-markets` 和 `#sources` 深链接；切换时保留表单和方案状态。原供应链模型另保留在 `network.html`，其库存、供应商和运输参数不代表飞机模型的数据或性能来源。
 
 ## Run and verify
 
@@ -36,7 +38,7 @@ npm run check
 1. 在“示例场景”查看地图、轮转与加油建议。可编辑价格、基础耗油和已有燃油，以及展开后的性能、保留油与重量参数。
 2. 添加或删除航段，将轮转保持为 2–5 个连续航段。修改机场后需同步核对耗油与载荷；系统不会从城市距离推断真实性能。
 3. 点击“重新计算方案”，比较逐站按需基线与优化方案的成本、加油量、落地燃油和额外携油耗油。不可行输入显示诊断；编辑后旧结果立即失效。
-4. 切换“优化方案 / 逐站按需”，点击“播放轮转”，观察飞机沿路径移动和当前航段燃油变化。播放是方案示意，不是实时飞机位置或实际飞行时间。
+4. 有效方案加载后即开始轮转演示：飞机沿路径移动，当前航段高亮，加油阶段的油量和累计采购成本上升，飞行阶段燃油下降。可暂停、重播、拖动进度或选择航段；切换“优化方案 / 逐站按需”时，各图表和演示使用对应方案。离开计算页签或页面进入后台时暂停；系统减少动态效果偏好下不自动播放，可手动选择静态进度。演示不是实时飞机位置、真实加油过程或实际飞行时间。
 5. 导入报价并切到“我的报价”，按计划日期匹配出发站价格；计算后可导出包含输入、报价来源和结果的 JSON。
 
 新轮转引擎直接枚举小规模有界线性问题的顶点。额外携油增加本段耗油；油箱容量在滑行前检查，起飞和落地重量分别检查。两方案使用相同初始燃油与相同终点库存，避免通过耗尽最后一站燃油制造节省。逐站按需基线因供油上限而不可行时，只展示可行性差异，不输出节省比例。方程、输入输出和默认示例见[固定轮转模型](docs/flight-model.md)。
@@ -82,7 +84,7 @@ The retained planning map includes 50 airports within the existing East/Southeas
 
 ## 保留的油市与观测数据
 
-Public market display at `/network.html#oil-markets`: `OANDA:WTICOUSD` (WTI crude CFD) and `OANDA:BCOUSD` (Brent crude CFD). TradingView serves the chart directly to the visitor without an API key; the app does not copy, export or use its prices in the airport rotation optimizer. The chart defaults to 15-minute candles and UTC+8; **15 minutes is the candle interval, not the data delay**. Provider timestamps, source delay and market status remain in the original chart. Script/frame loading status does not prove a fresh quote has arrived. If the external chart is blocked or slow, use the retry control or its always-visible source links. See [market access, latency and current limits](docs/live-data.md).
+Public market display at `/#oil-markets` (also retained at `/network.html#oil-markets`): `OANDA:WTICOUSD` (WTI crude CFD) and `OANDA:BCOUSD` (Brent crude CFD). TradingView serves the chart directly to the visitor without an API key; the app does not copy, export or use its prices in the airport rotation optimizer. The chart defaults to 15-minute candles and UTC+8; **15 minutes is the candle interval, not the data delay**. Provider timestamps, source delay and market status remain in the original chart. Script/frame loading status does not prove a fresh quote has arrived. If the external chart is blocked or slow, use the retry control or its always-visible source links. See [market access, latency and current limits](docs/live-data.md).
 
 Five official-source adapters have completed a real GitHub Actions HTTPS run:
 
@@ -110,12 +112,14 @@ The collector needs HTTPS access to the official source hosts. The managed build
 
 The refresh workflow checks the three EIA/ECB market feeds hourly at minute 17, checks all five sources daily at 22:47 UTC, supports manual dispatch, and runs on relevant source changes. GitHub schedules are best effort and may run late. Scheduled Actions run from the default branch. It commits only `dist/data/`, reports partial failures, and fails if no selected feed refreshed.
 
-The retained `network.html` app loads the latest collected dataset from GitHub `main`, then the previous data branch, then its bundled fallback. The observed monitor checks every 60 seconds while visible and has a manual check button; hidden pages pause automatic checks. Requests for all feeds use the same selected source location; each feed keeps its own observation date and freshness. These are periodic collected snapshots, not real-time exchange or supplier quotes. The hosted UI does not need to be redeployed for remote dataset updates. A failed check retains the last loaded observations and their timestamps. Remote observations do not change the homepage demonstration prices or user quotation collection.
+The homepage oil-market/source tabs and retained `network.html` app load the latest collected dataset from GitHub `main`, then the previous data branch, then its bundled fallback. The observed monitor checks every 60 seconds while visible and has a manual check button; hidden pages pause automatic checks. Requests for all feeds use the same selected source location; each feed keeps its own observation date and freshness. These are periodic collected snapshots, not real-time exchange or supplier quotes. The hosted UI does not need to be redeployed for remote dataset updates. A failed check retains the last loaded observations and their timestamps. Remote observations do not change the homepage demonstration prices or user quotation collection.
 
 ## Structure
 
-- `dist/index.html`, `dist/flight.css`: new responsive homepage, map, decision card, rotation inputs and quote import dialog.
-- `dist/flight-app.js`: rotation editing, price modes, strategy switching, plane playback, airport search/filtering, import and JSON export.
+- `dist/index.html`, `dist/flight.css`, `dist/workspace-flight.css`: restored three-tab dashboard, compact calculations overview, map/decision split, rotation inputs and quote import dialog.
+- `dist/flight-app.js`: rotation editing, price modes, strategy switching, map/row/cost motion integration, airport search/filtering, import and JSON export.
+- `dist/rotation-motion.js`: deterministic refuel/flight/arrival playback with pause, restart, seek, leg progress and reduced-motion behavior.
+- `dist/workspace-directory.js`: Sources-only 50-airport reference table and source links, independent of the legacy map controls.
 - `dist/flight-optimizer.js`: pure fixed-rotation solver, baseline, fuel/weight constraints, diagnostics and demonstration input.
 - `dist/fuel-quotes.js`: `QUOTE_CSV_TEMPLATE`, `parseQuoteCsv` and `quoteForAirport`; bounded CSV parsing and applicable quotation selection.
 - `dist/asia-map.js`: shared SVG geography and projection; homepage routes are schematic paths.
@@ -123,8 +127,8 @@ The retained `network.html` app loads the latest collected dataset from GitHub `
 - `dist/fonts/`: local Manrope and Instrument Serif fonts with licenses.
 - `src/planner.js`: multi-period LP, validation, scenarios and diagnostics.
 - `dist/planner.js`: generated self-contained browser bundle (do not hand-edit).
-- `dist/network.html`, `workspace.js`, `styles.css`: retained three-tab workspace, with calculations selected by default and persistent form state across tabs.
-- `dist/dashboard.css`: dashboard typography, neutral surfaces, readable controls and responsive presentation.
+- `dist/workspace.js`, `dist/styles.css`, `dist/dashboard.css`: shared three-tab navigation and original dashboard foundation; calculations selected by default with persistent form state across tabs.
+- `dist/network.html`: retained supply-chain calculations with the original map controls and supporting market/source tabs.
 - `dist/airport-map.js`, `src/airport-directory.js`, `dist/data/airport-directory.json`: the versioned 50-airport directory, marker layout, selection, zoom and source table. `scripts/build_airport_directory.py` rebuilds the coordinate join from an OurAirports CSV; `src/airport-traffic-2024.json` preserves the traffic candidates and references.
 - `dist/observed-app.js`: observed market summaries, original-unit tables, source health, reference geography and exports.
 - `dist/public-market.js`: official TradingView display integration, instrument selection and bounded loading/error/retry handling; no price extraction.
@@ -132,9 +136,9 @@ The retained `network.html` app loads the latest collected dataset from GitHub `
 - `dist/data/`: verified source snapshots and health catalog.
 - `scripts/refresh_data.py`, `data_adapters.py`, `collect_market.py`: ingestion.
 - `scripts/build.mjs`: deterministic browser build and third-party license copy.
-- `tests/flight-optimizer.test.mjs`, `tests/fuel-quotes.test.mjs`: new rotation model and quote parsing/applicability checks; other `tests/` files retain model, data and DOM regression checks.
+- `tests/flight-optimizer.test.mjs`, `tests/fuel-quotes.test.mjs`, `tests/flight-ui.test.mjs`: rotation model, quote parsing/applicability and flight UI checks; motion/dashboard tests cover the playback controller and restored workspace. Other `tests/` files retain model, data and DOM regression checks.
 - `dist/optimizer.js`, `model.js`: earlier single-period/aircraft examples, not the active planning engine.
 
 The homepage uses HTML, CSS, native JavaScript ES modules and SVG, with browser-local computation and no map-service key. The new rotation solver has no server solver dependency; the retained multi-period model uses `javascript-lp-solver` bundled by esbuild. See [design scope and acceptance constraints](docs/design-brief.md).
 
-No orders are executed. The rotation model does not select routes, add stops or replace flight-performance and dispatch calculations. Linear carry-burn assumptions must be replaced with airline-approved operational data before actual use. Vessel lots, source inventories, blending, taxes, contract obligations, hedging and credit/accounting workflows remain outside the retained supply-chain model. Planning routes and plane playback are schematic; they are not observed ship or aircraft positions. Browser DOM behavior is tested; visual cross-browser inspection remains a separate check.
+No orders are executed. The rotation model does not select routes, add stops or replace flight-performance and dispatch calculations. Linear carry-burn assumptions must be replaced with airline-approved operational data before actual use. Vessel lots, source inventories, blending, taxes, contract obligations, hedging and credit/accounting workflows remain outside the retained supply-chain model. Planning routes and plane playback are schematic; they are not observed ship or aircraft positions. Playback fuel and cost values come from the currently selected plan rather than invented live data. Browser DOM and motion behavior are tested; visual cross-browser inspection remains a separate check.

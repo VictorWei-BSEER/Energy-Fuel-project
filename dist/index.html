@@ -3,434 +3,1199 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#0b1014" />
+    <meta name="theme-color" content="#f3f6fa" />
     <meta
       name="description"
-      content="Fuel Atlas 燃油图谱：为东亚短途宽体机轮转，比较逐站加油与提前带油的成本，追溯机场航油报价。"
+      content="Fuel Atlas 燃油图谱：在原有市场、规划、来源工作台中，动态观看东亚航班轮转的加油、耗油与成本变化。"
     />
+    <title>Fuel Atlas — 航线与燃油规划</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./dashboard.css?v=20261102-header-2" />
+    <script type="module" src="./workspace.js"></script>
+
+    <script type="module" src="./observed-app.js?v=20261104-motion"></script>
+    <script type="module" src="./public-market.js"></script>
+    <script type="module" src="./workspace-directory.js"></script>
+    <link href="./flight.css" rel="stylesheet" />
+    <link href="./workspace-flight.css" rel="stylesheet" />
+    <link href="./flight-motion.css" rel="stylesheet" />
+    <script src="./flight-app.js?v=20261104-motion" type="module"></script>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22%3E%3Cpath fill=%22%23c5efab%22 d=%22M4 29 17 5h13L17 29z%22/%3E%3C/svg%3E"
     />
-    <title>Fuel Atlas — 每一站，更好的加油决策</title>
-    <link rel="stylesheet" href="./flight.css" />
-    <script type="module" src="./flight-app.js"></script>
   </head>
-  <body>
-    <a class="skip" href="#planner">跳到航线规划</a>
-    <header class="header shell">
-      <a class="brand" href="./" aria-label="Fuel Atlas 首页"
-        ><svg viewBox="0 0 36 36" aria-hidden="true">
-          <path d="M4 29 17 5h13L17 29z" />
-          <path d="m22 20 8 9H20z" /></svg
-        ><span
-          >fuel<span class="brand-light">atlas</span
-          ><small>燃油图谱</small></span
-        ></a
-      >
-      <nav class="main-nav" aria-label="主导航">
-        <a href="#planner" class="active" data-section="planner">航线规划</a
-        ><a href="#airports" data-section="airports">机场供油</a
-        ><a href="#sources" data-section="sources"
-          >数据与方法 <span>↗</span></a
+  <body class="dashboard-restored">
+    <a class="skip-link" href="#main">Skip to workspace</a>
+    <div class="workspace">
+      <header class="topbar">
+        <a href="#calculations" class="wordmark"
+          ><svg
+            class="brand-icon"
+            viewBox="0 0 36 36"
+            fill="none"
+            aria-hidden="true"
+          >
+            <rect width="36" height="36" rx="9" fill="currentColor" />
+            <path
+              d="m9 25 7-15 4 10 7-7"
+              stroke="white"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle cx="9" cy="25" r="2" fill="white" />
+            <circle cx="27" cy="13" r="2" fill="white" /></svg
+          ><span class="brand-copy"
+            ><span class="brand-titles"
+              >Fuel Atlas
+              <span class="brand-title-zh" lang="zh-Hans">燃油图谱</span></span
+            ><small>Airline planning workspace</small></span
+          ></a
         >
+        <div class="project-caption">
+          Network planning <span>/ East Asia</span>
+        </div>
+        <div class="stream-control">
+          <span class="demo-badge">Scenario model</span
+          ><span class="saved-state">East Asia</span>
+        </div>
+      </header>
+      <nav class="workspace-navigation" aria-label="Main workspace">
+        <div
+          class="workspace-tabs"
+          role="tablist"
+          aria-label="Fuel Atlas sections"
+        >
+          <button
+            type="button"
+            role="tab"
+            id="workspace-tab-oil-markets"
+            data-workspace="oil-markets"
+            aria-controls="workspace-oil-markets"
+            aria-selected="false"
+            tabindex="-1"
+          >
+            <span class="workspace-tab-number" aria-hidden="true">01</span
+            ><span>Oil market live information</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            id="workspace-tab-calculations"
+            data-workspace="calculations"
+            aria-controls="workspace-calculations"
+            aria-selected="true"
+          >
+            <span class="workspace-tab-number" aria-hidden="true">02</span
+            ><span>Predictions &amp; flight calculations</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            id="workspace-tab-sources"
+            data-workspace="sources"
+            aria-controls="workspace-sources"
+            aria-selected="false"
+            tabindex="-1"
+          >
+            <span class="workspace-tab-number" aria-hidden="true">03</span
+            ><span>Sources</span>
+          </button>
+        </div>
       </nav>
-      <div class="header-end">
-        <span class="region"><i></i> EAST ASIA</span
-        ><button class="button subtle small" data-import>
-          导入报价 <span>↗</span>
-        </button>
-      </div>
-    </header>
-    <main>
-      <section id="planner" class="shell planner">
-        <div class="hero">
-          <div>
-            <p class="eyebrow">
-              <span class="line"></span> FLIGHT OPERATIONS / 01
-            </p>
-            <h1>Every stop.<br /><em>A smarter uplift.</em></h1>
-            <p class="hero-copy">
-              让每一站，成为更好的加油决策。<br /><span
-                >为东亚短途宽体机，找到价格与携油成本之间的平衡。</span
+      <main id="main">
+        <section
+          id="workspace-calculations"
+          class="workspace-panel planning-workspace flight-workspace"
+          role="tabpanel"
+          aria-labelledby="workspace-tab-calculations"
+          tabindex="0"
+        >
+          <section class="overview-head">
+            <div>
+              <p class="eyebrow">
+                <span class="red-square"></span> Planning workspace ·
+                东亚航班轮转
+              </p>
+              <h1>
+                Flight &amp; fuel planning
+                <span class="title-zh" lang="zh-Hans">航线与燃油规划</span>
+              </h1>
+              <p class="workspace-intro">
+                编排一串航班，比较逐站加油与提前携油。沿航线观看每一站的加油量、剩余燃油和采购成本。
+              </p>
+            </div>
+            <div class="overview-actions">
+              <button class="outline-button" type="button" data-import="">
+                导入供应商报价 <span aria-hidden="true">↗</span></button
+              ><a class="outline-button" href="./network.html#calculations"
+                >供应链规划 <span aria-hidden="true">↗</span></a
               >
-            </p>
-          </div>
-          <div class="hero-side">
-            <div class="coordinate">
-              31°08′ N &nbsp;121°48′ E <span>→</span> 35°33′ N &nbsp;139°47′ E
             </div>
-            <div class="hero-caption">
-              <svg class="mini-aircraft" viewBox="0 0 64 64" aria-hidden="true">
-                <path
-                  d="m34 3 3 19 23 15v4L37 32l-1 19 8 8v3l-12-5-12 5v-3l8-8-1-19L4 41v-4l23-15 3-19q2-5 4 0Z"
-                />
-              </svg>
-              <p>更便宜的一吨油，<br />值得多带一程吗？</p>
+          </section>
+          <section id="planner" class="flight-planner">
+            <div class="workspace-bar">
+              <div class="workspace-title">
+                <span class="live-dot"></span><strong>东亚轮转工作台</strong
+                ><span class="divider"></span
+                ><span id="route-caption">上海 → 首尔 → 东京 → 上海</span>
+              </div>
+              <div class="mode-switch" aria-label="价格数据模式">
+                <button id="mode-demo" class="selected" aria-pressed="true">
+                  示例场景</button
+                ><button id="mode-quotes" aria-pressed="false">
+                  我的报价 <span id="quote-count">0</span>
+                </button>
+              </div>
             </div>
-            <a href="#rotation" class="inline-link"
-              >从一次轮转开始 <span>↓</span></a
-            >
-          </div>
-        </div>
-        <div class="workspace-bar">
-          <div class="workspace-title">
-            <span class="live-dot"></span><strong>东亚轮转工作台</strong
-            ><span class="divider"></span
-            ><span id="route-caption">上海 → 首尔 → 东京 → 上海</span>
-          </div>
-          <div class="mode-switch" aria-label="价格数据模式">
-            <button id="mode-demo" class="selected" aria-pressed="true">
-              示例场景</button
-            ><button id="mode-quotes" aria-pressed="false">
-              我的报价 <span id="quote-count">0</span>
+            <div class="workspace-grid">
+              <section class="map-card" aria-labelledby="map-heading">
+                <div class="map-top">
+                  <div>
+                    <p class="eyebrow">ROTATION IN MOTION / 轮转动态</p>
+                    <h2 id="map-heading">一串航班，逐站看懂加油决策</h2>
+                  </div>
+                  <span class="map-tag" id="map-mode">DEMO / 示例价格</span>
+                </div>
+                <div class="map-stage" id="map-stage">
+                  <svg
+                    id="flight-map"
+                    viewBox="300 35 510 390"
+                    role="group"
+                    aria-label="东亚机场轮转地图，选择机场查看价格与来源"
+                  />
+                  <div class="map-label china">CHINA</div>
+                  <div class="map-label japan">JAPAN</div>
+                  <div class="map-label korea">KOREA</div>
+                  <div class="ocean-label">EAST CHINA<br />SEA</div>
+                  <div class="compass" aria-hidden="true">N<br />↑</div>
+                  <div class="map-scale">
+                    0 ───── 500 km <small>示意比例</small>
+                  </div>
+                  <div class="map-tooltip" id="airport-tooltip" hidden></div>
+                  <div class="motion-detail" id="motion-detail">
+                    <div class="motion-route">
+                      <span class="motion-auto-label"
+                        ><i aria-hidden="true"></i>自动播放 · 航班模拟</span
+                      ><strong id="motion-current-leg">PVG → ICN</strong
+                      ><span id="motion-phase">准备起飞</span>
+                    </div>
+                    <div class="motion-readouts">
+                      <div>
+                        <span>机上燃油</span
+                        ><strong id="motion-fuel">— <small>t</small></strong>
+                      </div>
+                      <div>
+                        <span>累计采购成本</span
+                        ><strong id="motion-cost">—</strong>
+                      </div>
+                    </div>
+                    <p
+                      id="motion-summary"
+                      class="motion-summary"
+                      aria-live="polite"
+                    >
+                      示例轮转演示，不代表实时航班位置。
+                    </p>
+                  </div>
+                </div>
+                <div class="map-bottom">
+                  <div class="motion-timeline">
+                    <div
+                      id="motion-leg-buttons"
+                      class="motion-leg-buttons"
+                      aria-label="选择轮转航段"
+                    ></div>
+                    <div class="motion-controls">
+                      <button
+                        type="button"
+                        id="motion-toggle"
+                        class="motion-control primary-motion"
+                        aria-label="暂停轮转动画"
+                      >
+                        Ⅱ <span>暂停</span></button
+                      ><button
+                        type="button"
+                        id="motion-restart"
+                        class="motion-control"
+                        aria-label="从头播放轮转动画"
+                      >
+                        ↺</button
+                      ><label class="motion-scrubber"
+                        ><span class="visually-hidden">轮转播放进度</span
+                        ><input
+                          id="motion-progress"
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="0.1"
+                          value="0"
+                          aria-label="轮转播放进度" /></label
+                      ><button
+                        id="play-route"
+                        type="button"
+                        class="play-button"
+                        aria-label="播放轮转航线"
+                      >
+                        ▶ <span>重播轮转</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="map-support">
+                    <div class="legend">
+                      <span><i class="dot mint"></i>轮转机场</span
+                      ><span><i class="dot gray"></i>参考机场</span
+                      ><span class="geography"
+                        >Natural Earth · OurAirports</span
+                      >
+                    </div>
+                    <span>航班模拟 · 非实时位置</span>
+                  </div>
+                </div>
+                <div
+                  class="flight-playback"
+                  id="flight-playback"
+                  hidden
+                  aria-live="polite"
+                ></div>
+              </section>
+              <aside class="decision-card" aria-labelledby="decision-title">
+                <div class="card-kicker">
+                  <span>UPLIFT DECISION / 加油决策</span
+                  ><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="m4 17 6-6 4 3 6-9M15 5h5v5" />
+                  </svg>
+                </div>
+                <h2 id="decision-title">加油策略与成本</h2>
+                <p class="decision-sub" id="result-state">
+                  同一轮转 · 同一终点油量
+                </p>
+                <div class="savings">
+                  <span id="savings-label">本次轮转预计节省 · 示例</span
+                  ><strong id="savings">—</strong>
+                  <div>
+                    <span id="savings-percent" class="saving-percent">—</span
+                    ><span>相较逐站按需加油</span>
+                  </div>
+                </div>
+                <div class="decision-divider"></div>
+                <div class="cost-line">
+                  <span>逐站按需加油</span><b id="baseline-cost">—</b>
+                </div>
+                <div class="cost-line accent">
+                  <span>优化加油方案</span><b id="optimized-cost">—</b>
+                </div>
+                <div class="mini-comparison" aria-hidden="true">
+                  <i id="cost-ratio"></i>
+                </div>
+                <div class="recommendation" id="recommendation">
+                  <span>↗</span>
+                  <p>正在计算轮转…</p>
+                </div>
+                <div class="decision-foot">
+                  <span>额外携油耗油</span><b id="extra-burn">—</b>
+                </div>
+                <button id="download-plan" class="button full">
+                  导出本次方案 <span>↓</span>
+                </button>
+                <p class="micro" id="result-disclosure">
+                  价格与性能为演示假设，仅作方案比较。
+                </p>
+              </aside>
+            </div>
+            <section class="rotation-card" id="rotation">
+              <div class="section-top">
+                <div>
+                  <p class="eyebrow">BUILD YOUR ROTATION / 02</p>
+                  <h2>一串航班，一个更优的方案。</h2>
+                </div>
+                <div class="rotation-actions">
+                  <button class="text-button" id="reset-plan">重置示例 ↺</button
+                  ><button class="button subtle small" id="add-leg">
+                    ＋ 添加航段
+                  </button>
+                </div>
+              </div>
+              <form id="rotation-form">
+                <div class="rotation-settings">
+                  <label
+                    >机型 / 示例性能<select id="aircraft">
+                      <option value="b787">Boeing 787-9</option>
+                      <option value="a330">Airbus A330-300</option>
+                    </select></label
+                  ><label
+                    >计划日期<input
+                      id="flight-date"
+                      type="date"
+                      value="2026-11-04"
+                      required /></label
+                  ><label
+                    >首站已有燃油 <span>t</span
+                    ><input
+                      id="initial-fuel"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value="8"
+                      required
+                  /></label>
+                  <div class="performance-note">
+                    <i></i>固定航线轮转<br /><span
+                      >比较每站加油量，不增加经停</span
+                    >
+                  </div>
+                </div>
+                <div class="table-scroll">
+                  <table class="leg-table">
+                    <thead>
+                      <tr>
+                        <th>航段</th>
+                        <th>出发 → 到达</th>
+                        <th>出发站油价 <small>USD/t</small></th>
+                        <th>基础耗油 <small>t</small></th>
+                        <th>加油建议 <small>t</small></th>
+                        <th>落地燃油 <small>t</small></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="leg-rows"></tbody>
+                  </table>
+                </div>
+                <details class="advanced">
+                  <summary>性能与重量约束 <span>展开调整假设 ＋</span></summary>
+                  <p class="micro">
+                    以下均为线性模型的示例参数，不代表机型真实性能。实际使用需替换为航司认可的航班性能与保留油数据。
+                  </p>
+                  <div class="advanced-aircraft">
+                    <label
+                      >油箱容量 · t<input
+                        id="tank-capacity"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        required /></label
+                    ><label
+                      >最大起飞重量 · t<input
+                        id="mtow"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        required /></label
+                    ><label
+                      >最大落地重量 · t<input
+                        id="mlw"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        required
+                    /></label>
+                  </div>
+                  <div class="table-scroll">
+                    <table class="advanced-table">
+                      <thead>
+                        <tr>
+                          <th>航段</th>
+                          <th>滑行耗油 · t</th>
+                          <th>到达保留油 · t</th>
+                          <th>每吨额外携油损耗 · %</th>
+                          <th>无油重量 · t</th>
+                          <th>供油上限 · t <small>空=不限</small></th>
+                        </tr>
+                      </thead>
+                      <tbody id="performance-rows"></tbody>
+                    </table>
+                  </div>
+                </details>
+                <div class="form-bottom">
+                  <p id="plan-status" role="status">
+                    <span class="live-dot"></span> 已计算 · 使用示例价格与性能
+                  </p>
+                  <button type="submit" class="button primary" id="calculate">
+                    重新计算方案 <span>↗</span>
+                  </button>
+                </div>
+                <div
+                  class="error-box"
+                  id="model-error"
+                  role="alert"
+                  hidden
+                ></div>
+              </form>
+            </section>
+            <section class="strategy-section">
+              <div class="section-top">
+                <div>
+                  <p class="eyebrow">FOLLOW THE FUEL / 03</p>
+                  <h2>不只在哪加，更知道为什么。</h2>
+                </div>
+                <div class="strategy-switch">
+                  <button
+                    data-strategy="optimized"
+                    class="selected"
+                    aria-pressed="true"
+                  >
+                    优化方案</button
+                  ><button data-strategy="baseline" aria-pressed="false">
+                    逐站按需
+                  </button>
+                </div>
+              </div>
+              <div id="strategy-cards" class="strategy-cards"></div>
+              <p class="micro" id="constraint-note"></p>
+            </section>
+          </section>
+        </section>
+        <section
+          id="workspace-oil-markets"
+          class="workspace-panel observed-monitor"
+          role="tabpanel"
+          aria-labelledby="workspace-tab-oil-markets"
+          tabindex="0"
+          hidden
+        >
+          <section class="overview-head">
+            <div>
+              <p class="eyebrow">
+                <span class="red-square"></span> Market overview
+              </p>
+              <h1>Oil market overview</h1>
+            </div>
+            <div class="overview-note">
+              Follow WTI and Brent at the source.<br />Compare the latest
+              published benchmarks.
+            </div>
+            <button class="outline-button" id="observed-refresh-data">
+              Check for updates <span aria-hidden="true">↻</span>
             </button>
-          </div>
-        </div>
-        <div class="workspace-grid">
-          <section class="map-card" aria-labelledby="map-heading">
-            <div class="map-top">
-              <div>
-                <p class="eyebrow">THE NETWORK</p>
-                <h2 id="map-heading">东亚，每一程都算数。</h2>
-              </div>
-              <span class="map-tag" id="map-mode">DEMO / 示例价格</span>
-            </div>
-            <div class="map-stage" id="map-stage">
-              <svg
-                id="flight-map"
-                viewBox="300 35 510 390"
-                role="group"
-                aria-label="东亚机场轮转地图，选择机场查看价格与来源"
-              ></svg>
-              <div class="map-label china">CHINA</div>
-              <div class="map-label japan">JAPAN</div>
-              <div class="map-label korea">KOREA</div>
-              <div class="ocean-label">EAST CHINA<br />SEA</div>
-              <div class="compass" aria-hidden="true">N<br />↑</div>
-              <div class="map-scale">
-                0 ───── 500 km <small>示意比例</small>
-              </div>
-              <div class="map-tooltip" id="airport-tooltip" hidden></div>
-            </div>
-            <div class="map-bottom">
-              <div class="legend">
-                <span><i class="dot mint"></i> 轮转机场</span
-                ><span><i class="dot gray"></i> 参考机场</span
-                ><span class="geography">Natural Earth · OurAirports</span>
-              </div>
-              <button
-                id="play-route"
-                class="play-button"
-                aria-label="播放轮转航线"
+          </section>
+          <section
+            class="observed-summary"
+            aria-label="Latest published observations"
+          >
+            <article>
+              <p>JET FUEL · U.S. GULF COAST</p>
+              <strong id="jet-value">—</strong
+              ><span id="jet-date">Awaiting observation</span
+              ><small
+                >USD / US gallon · daily observations, reporting lag</small
               >
-                ▶ <span>播放轮转</span>
-              </button>
+            </article>
+            <article>
+              <p>BRENT · EUROPE FOB</p>
+              <strong id="brent-value">—</strong
+              ><span id="brent-date">Awaiting observation</span
+              ><small>USD / barrel · daily observations, reporting lag</small>
+            </article>
+            <article>
+              <p>ECB REFERENCE · USD PER EUR</p>
+              <strong id="fx-value">—</strong
+              ><span id="fx-date">Awaiting observation</span
+              ><small>Informational reference · business days</small>
+            </article>
+            <article>
+              <p>JODI · JET KEROSENE</p>
+              <strong id="jodi-value">—</strong
+              ><span id="jodi-date">Awaiting reporting period</span
+              ><small>National balances · monthly publication</small>
+            </article>
+          </section>
+          <section
+            class="public-market-panel"
+            id="public-market"
+            aria-labelledby="public-market-title"
+          >
+            <div class="public-market-heading">
+              <div>
+                <p class="eyebrow">
+                  <span class="red-square"></span> PUBLIC OIL MARKETS / 公开行情
+                </p>
+                <h2 id="public-market-title">Crude oil markets</h2>
+                <p>OANDA 原油差价合约（CFD）公开图表 · 无需在本站创建账户</p>
+              </div>
+              <div
+                class="public-market-tabs"
+                role="tablist"
+                aria-label="选择公开原油 CFD 图表"
+              >
+                <button
+                  id="public-wti"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="public-market-chart"
+                  data-market="wti"
+                >
+                  WTI <span>WTICOUSD</span></button
+                ><button
+                  id="public-brent"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="public-market-chart"
+                  tabindex="-1"
+                  data-market="brent"
+                >
+                  BRENT <span>BCOUSD</span>
+                </button>
+              </div>
+            </div>
+            <div class="public-market-instrument">
+              <strong id="public-market-symbol">OANDA:WTICOUSD</strong
+              ><span id="public-market-description"
+                >WTI 原油差价合约（CFD）· OANDA</span
+              ><span>USD 报价 · 非交易所期货 / 非航空燃油报价</span>
+            </div>
+            <div class="public-market-disclosure">
+              时效以图表内报价时间、D 延迟标志及休市状态为准；15 分钟是 K
+              线周期，不是数据延迟
             </div>
             <div
-              class="flight-playback"
-              id="flight-playback"
-              hidden
-              aria-live="polite"
-            ></div>
-          </section>
-          <aside class="decision-card" aria-labelledby="decision-title">
-            <div class="card-kicker">
-              <span>UPLIFT INTELLIGENCE</span
-              ><svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="m4 17 6-6 4 3 6-9M15 5h5v5" />
-              </svg>
-            </div>
-            <h2 id="decision-title">把价差，变成优势。</h2>
-            <p class="decision-sub" id="result-state">
-              同一轮转 · 同一终点油量
-            </p>
-            <div class="savings">
-              <span id="savings-label">本次轮转预计节省 · 示例</span
-              ><strong id="savings">—</strong>
-              <div>
-                <span id="savings-percent" class="saving-percent">—</span
-                ><span>相较逐站按需加油</span>
+              id="public-market-chart"
+              class="public-market-chart"
+              role="tabpanel"
+              aria-labelledby="public-wti"
+              aria-busy="true"
+            >
+              <div class="public-chart-placeholder">
+                正在加载 TradingView 公开图表…
               </div>
             </div>
-            <div class="decision-divider"></div>
-            <div class="cost-line">
-              <span>逐站按需加油</span><b id="baseline-cost">—</b>
-            </div>
-            <div class="cost-line accent">
-              <span>优化加油方案</span><b id="optimized-cost">—</b>
-            </div>
-            <div class="mini-comparison" aria-hidden="true">
-              <i id="cost-ratio"></i>
-            </div>
-            <div class="recommendation" id="recommendation">
-              <span>↗</span>
-              <p>正在计算轮转…</p>
-            </div>
-            <div class="decision-foot">
-              <span>额外携油耗油</span><b id="extra-burn">—</b>
-            </div>
-            <button id="download-plan" class="button full">
-              导出本次方案 <span>↓</span>
-            </button>
-            <p class="micro" id="result-disclosure">
-              价格与性能为演示假设，仅作方案比较。
-            </p>
-          </aside>
-        </div>
-        <section class="rotation-card" id="rotation">
-          <div class="section-top">
-            <div>
-              <p class="eyebrow">BUILD YOUR ROTATION / 02</p>
-              <h2>一串航班，一个更优的方案。</h2>
-            </div>
-            <div class="rotation-actions">
-              <button class="text-button" id="reset-plan">重置示例 ↺</button
-              ><button class="button subtle small" id="add-leg">
-                ＋ 添加航段
-              </button>
-            </div>
-          </div>
-          <form id="rotation-form">
-            <div class="rotation-settings">
-              <label
-                >机型 / 示例性能<select id="aircraft">
-                  <option value="b787">Boeing 787-9</option>
-                  <option value="a330">Airbus A330-300</option>
-                </select></label
-              ><label
-                >计划日期<input
-                  id="flight-date"
-                  type="date"
-                  value="2026-11-04"
-                  required /></label
-              ><label
-                >首站已有燃油 <span>t</span
-                ><input
-                  id="initial-fuel"
-                  type="number"
-                  min="0"
-                  step="0.1"
-                  value="8"
-                  required
-              /></label>
-              <div class="performance-note">
-                <i></i>固定航线轮转<br /><span>比较每站加油量，不增加经停</span>
-              </div>
-            </div>
-            <div class="table-scroll">
-              <table class="leg-table">
-                <thead>
-                  <tr>
-                    <th>航段</th>
-                    <th>出发 → 到达</th>
-                    <th>出发站油价 <small>USD/t</small></th>
-                    <th>基础耗油 <small>t</small></th>
-                    <th>加油建议 <small>t</small></th>
-                    <th>落地燃油 <small>t</small></th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="leg-rows"></tbody>
-              </table>
-            </div>
-            <details class="advanced">
-              <summary>性能与重量约束 <span>展开调整假设 ＋</span></summary>
-              <p class="micro">
-                以下均为线性模型的示例参数，不代表机型真实性能。实际使用需替换为航司认可的航班性能与保留油数据。
-              </p>
-              <div class="advanced-aircraft">
-                <label
-                  >油箱容量 · t<input
-                    id="tank-capacity"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    required /></label
-                ><label
-                  >最大起飞重量 · t<input
-                    id="mtow"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    required /></label
-                ><label
-                  >最大落地重量 · t<input
-                    id="mlw"
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    required
-                /></label>
-              </div>
-              <div class="table-scroll">
-                <table class="advanced-table">
-                  <thead>
-                    <tr>
-                      <th>航段</th>
-                      <th>滑行耗油 · t</th>
-                      <th>到达保留油 · t</th>
-                      <th>每吨额外携油损耗 · %</th>
-                      <th>无油重量 · t</th>
-                      <th>供油上限 · t <small>空=不限</small></th>
-                    </tr>
-                  </thead>
-                  <tbody id="performance-rows"></tbody>
-                </table>
-              </div>
-            </details>
-            <div class="form-bottom">
-              <p id="plan-status" role="status">
-                <span class="live-dot"></span> 已计算 · 使用示例价格与性能
-              </p>
-              <button type="submit" class="button primary" id="calculate">
-                重新计算方案 <span>↗</span>
-              </button>
-            </div>
-            <div class="error-box" id="model-error" role="alert" hidden></div>
-          </form>
-        </section>
-        <section class="strategy-section">
-          <div class="section-top">
-            <div>
-              <p class="eyebrow">FOLLOW THE FUEL / 03</p>
-              <h2>不只在哪加，更知道为什么。</h2>
-            </div>
-            <div class="strategy-switch">
-              <button
-                data-strategy="optimized"
-                class="selected"
-                aria-pressed="true"
-              >
-                优化方案</button
-              ><button data-strategy="baseline" aria-pressed="false">
-                逐站按需
-              </button>
-            </div>
-          </div>
-          <div id="strategy-cards" class="strategy-cards"></div>
-          <p class="micro" id="constraint-note"></p>
-        </section>
-      </section>
-      <section id="airports" class="airport-section">
-        <div class="shell">
-          <div class="section-top">
-            <div>
-              <p class="eyebrow">AIRPORT FUEL INTELLIGENCE / 04</p>
-              <h2>每一个价格，都有来处。</h2>
-              <p class="section-copy">
-                合同、交付口径、税费和有效期，一起决定可比的到机价格。
-              </p>
-            </div>
-            <button class="button subtle" data-import>
-              导入供应商报价 <span>↗</span>
-            </button>
-          </div>
-          <div class="airport-toolbar">
-            <label class="search"
-              ><span>⌕</span
-              ><input
-                id="airport-search"
-                type="search"
-                placeholder="查找城市或机场代码"
-                aria-label="查找城市或机场代码"
-            /></label>
-            <div class="airport-filters" aria-label="筛选地区">
-              <button class="selected" data-region="all">全部</button
-              ><button data-region="CN">中国内地</button
-              ><button data-region="JP">日本</button
-              ><button data-region="KR">韩国</button
-              ><button data-region="TW">台北</button
-              ><button data-region="HK">香港</button>
-            </div>
-            <span class="airport-count" id="airport-count">17 个机场</span>
-          </div>
-          <div class="table-scroll">
-            <table class="airport-table">
-              <thead>
-                <tr>
-                  <th>机场 / 城市</th>
-                  <th>供货价 <small>USD/t</small></th>
-                  <th>数据状态</th>
-                  <th>供应商 / 交付口径</th>
-                  <th>有效期 / 来源</th>
-                </tr>
-              </thead>
-              <tbody id="airport-rows"></tbody>
-            </table>
-          </div>
-          <div class="airport-note">
-            <span>◈</span>
-            <p>
-              当前未接入机场合同报价。切换至「我的报价」并导入
-              CSV，即可按你的价格计算。台湾中油公开挂牌另有费用说明，查看<a
-                href="https://vipmbr.cpc.com.tw/mbwebs/showlistprice_d1510_en.aspx"
+            <div class="public-market-attribution">
+              <a
+                href="https://www.tradingview.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                >官方价格表 ↗</a
-              >。
-            </p>
-          </div>
-        </div>
-      </section>
-      <section id="sources" class="shell sources-section">
-        <div class="section-top">
-          <div>
-            <p class="eyebrow">TRACEABLE BY DESIGN / 05</p>
-            <h2>好的决策，从可靠的数据开始。</h2>
-          </div>
-          <span class="source-date">资料核对 · 2026.11.04</span>
-        </div>
-        <div class="source-intro">
-          <p>
-            先从一家航司、6–8 个机场的合同价格通知和结算资料开始。<br /><span
-              >市场基准帮助理解趋势；实际供货报价进入加油优化。</span
+                >Charts by TradingView</a
+              ><span
+                >图表 TradingView · 报价 OANDA ·
+                报价时间与状态以提供方显示为准。</span
+              >
+            </div>
+            <div class="public-market-status">
+              <dl>
+                <div>
+                  <dt>图表显示状态</dt>
+                  <dd id="live-status">LOADING CHART</dd>
+                </div>
+                <div>
+                  <dt>图表 / 报价提供方</dt>
+                  <dd id="live-provider">TradingView / OANDA CFDs</dd>
+                </div>
+                <div>
+                  <dt>报价时间</dt>
+                  <dd id="live-asof">请查看图表内时间</dd>
+                </div>
+              </dl>
+              <button class="text-button" id="public-market-retry" disabled>
+                Retry chart / 重试 ↻
+              </button>
+            </div>
+            <p
+              id="public-market-message"
+              class="public-market-message"
+              role="status"
             >
-          </p>
-          <a href="./network.html#oil-markets" class="inline-link"
-            >查看油市与原供应链模型 ↗</a
-          >
-        </div>
-        <div class="source-cards" id="source-cards"></div>
-        <details class="methodology">
-          <summary>计算方法与适用范围 <span>＋</span></summary>
-          <div class="method-grid">
-            <div>
-              <h3>价格优势，要扣除携油成本。</h3>
-              <p>
-                固定轮转内最小化新购燃油总成本。抵达油量 + 本站加油 − 滑行耗油 =
-                起飞油量；额外携油会按本航段系数增加耗油。每段满足油箱容量、起飞重量、落地重量、保留油和供油上限。
-              </p>
-              <p>
-                基线使用相同初始燃油与终点油量，逐站补足下一段所需燃油。若基线因缺油不可执行，显示可行性差异，不输出节省比例。
-              </p>
+              正在加载公开图表；报价时效以图表内标识为准。
+            </p>
+            <div class="public-market-fallback">
+              <span>图表无法显示时可直接打开：</span
+              ><a
+                href="https://www.tradingview.com/symbols/WTICOUSD/?exchange=OANDA"
+                target="_blank"
+                rel="noopener noreferrer"
+                >WTI · TradingView ↗</a
+              ><a
+                href="https://www.tradingview.com/symbols/BCOUSD/?exchange=OANDA"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Brent · TradingView ↗</a
+              >
             </div>
-            <div>
-              <h3>当前版本的边界。</h3>
-              <p>
-                2–5 航段，重量统一为吨、价格为 USD/t。报价须为含费用的
-                into-plane
-                口径，按计划日期匹配；不同币种、体积单位需在导入前人工核对换算。
-              </p>
-              <p>
-                线性携油系数与示例耗油不能代替航班性能计算。本版不优化航线、不预测油价，也不执行加油订单。
-              </p>
+            <div class="airport-api-status">
+              <strong id="airport-api-status">机场航油报价 API：未连接</strong
+              ><span
+                >机场航油、库存与需求仍无已核验数据；公开图表独立于下方采集数据。</span
+              >
+            </div>
+          </section>
+          <div class="observed-disclosure">
+            <span>COLLECTED BENCHMARKS ARE DELAYED.</span> EIA daily
+            observations, ECB business-day reference rates and JODI monthly
+            balances are not real-time airport quotes. EIA/ECB sources are
+            checked hourly; monthly and geographic sources daily. This page
+            checks stored snapshots every 60 seconds while visible.
+          </div>
+          <p id="refresh-status" class="action-status" role="status">
+            Checking source snapshots…
+          </p>
+          <div class="ticker" aria-label="Source update cadence">
+            <span class="ticker-title"
+              >SOURCE CLOCK <span>NOT A LIVE TICKER</span></span
+            >
+            <div id="observed-ticker-values">
+              <span class="ticker-item">Loading published observations…</span>
             </div>
           </div>
-        </details>
-      </section>
-    </main>
-    <footer class="shell footer">
-      <a class="brand" href="./">fuel<span class="brand-light">atlas</span></a
-      ><span>BETTER UPLIFT. EVERY LEG.</span
-      ><span>东亚短途宽体机 · 加油决策研究</span
-      ><a
-        href="https://github.com/VictorWei-BSEER/Energy-Fuel-project"
-        target="_blank"
-        rel="noopener noreferrer"
-        >GitHub ↗</a
-      >
-    </footer>
+        </section>
+        <section
+          id="workspace-sources"
+          class="workspace-panel observed-monitor"
+          role="tabpanel"
+          aria-labelledby="workspace-tab-sources"
+          tabindex="0"
+          hidden
+        >
+          <div class="overview-head">
+            <div>
+              <p class="eyebrow">
+                <span class="red-square"></span> Data &amp; methodology
+              </p>
+              <h1>Sources &amp; airport quotes</h1>
+            </div>
+            <div class="overview-note">
+              机场报价、数据来源和时效。<br />公开市场基准与合同供货价各有用途。
+            </div>
+            <button
+              class="outline-button"
+              type="button"
+              data-refresh-observations=""
+            >
+              Check for updates ↻
+            </button>
+          </div>
+          <p class="sources-intro">
+            Market charts, published benchmarks and planning assumptions each
+            have a different role. Review their coverage and freshness here.
+          </p>
+          <p class="action-status" data-source-refresh-status="" role="status">
+            Checking source snapshots…
+          </p>
+          <section id="airports" class="airport-section">
+            <div class="airport-section-inner">
+              <div class="section-top">
+                <div>
+                  <p class="eyebrow">AIRPORT FUEL INTELLIGENCE / 04</p>
+                  <h2>每一个价格，都有来处。</h2>
+                  <p class="section-copy">
+                    合同、交付口径、税费和有效期，一起决定可比的到机价格。
+                  </p>
+                </div>
+                <button class="button subtle" data-import="">
+                  导入供应商报价 <span>↗</span>
+                </button>
+              </div>
+              <div class="airport-toolbar">
+                <label class="search"
+                  ><span>⌕</span
+                  ><input
+                    id="airport-search"
+                    type="search"
+                    placeholder="查找城市或机场代码"
+                    aria-label="查找城市或机场代码"
+                /></label>
+                <div class="airport-filters" aria-label="筛选地区">
+                  <button class="selected" data-region="all">全部</button
+                  ><button data-region="CN">中国内地</button
+                  ><button data-region="JP">日本</button
+                  ><button data-region="KR">韩国</button
+                  ><button data-region="TW">台北</button
+                  ><button data-region="HK">香港</button>
+                </div>
+                <span class="airport-count" id="airport-count">17 个机场</span>
+              </div>
+              <div class="table-scroll">
+                <table class="airport-table">
+                  <thead>
+                    <tr>
+                      <th>机场 / 城市</th>
+                      <th>供货价 <small>USD/t</small></th>
+                      <th>数据状态</th>
+                      <th>供应商 / 交付口径</th>
+                      <th>有效期 / 来源</th>
+                    </tr>
+                  </thead>
+                  <tbody id="airport-rows"></tbody>
+                </table>
+              </div>
+              <div class="airport-note">
+                <span>◈</span>
+                <p>
+                  当前未接入机场合同报价。切换至「我的报价」并导入
+                  CSV，即可按你的价格计算。台湾中油公开挂牌另有费用说明，查看<a
+                    href="https://vipmbr.cpc.com.tw/mbwebs/showlistprice_d1510_en.aspx"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >官方价格表 ↗</a
+                  >。
+                </p>
+              </div>
+            </div>
+          </section>
+          <section id="sources" class="sources-section">
+            <div class="section-top">
+              <div>
+                <p class="eyebrow">TRACEABLE BY DESIGN / 05</p>
+                <h2>好的决策，从可靠的数据开始。</h2>
+              </div>
+              <span class="source-date">资料核对 · 2026.11.04</span>
+            </div>
+            <div class="source-intro">
+              <p>
+                先从一家航司、6–8 个机场的合同价格通知和结算资料开始。<br /><span
+                  >市场基准帮助理解趋势；实际供货报价进入加油优化。</span
+                >
+              </p>
+              <a href="./network.html#calculations" class="inline-link"
+                >打开原供应链模型 ↗</a
+              >
+            </div>
+            <div class="source-cards" id="source-cards"></div>
+            <details class="methodology">
+              <summary>计算方法与适用范围 <span>＋</span></summary>
+              <div class="method-grid">
+                <div>
+                  <h3>价格优势，要扣除携油成本。</h3>
+                  <p>
+                    固定轮转内最小化新购燃油总成本。抵达油量 + 本站加油 −
+                    滑行耗油 =
+                    起飞油量；额外携油会按本航段系数增加耗油。每段满足油箱容量、起飞重量、落地重量、保留油和供油上限。
+                  </p>
+                  <p>
+                    基线使用相同初始燃油与终点油量，逐站补足下一段所需燃油。若基线因缺油不可执行，显示可行性差异，不输出节省比例。
+                  </p>
+                </div>
+                <div>
+                  <h3>当前版本的边界。</h3>
+                  <p>
+                    2–5 航段，重量统一为吨、价格为 USD/t。报价须为含费用的
+                    into-plane
+                    口径，按计划日期匹配；不同币种、体积单位需在导入前人工核对换算。
+                  </p>
+                  <p>
+                    线性携油系数与示例耗油不能代替航班性能计算。本版不优化航线、不预测油价，也不执行加油订单。
+                  </p>
+                </div>
+              </div>
+            </details>
+          </section>
+          <section
+            class="data-section"
+            id="observed-data-sources"
+            aria-labelledby="observed-sources-title"
+          >
+            <div class="market-heading">
+              <div>
+                <p class="eyebrow">OBSERVED WHEN? COLLECTED WHEN?</p>
+                <h2 id="observed-sources-title">
+                  Source health <span>来源与时效</span>
+                </h2>
+              </div>
+              <span id="last-check" class="last-check">No check completed</span>
+            </div>
+            <div class="feed-grid" id="observed-source-cards"></div>
+            <p class="table-note">
+              Page refresh time is separate from source observation and
+              collection time. Stored updates are checked while this page is
+              visible. Failed or stale collection remains labeled.
+            </p>
+          </section>
+          <details class="source-detail airport-directory-sources">
+            <summary>
+              <span>Planning airport directory · 50 airports</span
+              ><span>Selection, traffic &amp; coordinates</span>
+            </summary>
+            <p id="directory-method" class="directory-method"></p>
+            <p class="directory-note">
+              Passenger counts determine airport selection only. Airport fuel
+              prices, demand and inventory require their own data.
+            </p>
+            <div class="table-scroll directory-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>RANK</th>
+                    <th>AIRPORT</th>
+                    <th>NAME</th>
+                    <th>CITY</th>
+                    <th>2024 PASSENGERS</th>
+                    <th>COUNTRY / ECONOMY</th>
+                  </tr>
+                </thead>
+                <tbody id="directory-rows"></tbody>
+              </table>
+            </div>
+            <div id="directory-sources" class="directory-sources"></div>
+          </details>
+          <details class="source-detail">
+            <summary>
+              <span>Published observations</span
+              ><span>Browse &amp; export the source records</span>
+            </summary>
+            <section
+              class="market-panel observed-records"
+              id="observations"
+              aria-labelledby="observations-title"
+            >
+              <div class="market-heading">
+                <div>
+                  <p class="eyebrow">THE RECORD. AS PUBLISHED.</p>
+                  <h2 id="observations-title">
+                    Source observations <span>原始观测数据</span>
+                  </h2>
+                </div>
+                <div class="observed-export">
+                  <button class="text-button" id="export-csv" disabled>
+                    Export current table CSV ↗</button
+                  ><button
+                    class="text-button"
+                    id="observed-export-json"
+                    disabled
+                  >
+                    Collected datasets JSON ↗
+                  </button>
+                </div>
+              </div>
+              <div
+                class="result-tabs"
+                role="tablist"
+                aria-label="Observed data tables"
+              >
+                <button
+                  role="tab"
+                  id="tab-jet"
+                  aria-controls="view-jet"
+                  aria-selected="true"
+                  data-tab="jet"
+                >
+                  01 / Jet fuel</button
+                ><button
+                  role="tab"
+                  id="tab-brent"
+                  aria-controls="view-brent"
+                  aria-selected="false"
+                  tabindex="-1"
+                  data-tab="brent"
+                >
+                  02 / Brent</button
+                ><button
+                  role="tab"
+                  id="tab-fx"
+                  aria-controls="view-fx"
+                  aria-selected="false"
+                  tabindex="-1"
+                  data-tab="fx"
+                >
+                  03 / FX</button
+                ><button
+                  role="tab"
+                  id="tab-jodi"
+                  aria-controls="view-jodi"
+                  aria-selected="false"
+                  tabindex="-1"
+                  data-tab="jodi"
+                >
+                  04 / JODI</button
+                ><button
+                  role="tab"
+                  id="tab-airports"
+                  aria-controls="view-airports"
+                  aria-selected="false"
+                  tabindex="-1"
+                  data-tab="airports"
+                >
+                  05 / Geography
+                </button>
+              </div>
+              <div id="view-jet" role="tabpanel" aria-labelledby="tab-jet">
+                <div class="observation-heading">
+                  <h3>U.S. Gulf Coast jet fuel spot price FOB</h3>
+                  <span
+                    >USD / US GALLON · DAILY OBSERVATIONS, REPORTING LAG</span
+                  >
+                </div>
+                <p class="source-scope">
+                  Published U.S. wholesale benchmark. No density conversion or
+                  Asian airport-price estimate is applied.
+                </p>
+                <svg
+                  id="jet-chart"
+                  class="observation-chart"
+                  viewBox="0 0 900 200"
+                  role="img"
+                  aria-label="Published U.S. Gulf Coast jet fuel observations in dollars per US gallon"
+                />
+                <div class="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>OBSERVATION DATE</th>
+                        <th>PUBLISHED VALUE</th>
+                        <th>ORIGINAL UNIT</th>
+                        <th>SOURCE</th>
+                      </tr>
+                    </thead>
+                    <tbody id="jet-rows"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div
+                id="view-brent"
+                role="tabpanel"
+                aria-labelledby="tab-brent"
+                hidden
+              >
+                <div class="observation-heading">
+                  <h3>Europe Brent spot price FOB</h3>
+                  <span>USD / BARREL · DAILY OBSERVATIONS, REPORTING LAG</span>
+                </div>
+                <p class="source-scope">
+                  A separate crude-oil benchmark. It is not a jet-fuel quote or
+                  an executable arbitrage opportunity.
+                </p>
+                <svg
+                  id="brent-chart"
+                  class="observation-chart"
+                  viewBox="0 0 900 200"
+                  role="img"
+                  aria-label="Published Brent observations in dollars per barrel"
+                />
+                <div class="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>OBSERVATION DATE</th>
+                        <th>PUBLISHED VALUE</th>
+                        <th>ORIGINAL UNIT</th>
+                        <th>SOURCE</th>
+                      </tr>
+                    </thead>
+                    <tbody id="brent-rows"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div id="view-fx" role="tabpanel" aria-labelledby="tab-fx" hidden>
+                <div class="observation-heading">
+                  <h3>ECB euro foreign exchange reference rates</h3>
+                  <span>REFERENCE RATES · NOT TRANSACTION QUOTES</span>
+                </div>
+                <p id="fx-table-date" class="source-scope">
+                  Awaiting source observation.
+                </p>
+                <div class="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>BASE CURRENCY</th>
+                        <th>QUOTE CURRENCY</th>
+                        <th>UNITS PER 1 EUR</th>
+                        <th>OBSERVATION DATE</th>
+                      </tr>
+                    </thead>
+                    <tbody id="fx-rows"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div
+                id="view-jodi"
+                role="tabpanel"
+                aria-labelledby="tab-jodi"
+                hidden
+              >
+                <div class="observation-heading">
+                  <h3>National jet kerosene balances</h3>
+                  <span>THOUSAND METRIC TONNES · MONTHLY, DELAYED</span>
+                </div>
+                <p class="source-scope">
+                  JETKERO / KTONS records retain the source assessment code.
+                  National totals are not airport stock or available supplier
+                  capacity. A missing record is not zero.
+                </p>
+                <div class="jodi-filters">
+                  <label for="jodi-period"
+                    >REPORTING MONTH<select id="jodi-period"></select></label
+                  ><label for="jodi-country"
+                    >COUNTRY / ECONOMY<select id="jodi-country">
+                      <option value="all">All reported</option>
+                      <option value="CN">China · CN</option>
+                      <option value="HK">Hong Kong · HK</option>
+                      <option value="JP">Japan · JP</option>
+                      <option value="KR">South Korea · KR</option>
+                      <option value="SG">Singapore · SG</option>
+                      <option value="TW">Taiwan · TW</option>
+                    </select></label
+                  >
+                </div>
+                <p id="jodi-coverage" class="coverage-note"></p>
+                <div class="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>MONTH</th>
+                        <th>COUNTRY</th>
+                        <th>FLOW</th>
+                        <th>REPORTED VALUE</th>
+                        <th>UNIT</th>
+                        <th>ASSESSMENT CODE</th>
+                      </tr>
+                    </thead>
+                    <tbody id="jodi-rows"></tbody>
+                  </table>
+                </div>
+                <p class="table-note">
+                  Assessment codes are source metadata. Code 3 is retained as
+                  unassessed; a reported zero with this code does not establish
+                  absence of supply capability.
+                </p>
+              </div>
+              <div
+                id="view-airports"
+                role="tabpanel"
+                aria-labelledby="tab-airports"
+                hidden
+              >
+                <div class="observation-heading">
+                  <h3>Airport coordinate registry</h3>
+                  <span>GEOGRAPHY ONLY · WGS84</span>
+                </div>
+                <p class="source-scope">
+                  These coordinates are the only airport-level observations
+                  connected to the default monitor.
+                </p>
+                <div class="table-scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>IATA / ICAO</th>
+                        <th>AIRPORT</th>
+                        <th>COUNTRY</th>
+                        <th>LATITUDE</th>
+                        <th>LONGITUDE</th>
+                        <th>FUEL QUOTE</th>
+                      </tr>
+                    </thead>
+                    <tbody id="observed-airport-rows"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+          </details>
+          <details class="source-detail">
+            <summary>
+              <span>Airport reference map</span
+              ><span>Locations &amp; coordinate coverage</span>
+            </summary>
+            <div class="atlas-grid observed-atlas">
+              <section class="map-panel" aria-labelledby="observed-map-title">
+                <div class="panel-heading">
+                  <h2 id="observed-map-title">
+                    Airport geography <span>机场地理位置</span>
+                  </h2>
+                  <span class="geography-only">COORDINATES ONLY</span>
+                </div>
+                <div class="map-stage">
+                  <svg
+                    id="observed-atlas-map"
+                    viewBox="0 0 900 680"
+                    role="group"
+                    aria-label="Verified airport coordinates in East and Southeast Asia; no quoted fuel prices or inventory values"
+                  />
+                  <div class="map-corner">
+                    <span class="map-index">01—</span
+                    ><span id="map-count"
+                      >GEOGRAPHIC REFERENCE<br />NO INFERRED MARKET VALUES</span
+                    >
+                  </div>
+                  <div class="north-marker" aria-hidden="true">
+                    <span>N</span
+                    ><svg viewBox="0 0 16 34">
+                      <path d="M8 1 15 28 8 23 1 28Z" />
+                    </svg>
+                  </div>
+                  <div class="map-key">
+                    <span
+                      ><i class="key-node"></i> Sourced airport
+                      coordinates</span
+                    ><span>No verified airport price or inventory feed</span>
+                  </div>
+                  <div class="map-attribution">
+                    Natural Earth + OurAirports · reference geography
+                  </div>
+                </div>
+                <div class="map-footer">
+                  <span
+                    ><i class="status-square"></i
+                    ><span id="observed-map-status"
+                      >Awaiting coordinate source</span
+                    ></span
+                  ><span>Click an airport to inspect ↗</span>
+                </div>
+              </section>
+              <aside
+                class="inspector observed-inspector"
+                aria-labelledby="airport-title"
+              >
+                <div class="inspector-heading">
+                  <span class="eyebrow">VERIFIED LOCATION / OPEN DATA</span
+                  ><span class="issue-no">02</span>
+                </div>
+                <h2 id="airport-title">Select a<br />location.</h2>
+                <p class="inspector-intro">
+                  Coordinates identify an airport. They do not establish fuel
+                  prices, demand, stock or available capacity.
+                </p>
+                <label class="field-label" for="airport-select">AIRPORT</label
+                ><select
+                  id="airport-select"
+                  aria-label="Select airport"
+                ></select>
+                <dl class="airport-facts">
+                  <div>
+                    <dt>NAME</dt>
+                    <dd id="airport-name">—</dd>
+                  </div>
+                  <div>
+                    <dt>WGS84 COORDINATES</dt>
+                    <dd id="airport-coordinates">—</dd>
+                  </div>
+                  <div>
+                    <dt>FUEL PRICE</dt>
+                    <dd class="missing-observation">No verified quote</dd>
+                  </div>
+                  <div>
+                    <dt>AVAILABLE INVENTORY</dt>
+                    <dd class="missing-observation">No verified observation</dd>
+                  </div>
+                  <div>
+                    <dt>FUEL DEMAND</dt>
+                    <dd class="missing-observation">No verified observation</dd>
+                  </div>
+                </dl>
+                <p class="model-footnote">
+                  U.S. Gulf Coast jet fuel is a regional benchmark. It is not
+                  assigned to any airport on this map.
+                </p>
+                <a
+                  class="method-button"
+                  href="https://ourairports.com/data/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Coordinate source <span aria-hidden="true">↗</span></a
+                >
+              </aside>
+            </div>
+          </details>
+        </section>
+        <footer class="site-footer">
+          <span
+            >FUEL ATLAS <span class="footer-slash">/</span> ENERGY
+            PLANNING</span
+          ><span>Research workspace · Victor / Gastón / Sandy</span
+          ><button type="button" data-open-workspace="sources">
+            Source transparency ↗
+          </button>
+        </footer>
+      </main>
+    </div>
+
     <dialog id="import-dialog" aria-labelledby="import-title">
       <div class="dialog-header">
         <span class="eyebrow">YOUR QUOTES, YOUR DECISIONS</span
