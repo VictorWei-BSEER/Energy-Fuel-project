@@ -4,7 +4,8 @@ import { optimizeRotation, defaultRotation } from "./flight-optimizer.js";
 import {
   parseQuoteCsv,
   quoteForAirport,
-  QUOTE_CSV_TEMPLATE,
+  localDate,
+  makeQuoteCsvTemplate,
 } from "./fuel-quotes.js";
 
 const $ = (selector) => document.querySelector(selector);
@@ -72,6 +73,7 @@ let input = defaultRotation();
 let mode = "demo",
   quotes = [],
   result = null,
+  solvedPlan = null,
   dirty = false,
   strategy = "optimized",
   region = "all";
@@ -90,8 +92,8 @@ const mapView = { x: 300, y: 35, width: 510, height: 390 };
 const motionLabels = { refuel: "加油中", flight: "飞行中", arrival: "已抵达" };
 const dialog = $("#import-dialog");
 
-function activeQuote(code) {
-  return quoteForAirport(quotes, code, $("#flight-date").value);
+function activeQuote(code, date = $("#flight-date").value) {
+  return quoteForAirport(quotes, code, date);
 }
 function priceFor(code) {
   return mode === "demo"
@@ -442,6 +444,7 @@ function setDirty(message = "参数已修改，重新计算以更新方案") {
   stopPlayback();
   dirty = true;
   result = null;
+  solvedPlan = null;
   $("#plan-status").textContent = message;
   $("#savings").textContent = "—";
   $("#savings-percent").textContent = "待计算";
@@ -467,23 +470,36 @@ function collectInputs() {
 function calculate() {
   stopPlayback();
   collectInputs();
+  const planDate = $("#flight-date").value;
+  const provenance = [];
   const errors = [];
-  if (!$("#flight-date").value || !$("#flight-date").validity.valid)
+  if (!planDate || !$("#flight-date").validity.valid)
     errors.push("请选择有效的计划日期。");
   for (const [i, leg] of input.legs.entries()) {
     if (leg.from === leg.to)
       errors.push(`第 ${i + 1} 航段的出发和到达机场不能相同。`);
     if (mode === "quotes") {
-      const quote = activeQuote(leg.from);
+      const quote = activeQuote(leg.from, planDate);
       if (!quote)
         errors.push(`${leg.from} 在计划日期没有有效、含费用的到机报价。`);
-      else leg.priceUsdPerT = quote.priceUsdPerT;
+      else {
+        leg.priceUsdPerT = quote.priceUsdPerT;
+        provenance.push({ ...quote, applicability: "current" });
+      }
     }
   }
   if (errors.length) return showError(errors);
   result = optimizeRotation(input);
   if (!result.feasible)
     return showError([...result.errors, ...result.diagnostics]);
+  // Export the exact date, prices and provenance used by this successful solve.
+  solvedPlan = structuredClone({
+    date: planDate,
+    priceMode: mode,
+    input,
+    quotes: provenance,
+    result,
+  });
   dirty = false;
   $("#model-error").hidden = true;
   $("#savings-label").textContent =
@@ -762,6 +778,7 @@ $("#rotation-form").addEventListener("change", (e) => {
     setDirty("航线已修改；请同步核对耗油参数后重新计算");
   }
   if (field.id === "flight-date") {
+    setDirty();
     for (const leg of input.legs) leg.priceUsdPerT = priceFor(leg.from);
     renderForm();
     renderMap();
@@ -867,7 +884,7 @@ $("#clear-quotes").addEventListener("click", () => {
 $("#download-template").addEventListener("click", () =>
   downloadFile(
     "fuel-atlas-quotes-template.csv",
-    "\ufeff" + QUOTE_CSV_TEMPLATE,
+    "\ufeff" + makeQuoteCsvTemplate($("#flight-date").value),
     "text/csv;charset=utf-8",
   ),
 );
@@ -892,21 +909,16 @@ $("#quote-file").addEventListener("change", async (e) => {
   }
 });
 $("#download-plan").addEventListener("click", () => {
-  if (!result?.feasible || dirty) return;
-  const provenance =
-    mode === "quotes" ? input.legs.map((l) => activeQuote(l.from)) : [];
+  if (!solvedPlan || !result?.feasible || dirty) return;
   downloadFile(
     "fuel-atlas-rotation.json",
     JSON.stringify(
       {
         schemaVersion: 1,
-        date: $("#flight-date").value,
-        priceMode: mode,
+        ...solvedPlan,
         performanceStatus: "illustrative-user-editable",
-        priceStatus: mode === "demo" ? "illustrative" : "user-supplied",
-        input,
-        quotes: provenance,
-        result,
+        priceStatus:
+          solvedPlan.priceMode === "demo" ? "illustrative" : "user-supplied",
         limitations: "固定航线轮转；示例性能需由航司认可数据替换；不执行订单。",
       },
       null,
@@ -989,6 +1001,7 @@ reducedMotionPreference.addEventListener?.("change", () => {
   renderMap({ progress });
 });
 window.addEventListener("pagehide", () => stopPlayback());
+if (!$("#flight-date").value) $("#flight-date").value = localDate();
 syncAircraftInputs();
 renderForm();
 renderAirports();

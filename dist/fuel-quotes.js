@@ -18,14 +18,24 @@ const HEADERS = [
   "fees_included",
   "source",
 ];
-const DEFAULT_DATE = "2026-11-04";
 const MAX_BYTES = 256 * 1024;
 const MAX_ROWS = 500;
+
+/** Browser-local calendar date; evaluated when called, including after midnight. */
+export function localDate(now = new Date()) {
+  return [now.getFullYear(), now.getMonth() + 1, now.getDate()]
+    .map((value, index) => String(value).padStart(index === 0 ? 4 : 2, "0"))
+    .join("-");
+}
 
 // Deliberately contains no invented airport prices. Replace the empty fields with
 // a supplier's normalized quotation. Exporters must quote CSV fields and prefix
 // formula-like text with an apostrophe before opening exported data in a spreadsheet.
-export const QUOTE_CSV_TEMPLATE = `${HEADERS.join(",")}\nPVG,,,2026-11-04,2026-11-30,into-plane,true,\n`;
+export function makeQuoteCsvTemplate(date = localDate()) {
+  const from = validDate(date) ? date : "";
+  return `${HEADERS.join(",")}\nPVG,,,${from},,into-plane,true,\n`;
+}
+export const QUOTE_CSV_TEMPLATE = makeQuoteCsvTemplate("");
 
 function validDate(value) {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value))
@@ -146,7 +156,7 @@ function csvRows(text) {
  * All overlapping rows for an airport are excluded to avoid choosing a supplier
  * or contract silently. Historical / future nonoverlapping records are retained.
  */
-export function parseQuoteCsv(text, { today = DEFAULT_DATE } = {}) {
+export function parseQuoteCsv(text, { today = localDate() } = {}) {
   const errors = [];
   if (!validDate(today))
     return { quotes: [], errors: ["比较日期须为有效的 YYYY-MM-DD 日期。"] };
@@ -279,7 +289,7 @@ export function parseQuoteCsv(text, { today = DEFAULT_DATE } = {}) {
 }
 
 /** Return a unique applicable user-supplied quote; ambiguity or missing data is null. */
-export function quoteForAirport(quotes, iata, date = DEFAULT_DATE) {
+export function quoteForAirport(quotes, iata, date = localDate()) {
   if (!Array.isArray(quotes) || !AIRPORTS.has(iata) || !validDate(date))
     return null;
   const applicable = quotes.filter(

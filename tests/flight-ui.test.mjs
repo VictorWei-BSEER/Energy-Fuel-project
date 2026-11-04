@@ -4,7 +4,30 @@ import { readFile } from "node:fs/promises";
 import { parseHTML } from "linkedom";
 
 let mountId = 0;
-async function mount(t) {
+function localClock(instant, timeZone) {
+  const RealDate = Date;
+  let now = RealDate.parse(instant);
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone, year: "numeric", month: "2-digit", day: "2-digit",
+  });
+  const part = (date, type) => Number(
+    formatter.formatToParts(date).find((item) => item.type === type).value,
+  );
+  return class extends RealDate {
+    constructor(...args) { super(...(args.length ? args : [now])); }
+    static now() { return now; }
+    static advance(instant) { now = RealDate.parse(instant); }
+    getFullYear() { return part(this, "year"); }
+    getMonth() { return part(this, "month") - 1; }
+    getDate() { return part(this, "day"); }
+  };
+}
+
+async function mount(t, {
+  now = "2026-11-04T12:00:00Z",
+  timeZone = "Asia/Shanghai",
+  initialDate,
+} = {}) {
   const [html, sourceText] = await Promise.all([
     readFile(new URL("../dist/index.html", import.meta.url), "utf8"),
     readFile(
@@ -13,6 +36,18 @@ async function mount(t) {
     ),
   ]);
   const { document, window } = parseHTML(html);
+  if (initialDate !== undefined)
+    document.querySelector("#flight-date").value = initialDate;
+  const Clock = localClock(now, timeZone);
+  const downloads = [];
+  const createObjectURL = Object.getOwnPropertyDescriptor(URL, "createObjectURL");
+  Object.defineProperty(URL, "createObjectURL", {
+    configurable: true,
+    value: (blob) => {
+      downloads.push(blob);
+      return `blob:test-${downloads.length}`;
+    },
+  });
   window.location = { hash: "", replace() {} };
   window.matchMedia = () => ({ matches: false });
   // Linkedom has no SVG geometry. A straight endpoint adapter exercises the
@@ -51,6 +86,7 @@ async function mount(t) {
   }
   const originals = new Map();
   for (const [name, value] of Object.entries({
+    Date: Clock,
     document,
     window,
     IntersectionObserver: class {
@@ -72,6 +108,8 @@ async function mount(t) {
     });
   }
   t.after(() => {
+    if (createObjectURL) Object.defineProperty(URL, "createObjectURL", createObjectURL);
+    else delete URL.createObjectURL;
     window.dispatchEvent(new window.Event("pagehide"));
     for (const [prototype, name, descriptor] of geometryDescriptors) {
       if (descriptor) Object.defineProperty(prototype, name, descriptor);
@@ -125,6 +163,16 @@ async function mount(t) {
     window,
     input,
     fire,
+    downloads,
+    advanceClock: (instant) => Clock.advance(instant),
+    importQuotes: async (text) => {
+      Object.defineProperty($("#quote-file"), "files", {
+        configurable: true,
+        value: [{ size: new TextEncoder().encode(text).byteLength, text: async () => text }],
+      });
+      fire("#quote-file", "change");
+      await new Promise((resolve) => setImmediate(resolve));
+    },
     click: (selector) => fire(selector, "click"),
     calculate: () => fire("#rotation-form", "submit"),
     airportRow: (code) =>
@@ -251,4 +299,132 @@ test("a supply-constrained feasible plan keeps the unavailable baseline and its 
   click('[data-strategy="optimized"]');
   assert.equal($("#play-route").disabled, false);
   assert.match($("#strategy-cards").textContent, /LEG 01/);
+});
+
+const quoteHeader =
+  "airport,supplier,price_usd_per_t,valid_from,valid_until,delivery_basis,fees_included,source";
+const rotationQuotes = (from, until, prices = [860, 980, 1120]) =>
+  ["PVG", "ICN", "HND"].map((airport, i) =>
+    `${airport},TEST supplier,${prices[i]},${from},${until},into-plane,true,TEST fixture ${from}`,
+  );
+const quotationFile = (...rows) => [quoteHeader, ...rows].join("\n") + "\n";
+
+for (const [timeZone, now, expected] of [
+  ["Asia/Shanghai", "2026-11-04T16:05:00Z", "2026-11-05"],
+  ["America/Los_Angeles", "2026-11-05T02:05:00Z", "2026-11-04"],
+  ["Asia/Shanghai", "2026-12-31T16:05:00Z", "2027-01-01"],
+]) {
+  test(`first opening uses local calendar date in ${timeZone} at ${now}`, async (t) => {
+    const { $ } = await mount(t, { now, timeZone });
+    assert.equal($("#flight-date").value, expected);
+    assert.equal($("#model-error").hidden, true);
+    assert.equal($("#download-plan").disabled, false);
+  });
+}
+
+test("an explicitly restored future plan survives initialization, CSV import, solving and export", async (t) => {
+  const { $, click, importQuotes, downloads, advanceClock } = await mount(t, {
+    initialDate: "2026-12-15",
+    now: "2026-11-04T15:59:00Z",
+  });
+  assert.equal($("#flight-date").value, "2026-12-15");
+  await importQuotes(quotationFile(...rotationQuotes("2026-12-01", "2026-12-31")));
+  assert.equal($("#quote-count").textContent, "3");
+  advanceClock("2026-11-04T16:01:00Z");
+  click("#use-quotes");
+  assert.equal($("#flight-date").value, "2026-12-15");
+  assert.equal($("#model-error").hidden, true);
+  assert.equal($("#download-plan").disabled, false);
+  click("#download-plan");
+  const exported = JSON.parse(await downloads.at(-1).text());
+  assert.equal(exported.date, "2026-12-15");
+  assert.equal(exported.priceMode, "quotes");
+  assert.equal(exported.result.feasible, true);
+  assert.deepEqual(exported.input.legs.map((leg) => leg.priceUsdPerT), [860, 980, 1120]);
+  assert.deepEqual(exported.quotes.map((quote) => quote.airport), ["PVG", "ICN", "HND"]);
+  assert.ok(exported.quotes.every((quote) =>
+    quote.validFrom <= exported.date && exported.date <= quote.validUntil &&
+    quote.applicability === "current" && quote.source.startsWith("TEST fixture"),
+  ));
+});
+
+test("first opening after expiry cannot apply yesterday's quotations", async (t) => {
+  const { $, click, importQuotes, downloads, calculate } = await mount(t, {
+    now: "2026-11-04T16:01:00Z",
+  });
+  await importQuotes(quotationFile(...rotationQuotes("2026-11-01", "2026-11-04")));
+  assert.equal($("#quote-count").textContent, "3");
+  click("#use-quotes");
+  calculate();
+  assert.equal($("#model-error").hidden, false);
+  assert.match($("#model-error").textContent, /PVG.*没有有效.*报价/);
+  assert.equal($("#download-plan").disabled, true);
+  assert.equal($("#optimized-cost").textContent, "—");
+  click("#download-plan");
+  assert.equal(downloads.length, 0);
+});
+
+test("changing only the date invalidates the solved plan and reselects retained future quotations", async (t) => {
+  const { $, click, fire, calculate, importQuotes, downloads } = await mount(t);
+  await importQuotes(quotationFile(
+    ...rotationQuotes("2026-11-01", "2026-11-30"),
+    ...rotationQuotes("2026-12-01", "2026-12-31", [900, 1050, 1200]),
+  ));
+  assert.equal($("#quote-count").textContent, "6");
+  click("#use-quotes");
+  assert.equal($("#download-plan").disabled, false);
+  $("#flight-date").value = "2026-12-15";
+  fire("#flight-date", "change");
+  assert.equal($("#download-plan").disabled, true);
+  assert.equal($("#savings").textContent, "—");
+  click("#download-plan");
+  assert.equal(downloads.length, 0);
+  calculate();
+  assert.equal($("#model-error").hidden, true);
+  click("#download-plan");
+  const exported = JSON.parse(await downloads.at(-1).text());
+  assert.equal(exported.date, "2026-12-15");
+  assert.deepEqual(exported.input.legs.map((leg) => leg.priceUsdPerT), [900, 1050, 1200]);
+  assert.ok(exported.quotes.every((quote) =>
+    quote.validFrom === "2026-12-01" && quote.applicability === "current",
+  ));
+});
+
+test("clearing a selected date blocks calculation and export until a date is entered", async (t) => {
+  const { $, input, calculate, click, downloads } = await mount(t);
+  input("#flight-date", "");
+  calculate();
+  assert.equal($("#flight-date").value, "");
+  assert.equal($("#model-error").hidden, false);
+  assert.match($("#model-error").textContent, /有效.*日期/);
+  assert.equal($("#download-plan").disabled, true);
+  click("#download-plan");
+  assert.equal(downloads.length, 0);
+});
+
+test("downloaded quotation template follows the selected future plan and leaves quote values blank", async (t) => {
+  const { $, click, downloads } = await mount(t, { initialDate: "2027-01-03" });
+  click("#download-template");
+  const lines = (await downloads.at(-1).text()).replace(/^\uFEFF/, "").trim().split(/\r?\n/);
+  const header = lines[0].split(",");
+  const row = Object.fromEntries(header.map((key, i) => [key, lines[1].split(",")[i]]));
+  assert.equal(row.valid_from, $("#flight-date").value);
+  assert.equal(row.supplier, "");
+  assert.equal(row.price_usd_per_t, "");
+  assert.equal(row.source, "");
+});
+
+test("export retains the solved plan date and quote snapshot if the DOM changes without events", async (t) => {
+  const { $, click, importQuotes, downloads } = await mount(t);
+  await importQuotes(quotationFile(
+    ...rotationQuotes("2026-11-01", "2026-11-30"),
+    ...rotationQuotes("2026-12-01", "2026-12-31", [900, 1050, 1200]),
+  ));
+  click("#use-quotes");
+  $("#flight-date").value = "2026-12-15";
+  click("#download-plan");
+  const exported = JSON.parse(await downloads.at(-1).text());
+  assert.equal(exported.date, "2026-11-04");
+  assert.deepEqual(exported.input.legs.map((leg) => leg.priceUsdPerT), [860, 980, 1120]);
+  assert.ok(exported.quotes.every((quote) => quote.validUntil === "2026-11-30"));
 });

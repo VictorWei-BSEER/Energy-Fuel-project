@@ -1,10 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  parseQuoteCsv,
-  quoteForAirport,
+  parseQuoteCsv as parseQuoteCsvAtDate,
+  quoteForAirport as quoteForAirportAtDate,
   QUOTE_CSV_TEMPLATE,
 } from "../dist/fuel-quotes.js";
+
+// These fixtures describe November 2026. Implicit-clock behavior is exercised
+// separately by date-boundaries.test.mjs with a controlled local clock.
+const parseQuoteCsv = (text, options = {}) =>
+  parseQuoteCsvAtDate(text, { today: "2026-11-04", ...options });
+const quoteForAirport = (quotes, airport, date = "2026-11-04") =>
+  quoteForAirportAtDate(quotes, airport, date);
 
 const header =
   "airport,supplier,price_usd_per_t,valid_from,valid_until,delivery_basis,fees_included,source";
