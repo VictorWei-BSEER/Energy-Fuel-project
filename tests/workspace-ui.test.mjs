@@ -5,7 +5,7 @@ import { parseHTML } from 'linkedom';
 
 let mountId = 0;
 async function mount(t, hash = '') {
-  const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../dist/network.html', import.meta.url), 'utf8');
   const { document, window } = parseHTML(html);
   const originals = new Map();
   for (const [name, value] of Object.entries({ document, window, CustomEvent: window.CustomEvent })) {
@@ -88,5 +88,5 @@ test('workspace deep links, browser history and keyboard navigation select acces
   assert.deepEqual(visible(), ['workspace-sources']);
   assert.equal($('#workspace-tab-sources').getAttribute('aria-selected'), 'true');
   const legacy = await readFile(new URL('../dist/planner.html', import.meta.url), 'utf8');
-  assert.match(legacy, /url=\.\/#calculations/);
+  assert.match(legacy, /url=\.\/network\.html#calculations/);
 });
