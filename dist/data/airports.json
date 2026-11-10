@@ -10,7 +10,7 @@
     "license": "Public Domain",
     "referencePage": "https://ourairports.com/data/"
   },
-  "fetchedAt": "2026-11-09T02:02:11.631300Z",
+  "fetchedAt": "2026-11-10T04:22:07.022315Z",
   "observedAt": null,
   "airports": [
     {
@@ -120,7 +120,7 @@
     "detail": "Actual coordinates from the official OurAirports GitHub dataset. No per-record observation timestamp is provided.",
     "limitations": "Community-maintained airport geometry only; does not establish inventory, fuel availability, demand, storage capacity, or airport contract prices.",
     "transport": {
-      "sha256": "5754df21f25cb08d2def8a80b3eb609ddc52a4217afa8eb48280b6428c06e78f",
+      "sha256": "b311ab030775908769395b6814840f01732b27a5176b85f1a9ed3b5d98ff052b",
       "httpLastModified": null
     }
   }
