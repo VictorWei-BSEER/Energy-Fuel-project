@@ -17,7 +17,7 @@ async function until(predicate, message = 'asynchronous UI settled') {
 }
 
 async function mountApp(t, { noCatalog = false, remoteMode = 'unavailable' } = {}) {
-  const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../dist/network.html', import.meta.url), 'utf8');
   const sourceCatalog = JSON.parse(await readFile(new URL('../dist/data/catalog.json', import.meta.url), 'utf8'));
   const fixture = new Map([['data/catalog.json', sourceCatalog]]);
   for (const feed of sourceCatalog.feeds) {

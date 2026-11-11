@@ -1,0 +1,257 @@
+/* Motion is a visualization of solved fuel balances, not live flight tracking. */
+.dashboard-restored #flight-map .route-path {
+  stroke: #6b9dad;
+  stroke-width: 1.2;
+  opacity: 0.48;
+  transition: opacity 0.35s ease;
+}
+.dashboard-restored #flight-map .route-path.inactive {
+  opacity: 0.2;
+}
+.dashboard-restored #flight-map .route-halo {
+  stroke: #63d6fb;
+  stroke-width: 12;
+  opacity: 0.045;
+}
+.dashboard-restored #flight-map .route-trail {
+  fill: none;
+  stroke: #b4edff;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 3px #65d7fba8);
+  pointer-events: none;
+}
+.dashboard-restored #flight-map .route-trail.completed {
+  opacity: 0.5;
+}
+.dashboard-restored #flight-map .motion-plane {
+  fill: #f5fcff;
+  filter: drop-shadow(0 0 6px #b1e9ff8c);
+  pointer-events: none;
+}
+.dashboard-restored #flight-map .motion-plane .plane-shadow {
+  fill: #0008;
+  transform: translate(-3px, 7px);
+  filter: blur(3px);
+}
+.dashboard-restored #flight-map .motion-plane[data-phase="refuel"] {
+  fill: #b4f2ca;
+}
+.dashboard-restored #flight-map .airport-pulse {
+  fill: none;
+  stroke: #a5edc3;
+  stroke-width: 0.9;
+  opacity: 0;
+  pointer-events: none;
+}
+.dashboard-restored #flight-map .is-refueling .airport-pulse {
+  animation: refuel-pulse 1.25s ease-out infinite;
+}
+.dashboard-restored #flight-map .motion-active > .ring {
+  stroke: #d5f8ff;
+  stroke-width: 1.2;
+  opacity: 1;
+}
+.dashboard-restored #flight-map .motion-active > .marker {
+  fill: #e2fbff;
+}
+.dashboard-restored #flight-map .airport-code {
+  paint-order: stroke;
+  stroke: #14242d;
+  stroke-width: 2px;
+  stroke-linejoin: round;
+}
+.dashboard-restored #motion-detail {
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+.dashboard-restored .is-refueling #motion-detail {
+  border-color: #81c9a166;
+  box-shadow: 0 6px 24px #08181433;
+}
+.dashboard-restored #motion-detail .motion-readouts > div:first-child {
+  position: relative;
+  padding-bottom: 10px;
+}
+.dashboard-restored #motion-detail .motion-readouts > div:first-child::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: var(--fuel-level, 0%);
+  height: 3px;
+  border-radius: 3px;
+  background: #ace9c6;
+  box-shadow: 0 0 9px #ace9c633;
+  transition: width 0.06s linear;
+}
+.dashboard-restored #motion-detail .motion-readouts > div:first-child::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #536f7d55;
+  border-radius: 3px;
+}
+.dashboard-restored .motion-auto-label i {
+  opacity: 0.5;
+}
+.dashboard-restored .is-playing .motion-auto-label i {
+  opacity: 1;
+  animation: simulation-indicator 1.7s ease-in-out infinite;
+}
+.dashboard-restored #motion-toggle[data-state="paused"] {
+  color: #b8d6e6;
+}
+.dashboard-restored #motion-leg-buttons button {
+  position: relative;
+  transition:
+    color 0.2s,
+    background-color 0.2s,
+    border-color 0.2s;
+}
+.dashboard-restored #motion-leg-buttons button[aria-current="true"] {
+  background: #315361;
+  border-color: #9cdfffa6;
+  box-shadow: inset 0 -2px 0 #ace8ff;
+}
+.dashboard-restored #motion-leg-buttons button.completed {
+  border-color: #597b7c;
+}
+.dashboard-restored #motion-leg-buttons button.completed::after {
+  content: "✓";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #a6d9bd;
+  font-size: 9px;
+}
+.dashboard-restored #motion-progress {
+  accent-color: #a8e8ff;
+  cursor: ew-resize;
+}
+.dashboard-restored #motion-toggle:disabled {
+  opacity: 0.6;
+}
+.dashboard-restored #leg-rows tr {
+  transition:
+    background-color 0.4s,
+    box-shadow 0.4s;
+}
+.dashboard-restored #leg-rows tr.motion-active {
+  background: #edf5ff;
+  box-shadow: inset 3px 0 0 #2b60d5;
+}
+.dashboard-restored .strategy-card.motion-active {
+  border-color: #80aaf0;
+  box-shadow: 0 4px 20px #2b60d512;
+  background: #f5f9ff;
+}
+.dashboard-restored .strategy-card.motion-active .step {
+  color: #245bbb;
+}
+.dashboard-restored .strategy-card {
+  transition:
+    border-color 0.35s,
+    box-shadow 0.35s,
+    background-color 0.35s;
+}
+.dashboard-restored #cost-ratio {
+  transition: width 0.8s cubic-bezier(0.22, 0.8, 0.3, 1);
+}
+@keyframes refuel-pulse {
+  from {
+    r: 5px;
+    opacity: 0.85;
+  }
+  to {
+    r: 19px;
+    opacity: 0;
+  }
+}
+@keyframes simulation-indicator {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 #a9ecc122;
+  }
+  50% {
+    box-shadow: 0 0 0 4px #a9ecc10d;
+  }
+}
+@media (max-width: 620px) {
+  .dashboard-restored #flight-map .motion-plane {
+    transform-box: view-box;
+  }
+  .dashboard-restored #flight-map .route-trail {
+    stroke-width: 2.8;
+  }
+  .dashboard-restored #motion-leg-buttons button {
+    min-height: 54px;
+  }
+  .dashboard-restored #motion-leg-buttons button.completed::after {
+    display: none;
+  }
+  .dashboard-restored #motion-detail .motion-readouts > div:first-child {
+    padding-bottom: 7px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-restored #flight-map .airport-pulse {
+    animation: none;
+  }
+  .dashboard-restored #motion-detail,
+  .dashboard-restored .strategy-card,
+  .dashboard-restored #leg-rows tr,
+  .dashboard-restored #motion-leg-buttons button,
+  .dashboard-restored #cost-ratio,
+  .dashboard-restored #motion-detail .motion-readouts > div:first-child::after {
+    transition: none;
+  }
+}
+.dashboard-restored #motion-leg-buttons {
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.dashboard-restored #motion-leg-buttons button {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 6px;
+  flex: 1 0 108px;
+  min-width: 0;
+  text-align: left;
+  padding: 7px 10px;
+}
+.dashboard-restored #motion-leg-buttons button > span {
+  grid-row: 1 / 3;
+  align-self: center;
+  font-size: 8px;
+  opacity: 0.6;
+}
+.dashboard-restored #motion-leg-buttons button > strong {
+  font-size: 9px;
+  font-weight: 550;
+  letter-spacing: 0.2px;
+}
+.dashboard-restored #motion-leg-buttons button > small {
+  font-size: 8px;
+  font-weight: 400;
+  opacity: 0.72;
+}
+@media (max-width: 620px) {
+  .dashboard-restored #motion-leg-buttons button {
+    flex-basis: 87px;
+    padding: 7px 6px;
+    column-gap: 3px;
+    grid-template-columns: 13px 1fr;
+  }
+  .dashboard-restored #motion-leg-buttons button > strong {
+    font-size: 8px;
+  }
+  .dashboard-restored #motion-leg-buttons button > small {
+    font-size: 7px;
+  }
+}
