@@ -148,8 +148,8 @@ def package(output=ARTIFACTS):
     # The downloaded package must not link to an absent copy of itself or the
     # separate online planning app. Its core exhibit needs no external files.
     offline=entries['exhibit/index.html'].decode()
-    offline=offline.replace('href="../index.html">Open planning workspace',
-                            'href="../START-HERE.txt">Offline package instructions')
+    offline=re.sub(r'href="\.\./index\.html(?:#[^"]*)?"',
+                   'href="../START-HERE.txt"', offline)
     offline=offline.replace('href="./downloads/submission-package.zip"',
                             'href="../START-HERE.txt"')
     offline=offline.replace('Complete offline submission package <span>ZIP ↓</span>',
@@ -166,6 +166,7 @@ def package(output=ARTIFACTS):
         'START: open exhibit/index.html in a modern browser. No server or network is needed for the interactive model.\n'
         'READ: exhibit/downloads/Final_Project.pdf contains the report, reflection, references and four review rounds.\n'
         'SUBMIT: the interactive exhibit plus Analytical_Reflection.pdf (or DOCX) is the creative-format project.\n'
+        'The global flight workspace is separate from this research exhibit. Use the full repository or the hosted main model (network/access required): https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#calculations\n'
         'The full report and reproducibility files are supporting material. The hosted site may require existing access; this ZIP provides an offline alternative.\n\n'
         'REPRODUCE: python3 research/model.py --check\n'
         'TEST: python3 -m unittest discover -s tests -p "test_research_model.py"\n'

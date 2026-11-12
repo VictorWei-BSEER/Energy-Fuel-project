@@ -1,0 +1,101 @@
+[
+  {
+    "id": "cpc-posting",
+    "name": "台湾中油 · 公开挂牌",
+    "type": "public-posting",
+    "coverage": "TPE / TSA / KHH / RMQ / HUN / TTT / KNH",
+    "url": "https://vipmbr.cpc.com.tw/mbwebs/showlistprice_d1510_en.aspx",
+    "access": "公开网页，含生效日期、币种与单位",
+    "limitation": "参考挂牌，非航司合同成交价；TPE 运输和储存费用另计，需检查生效日期。"
+  },
+  {
+    "id": "world-fuel",
+    "name": "World Fuel · 客户报价",
+    "type": "customer-quote",
+    "coverage": "全球网络；东亚目标机场与商业宽体机条件待核实",
+    "url": "https://www.world-kinect.com/world-fuel/aviation/payments-aviation/world-fuel-contract",
+    "access": "myWorld 客户账户；集成需商业授权",
+    "limitation": "未接通客户报价或确认公开 API；费用、用量阶梯及报价有效期需逐条核验。"
+  },
+  {
+    "id": "avfuel",
+    "name": "Avfuel · 合同供油",
+    "type": "customer-quote",
+    "coverage": "全球合同网络；东亚具体覆盖待核实",
+    "url": "https://www.avfuel.com/fuel/about",
+    "access": "客户账户与合同报价服务",
+    "limitation": "合同价与零售价不同；公务机报价不能直接套用于商业宽体机。"
+  },
+  {
+    "id": "airportdata",
+    "name": "Airportdata · 报价 API",
+    "type": "licensed-api",
+    "coverage": "按机场服务商提供；东亚报价完整度待取样",
+    "url": "https://api.airportdata.com/technical-specifications/details-levels-3-4",
+    "access": "Level 4 付费订阅与 API key",
+    "limitation": "提供服务商自报 Jet A-1 价格、单位、币种及更新时间；尚未核实航司合同适用性和更新频率。"
+  },
+  {
+    "id": "iata-directory",
+    "name": "IATA · 机场供应商目录",
+    "type": "supplier-directory",
+    "coverage": "全球机场级 CAF / SAF 供应商",
+    "url": "https://www.iata.org/en/programs/ops-infra/fuel/",
+    "access": "Aviation Energy Hub；访问条件以平台为准",
+    "limitation": "用于建立机场询价清单，不提供统一机场可成交价格。"
+  },
+  {
+    "id": "cnaf",
+    "name": "中国航油 · 合同资料",
+    "type": "supplier-rfq",
+    "coverage": "中国机场；具体机场与合同适用范围待确认",
+    "url": "https://www.iata.org/en/about/sp/partners-directory/china-national-aviation-fuel-cnaf/1146/",
+    "access": "航司已有供油合同、价格通知、结算单或供应商报价",
+    "limitation": "链接为供应商行业资料，不含价格；须区分国内与国际航段、税费和供油服务。"
+  },
+  {
+    "id": "eneos",
+    "name": "ENEOS · 日本供油",
+    "type": "supplier-rfq",
+    "coverage": "日本航司供油；目标机场待确认",
+    "url": "https://www.eneos.co.jp/business/industrial/petroleum/",
+    "access": "商业供油合同与定向询价",
+    "limitation": "官方业务介绍不含公开机场成交价；需确认机型、用量、交付口径和有效期。"
+  },
+  {
+    "id": "sk-incheon",
+    "name": "SK · 韩国供油",
+    "type": "supplier-rfq",
+    "coverage": "ICN / GMP / PUS / CJJ / TAE / MWX / YNY",
+    "url": "https://www.skincheonpetrochem.com/business/aviation",
+    "access": "供应商合同与商业报价",
+    "limitation": "区分 Into Plane、Ex-Hydrant、Into-Storage；页面不含价格，不同交付口径不可直接比价。"
+  },
+  {
+    "id": "hong-kong-supply",
+    "name": "香港机场 · 供应链线索",
+    "type": "supplier-directory",
+    "coverage": "HKG",
+    "url": "https://www.afsc.com.hk/en/stockqc.html",
+    "access": "公开储运资料；实际价格从油品供应商合同或报价取得",
+    "limitation": "AFSC 代供应商储运，油权属于供应商；此资料不提供到机价格。"
+  },
+  {
+    "id": "opis",
+    "name": "OPIS · 亚太现货基准",
+    "type": "market-benchmark",
+    "coverage": "日本 CIF / 台湾 FOB / 韩国 FOB / 新加坡",
+    "url": "https://www.opis.com/product/pricing/spot/worldwide-jet-fuel-report/",
+    "access": "付费日报，可经 email / FTP 交付；展示与再分发需授权",
+    "limitation": "贸易市场现货基准，不是东亚机场 into-plane 价格。"
+  },
+  {
+    "id": "iata-monitor",
+    "name": "IATA · 炼厂周均参考",
+    "type": "market-benchmark",
+    "coverage": "全球与区域航煤市场",
+    "url": "https://www.iata.org/en/publications/economics/fuel-monitor/",
+    "access": "公开周度行情页面；IATA 不提供历史价格数据",
+    "limitation": "平均炼厂价，不能替代机场挂牌、供应商报价或航司合同到机价。"
+  }
+]

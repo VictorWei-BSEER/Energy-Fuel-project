@@ -86,6 +86,7 @@ class Page(HTMLParser):
     def __init__(self, text):
         super().__init__(convert_charrefs=True)
         self.ids, self.duplicates = set(), set()
+        self.workspace_routes = {}
         self.references, self.inline_scripts, self.inline_styles = [], [], []
         self.stack, self.text_by_id, self.script_type = [], {}, []
         self.module_scripts = 0
@@ -100,6 +101,8 @@ class Page(HTMLParser):
                 self.duplicates.add(identifier)
             self.ids.add(identifier)
             self.text_by_id.setdefault(identifier, [])
+        if tag == 'button' and attrs.get('role') == 'tab' and attrs.get('data-workspace'):
+            self.workspace_routes[attrs['data-workspace']] = attrs.get('aria-controls')
         if tag == 'base':
             self.has_base = True
         if tag == 'script' and attrs.get('type', '').lower() == 'module':
@@ -179,7 +182,13 @@ class Verifier:
             require(not target.lower().endswith('.zip'), f'{source}: offline ZIP contains a ZIP download/self-link: {value!r}')
         if url.fragment and target.lower().endswith(('.html', '.htm')):
             fragment = unquote(url.fragment)
-            require(fragment in self.page(target).ids, f'{source}: missing fragment #{fragment} in {target}')
+            destination = self.page(target)
+            # The main application uses workspace.js hash routes, whose tab
+            # controls must point to an existing mounted panel.
+            route_panel = destination.workspace_routes.get(fragment)
+            valid_route = route_panel == f'workspace-{fragment}' and route_panel in destination.ids
+            require(fragment in destination.ids or valid_route,
+                    f'{source}: missing fragment #{fragment} in {target}')
             self.counts['local_fragments'] += 1
         self.counts['local_references'] += 1
 

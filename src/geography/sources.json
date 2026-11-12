@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "fetchedAt": "2026-11-12T21:14:01Z",
+  "land": {
+    "sourceUrl": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_land.geojson",
+    "snapshot": "ne_110m_land.geojson.gz",
+    "sha256": "9e0729ee253ca7d7a5c4ae9395fb1902264c5377c52e224d13dd85010e2835d9",
+    "referenceUrl": "https://www.naturalearthdata.com/downloads/110m-physical-vectors/110m-land/",
+    "licenseUrl": "https://www.naturalearthdata.com/about/terms-of-use/",
+    "license": "Public Domain"
+  },
+  "airports": {
+    "sourceUrl": "https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv",
+    "snapshot": "ourairports-selected.csv.gz",
+    "upstreamSha256": "11e7a1edf9e5bef91aa4492e3ab42bb5b38b5f2df81358a235ed5a393a571e54",
+    "snapshotSha256": "00adda91255bcaf34a55d0dc7a27fbb569a1e67f11517014d4d9811c7c625af5",
+    "referenceUrl": "https://ourairports.com/data/",
+    "license": "Public Domain",
+    "snapshotMethod": "Unmodified CSV fields for the selected scheduled-service IATA records, in declared display order."
+  }
+}
