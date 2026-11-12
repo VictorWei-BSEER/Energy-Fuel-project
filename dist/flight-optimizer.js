@@ -7,7 +7,9 @@
  * (1-k)*e to the next station. The final fuel stock is held equal to the
  * minimum-uplift reference so savings never come from emptying the final tank.
  */
-const EPS = 1e-7;
+// Fuel feasibility follows floating-point resolution at this problem’s mass
+// scale. A fixed tonne tolerance can erase small quantities or admit unloading.
+const RELATIVE_MASS_EPS = 64 * Number.EPSILON;
 const COST_EPS = 1e-6;
 const LABELS = {
   tank: "油箱容量",
@@ -19,7 +21,16 @@ const LABELS = {
 };
 
 const sum = (values) => values.reduce((total, value) => total + value, 0);
-const clean = (value) => (Math.abs(value) < 1e-10 ? 0 : value);
+const clean = (value) => (value === 0 ? 0 : value);
+const cleanCost = (value) => (Math.abs(value) <= COST_EPS ? 0 : value);
+function massTolerance(input) {
+  const scale = Math.max(
+    input.aircraft.tankCapacityT,
+    input.initialFuelT,
+    ...input.legs.map(leg => leg.taxiBurnT + leg.baseBurnT + leg.reserveT),
+  );
+  return Math.max(Number.MIN_VALUE, RELATIVE_MASS_EPS * scale);
+}
 const finite = (value) => typeof value === "number" && Number.isFinite(value);
 
 function empty(status, errors = [], diagnostics = []) {
@@ -138,15 +149,17 @@ function limits(input, leg) {
 function planFromExtra(input, extra, status = "feasible") {
   const diagnostics = [];
   const { aircraft } = input;
+  const EPS = massTolerance(input);
   if (input.initialFuelT > aircraft.tankCapacityT + EPS) {
     diagnostics.push("初始油量超过油箱容量；当前模型不允许卸油。");
   }
   let arrivalFuelT = input.initialFuelT;
   const legs = input.legs.map((leg, i) => {
-    const carryFuelT = clean(extra[i]);
+    const carryFuelT = extra[i] < 0 && extra[i] >= -EPS ? 0 : clean(extra[i]);
     const takeoffFuelT = leg.baseBurnT + leg.reserveT + carryFuelT;
     const departureFuelT = takeoffFuelT + leg.taxiBurnT;
-    const upliftT = clean(departureFuelT - arrivalFuelT);
+    const rawUpliftT = departureFuelT - arrivalFuelT;
+    const upliftT = rawUpliftT < 0 && rawUpliftT >= -EPS ? 0 : clean(rawUpliftT);
     const extraBurnT = leg.carryBurnRate * carryFuelT;
     const burnT = leg.taxiBurnT + leg.baseBurnT + extraBurnT;
     const landingFuelT = leg.reserveT + (1 - leg.carryBurnRate) * carryFuelT;
@@ -251,7 +264,7 @@ function solveLinear(rows, rhs) {
 }
 
 /**
- * Exact vertex enumeration for a bounded, at most five-variable linear model.
+ * Floating-point vertex enumeration for a bounded, at most five-variable linear model.
  * One equality fixes terminal fuel; enumerate n-1 active inequalities.
  */
 export function optimizeRotation(rawInput) {
@@ -265,6 +278,7 @@ export function optimizeRotation(rawInput) {
       extraBurnVsBaselineT: null,
     };
   const input = parsed.input;
+  const EPS = massTolerance(input);
   const baseline = baselineFor(input);
   const n = input.legs.length;
   const terminalExtra = baseline.legs[n - 1].carryFuelT;
@@ -383,7 +397,7 @@ export function optimizeRotation(rawInput) {
     ...best,
     baseline,
     savingsUsd: comparable
-      ? clean(baseline.totalCostUsd - best.totalCostUsd)
+      ? cleanCost(baseline.totalCostUsd - best.totalCostUsd)
       : null,
     savingsPercent:
       comparable && baseline.totalCostUsd > COST_EPS

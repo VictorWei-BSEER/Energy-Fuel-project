@@ -7,3 +7,5 @@ This update makes the global model the primary landing view, with a 67-airport s
 The presentation uses Fuel Atlas branding with white surfaces, navy type and restrained blue charts, following the explorer/report separation on IEA's data pages. The research's calculations, 919-word reflection and archived submission documents remain unchanged.
 
 Validation includes numerical, geometry, quote and simulated DOM tests, CSS parsing and an independent source/cascade review. Global geography was inspected as a rendered SVG. The environment exposes no supported browser-control runtime, so this does not claim a real-browser or assistive-technology test.
+
+A subsequent release on 13 November uses the available Chromium runtime for actual browser acceptance and integrates Research into the shared five-tab workspace. The earlier verification limit above is superseded by [the current review record](reviews/README.md).

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><title>Fuel Atlas — Project decision brief</title><style>
+.project-brief-content { color: #17334f; font-family: Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 15px; line-height: 1.65; max-width: 1320px; margin: 0 auto; }
+.project-brief-content * { box-sizing: border-box; }
+.project-brief-content h1, .project-brief-content h2, .project-brief-content h3, .project-brief-content p { margin: 0; }
+.project-brief-content h1 { font-size: clamp(28px, 3.3vw, 40px); line-height: 1.15; letter-spacing: -1.2px; color: #142b46; font-weight: 600; max-width: 790px; }
+.project-brief-content h2 { font-size: 25px; line-height: 1.25; letter-spacing: -.55px; font-weight: 600; color: #142b46; }
+.project-brief-content h3 { font-size: 18px; line-height: 1.35; font-weight: 600; color: #142b46; margin-bottom: 10px; }
+.project-brief-content p + p { margin-top: 12px; }
+.project-brief-content a { color: #0057b8; text-decoration: underline; text-underline-offset: 3px; }
+.project-brief-content a:hover { color: #003d83; }
+.project-brief-content a:focus-visible { outline: 2px solid #0057b8; outline-offset: 4px; border-radius: 1px; }
+.project-brief-content .brief-heading { display: flex; justify-content: space-between; gap: 40px; padding: 30px 0; border-bottom: 1px solid #d9e2ec; }
+.project-brief-content .brief-eyebrow { margin: 0 0 10px; color: #536b84; text-transform: uppercase; letter-spacing: 1.2px; font-size: 11px; font-weight: 600; }
+.project-brief-content .brief-deck { max-width: 760px; margin-top: 16px; font-size: 18px; color: #536b84; line-height: 1.5; }
+.project-brief-content .brief-status { flex: 0 0 245px; border-left: 3px solid #0057b8; padding: 5px 0 5px 18px; align-self: center; }
+.project-brief-content .brief-status span, .project-brief-content .brief-status strong, .project-brief-content .brief-status small { display: block; }
+.project-brief-content .brief-status span { color: #536b84; font-size: 12px; }
+.project-brief-content .brief-status strong { margin: 3px 0 6px; font-size: 19px; font-weight: 600; }
+.project-brief-content .brief-status small { color: #536b84; line-height: 1.5; font-size: 12px; }
+.project-brief-content .brief-thesis { padding: 30px 0; max-width: 1060px; }
+.project-brief-content .brief-thesis h2 { margin-bottom: 14px; }
+.project-brief-content .brief-callout { padding: 16px 20px; border-left: 3px solid #0057b8; background: #eef5fc; }
+.project-brief-content .brief-section { padding: 30px 0; border-top: 1px solid #d9e2ec; }
+.project-brief-content .brief-section-heading { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; }
+.project-brief-content .brief-section-heading > span { color: #0057b8; font-size: 12px; font-weight: 700; }
+.project-brief-content .brief-table-wrap { overflow-x: auto; border: 1px solid #d9e2ec; }
+.project-brief-content table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.6; text-align: left; }
+.project-brief-content caption { text-align: left; padding: 12px 18px; color: #536b84; background: #fff; font-size: 12px; }
+.project-brief-content th, .project-brief-content td { padding: 14px 18px; border-top: 1px solid #d9e2ec; vertical-align: top; }
+.project-brief-content thead th { background: #f3f6fa; color: #344e69; font-size: 12px; font-weight: 600; }
+.project-brief-content tbody th { width: 28%; font-weight: 600; min-width: 170px; color: #17334f; }
+.project-brief-content .brief-note { font-size: 12px; color: #536b84; margin-top: 12px; }
+.project-brief-content .brief-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 40px; }
+.project-brief-content .brief-columns > div { min-width: 0; }
+.project-brief-content .brief-value { padding: 26px 30px; margin: 2px 0 30px; background: #eef5fc; border: 1px solid #cbddec; }
+.project-brief-content .brief-value h2 { margin-bottom: 16px; }
+.project-brief-content .brief-equation { font-size: 18px; line-height: 1.55; font-weight: 600; color: #004d9d; max-width: 1060px; }
+.project-brief-content .brief-pilot-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; margin-top: 22px; }
+.project-brief-content .brief-pilot-grid article { padding: 20px; border: 1px solid #d9e2ec; border-top: 3px solid #0057b8; background: #fff; min-width: 0; }
+.project-brief-content .brief-pilot-grid p { font-size: 14px; }
+.project-brief-content .brief-day { font-size: 12px !important; color: #0057b8; font-weight: 600; margin-bottom: 10px; }
+.project-brief-content .brief-next { display: flex; align-items: baseline; gap: 14px; margin-top: 22px; padding: 20px; background: #f3f6fa; }
+.project-brief-content .brief-next strong { white-space: nowrap; color: #0057b8; }
+.project-brief-content .brief-footer { padding: 20px 0 30px; color: #536b84; border-top: 1px solid #d9e2ec; font-size: 12px; }
+.project-brief-content .brief-footer p:last-child { display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; }
+@media (max-width: 900px) {
+  .project-brief-content .brief-heading { flex-direction: column; gap: 22px; }
+  .project-brief-content .brief-status { align-self: stretch; flex-basis: auto; }
+  .project-brief-content .brief-pilot-grid { gap: 14px; }
+  .project-brief-content .brief-pilot-grid article { padding: 15px; }
+}
+@media (max-width: 680px) {
+  .project-brief-content { font-size: 14px; }
+  .project-brief-content h2 { font-size: 22px; }
+  .project-brief-content .brief-heading { padding: 22px 0; }
+  .project-brief-content .brief-columns, .project-brief-content .brief-pilot-grid { grid-template-columns: 1fr; gap: 22px; }
+  .project-brief-content .brief-section { padding: 25px 0; }
+  .project-brief-content .brief-value { padding: 20px; }
+  .project-brief-content .brief-equation { font-size: 16px; }
+  .project-brief-content .brief-next { flex-direction: column; gap: 6px; }
+  .project-brief-content th, .project-brief-content td { padding: 12px; }
+}
+@media print {
+  .project-brief-content { max-width: none; font-size: 10pt; color: #142b46; }
+  .project-brief-content h1 { font-size: 24pt; }
+  .project-brief-content h2 { font-size: 16pt; }
+  .project-brief-content h3 { font-size: 12pt; }
+  .project-brief-content .brief-heading { padding-top: 0; }
+  .project-brief-content .brief-status { flex-basis: 190px; }
+  .project-brief-content .brief-section { padding: 18px 0; }
+  .project-brief-content .brief-section-heading { break-after: avoid; }
+  .project-brief-content .brief-pilot-grid { grid-template-columns: 1fr; gap: 10px; }
+  .project-brief-content .brief-pilot-grid article, .project-brief-content .brief-value, .project-brief-content tr { break-inside: avoid; }
+  .project-brief-content .brief-footer p:last-child { display: none; }
+}
+
+.project-brief-content .brief-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 18px 0 0; }
+.project-brief-content .brief-actions a { display: inline-flex; align-items: center; gap: 16px; min-height: 38px; padding: 7px 12px; border: 1px solid #c4d3e3; font-size: 12px; font-weight: 600; line-height: 1.4; text-decoration: none; border-radius: 2px; }
+.project-brief-content .brief-actions a:first-child { background: #0057b8; border-color: #0057b8; color: white; }
+.project-brief-content .brief-actions a:hover { background: #eef5fc; }
+.project-brief-content .brief-actions a:first-child:hover { background: #003d83; }
+.project-brief-content .brief-actions a span { font-size: 11px; font-weight: 400; }
+@media print { .project-brief-content .brief-actions { display: none; } }
+
+@page { size: A4; margin: 16mm 16mm 17mm; }
+body { margin: 0; background: white; color: #142b46; font-family: Arial, sans-serif; }
+.print-page { max-width: 1120px; padding: 28px; margin: 0 auto; }
+.print-source-notes { border-top: 1px solid #d9e2ec; padding-top: 15px; font: 12px/1.5 Arial,sans-serif; color: #536b84; }
+.print-source-notes h2 { font-size: 16px; color: #142b46; margin: 0 0 8px; }
+.print-source-notes ol { padding-left: 18px; margin: 0 0 8px; }
+.print-source-notes a { color: #0057b8; overflow-wrap: anywhere; }
+@media print {
+  .print-page { max-width: none; padding: 0; }
+  .project-brief-content { font-size: 9.2pt; line-height: 1.5; }
+  .project-brief-content h1 { font-size: 23pt; letter-spacing: -.7px; }
+  .project-brief-content h2 { font-size: 14pt; }
+  .project-brief-content h3 { font-size: 11pt; }
+  .project-brief-content .brief-deck { font-size: 11pt; margin-top: 8px; }
+  .project-brief-content .brief-heading { display: block; padding: 0 0 14px; }
+  .project-brief-content .brief-status { margin-top: 12px; padding: 0 0 0 10px; }
+  .project-brief-content .brief-status span, .project-brief-content .brief-status strong, .project-brief-content .brief-status small { display: inline; font-size: 9pt; margin-right: 8px; }
+  .project-brief-content .brief-status br { display: none; }
+  .project-brief-content .brief-thesis { padding: 16px 0; }
+  .project-brief-content .brief-thesis h2 { margin-bottom: 8px; }
+  .project-brief-content .brief-section { padding: 17px 0; }
+  .project-brief-content .brief-section-heading { margin-bottom: 11px; }
+  .project-brief-content .brief-callout { padding: 10px 13px; }
+  .project-brief-content .brief-columns { display: block; }
+  .project-brief-content .brief-columns > div { break-inside: avoid; }
+  .project-brief-content .brief-columns > div + div { margin-top: 13px; }
+  .project-brief-content section[aria-labelledby="brief-research-title"] { break-before: page; }
+  .project-brief-content .brief-value { padding: 14px 17px; margin-bottom: 17px; break-inside: avoid; }
+  .project-brief-content .brief-equation { font-size: 11pt; }
+  .project-brief-content .brief-value h2 { margin-bottom: 8px; }
+  .project-brief-content table { font-size: 9pt; }
+  .project-brief-content caption, .project-brief-content thead th, .project-brief-content .brief-note { font-size: 8pt; }
+  .project-brief-content th, .project-brief-content td { padding: 8px 10px; }
+  .project-brief-content caption { padding: 7px 10px; }
+  .project-brief-content .brief-pilot-grid { display: block; margin-top: 13px; }
+  .project-brief-content .brief-pilot-grid article { margin-bottom: 12px; padding: 10px 13px; break-inside: avoid; }
+  .project-brief-content .brief-pilot-grid p { font-size: 9pt; }
+  .project-brief-content .brief-day { font-size: 8pt !important; margin-bottom: 5px; }
+  .project-brief-content p + p { margin-top: 8px; }
+  .project-brief-content .brief-next { display: block; padding: 12px; margin-top: 15px; break-inside: avoid; }
+  .project-brief-content .brief-next strong { margin-right: 8px; }
+  .project-brief-content .brief-footer { padding: 12px 0; font-size: 8pt; }
+  .project-brief-content .brief-eyebrow { font-size: 8pt; margin-bottom: 7px; }
+  .print-source-notes { font-size: 8pt; padding-top: 10px; break-inside: avoid; }
+  .print-source-notes h2 { font-size: 11pt; }
+}
+
+</style></head><body><main class="print-page"><div class="project-brief-content">
+  <header class="brief-heading">
+    <div><p class="brief-eyebrow">Project brief · 13 November 2026</p><h1>From fuel prices to defensible decisions</h1><p class="brief-deck">A testable case for aviation fuel planning and Asian supply resilience.</p></div>
+    <div class="brief-status"><span>Current maturity</span><strong>Research prototype</strong><small>Demonstrated calculations. Commercial value not yet validated.</small></div>
+  </header>
+  <nav class="brief-actions" aria-label="Project brief downloads"><a href="./downloads/Fuel_Atlas_Decision_Brief.pdf" download>Download brief <span>PDF ↓</span></a><a href="./downloads/Fuel_Atlas_Decision_Brief.md" download>Methods and evidence <span>Markdown ↓</span></a><a href="./print.html">Print view <span aria-hidden="true">→</span></a></nav>
+
+  <section class="brief-thesis" aria-labelledby="brief-thesis-title">
+    <p class="brief-eyebrow">The decision</p><h2 id="brief-thesis-title">When does cheaper fuel justify carrying more of it?</h2>
+    <p>Fuel Atlas connects a fixed flight rotation, comparable fuel offers and aircraft constraints to explain where to buy fuel and how much to carry. The research asks a second question: when a local supply interruption occurs, does that flexibility protect connectivity or shift scarcity and emissions elsewhere?</p>
+    <p class="brief-callout"><strong>Next milestone:</strong> an airline-supervised shadow pilot using dated contracts and approved performance data. The present system supports a diligence conversation; it does not establish dispatch readiness, customer traction or investment returns.</p>
+  </section>
+
+  <section class="brief-section" aria-labelledby="brief-evidence-title">
+    <div class="brief-section-heading"><span>01</span><h2 id="brief-evidence-title">What the evidence supports</h2></div>
+    <div class="brief-table-wrap"><table><caption>Implemented capability and the next validation step</caption><thead><tr><th scope="col">Available today</th><th scope="col">Still to establish</th></tr></thead><tbody>
+      <tr><th scope="row">Fixed-rotation optimization</th><td>2–5 legs; explicit fuel, weight and supply constraints; matched terminal fuel. Requires aircraft-specific calibration and operational validation.</td></tr>
+      <tr><th scope="row">Global geographic sample</th><td>67 sourced airports across six continents. Coordinates do not establish prices, supplier availability or global market coverage.</td></tr>
+      <tr><th scope="row">Traceable data and research</th><td>Public benchmarks, quotation import and reproducible conditional analysis. No verified airline contract dataset, realized savings or prospective operational trial is included.</td></tr>
+    </tbody></table></div>
+    <p class="brief-note">The flight optimizer, marginal tankering study and separate supply-chain planner answer different questions; they are not one calibrated global energy model.</p>
+  </section>
+
+  <section class="brief-section" aria-labelledby="brief-commercial-title">
+    <div class="brief-section-heading"><span>02</span><h2 id="brief-commercial-title">A focused commercial hypothesis</h2></div>
+    <div class="brief-columns"><div><h3>Buyer and workflow</h3><p><strong>Hypothesis:</strong> airline fuel procurement teams, with flight-operations approval, may pay for faster, auditable comparisons of uplift choices. Start with one fleet type and a small airport network: reconcile offers, replay a rotation, explain binding constraints, then export the decision record.</p><p>A paid pilot followed by a subscription is a pricing hypothesis. Interview buyers and measure procurement, integration and support costs before estimating a market or setting a price.</p></div><div><h3>Positioning against existing tools</h3><p><a href="https://skymetrix.com/airtelligent/fuel/">Skymetrix</a> describes fuel procurement, flight-event integration and tankering support. <a href="https://www.openairlines.com/for-fuel-managers-ops-engineers/">OpenAirlines</a> offers operational fuel analytics and reporting. These vendor descriptions establish an existing competitive category, not comparative performance.</p><p>Fuel Atlas must test whether transparent resilience scenarios and decision provenance solve an unmet workflow. A map and optimizer alone are not a defensible advantage; data rights, validated performance and integration would have to be earned.</p></div></div>
+  </section>
+
+  <section class="brief-value" aria-labelledby="brief-value-title">
+    <p class="brief-eyebrow">Economic test</p><h2 id="brief-value-title">Measure net value, not a headline saving</h2>
+    <p class="brief-equation">Net value = matched baseline purchase cost − feasible alternative purchase cost − additional non-fuel costs</p>
+    <p>Purchase-cost comparisons already include modeled carriage fuel; do not subtract that burn twice. Separately reconcile carbon charges, handling, displaced payload, contract penalties and implementation costs. Hold mission, payload, reserves, quote availability, initial fuel and terminal fuel constant. Report gross and net differences, rejected cases and analyst time saved. No annual saving or market-size estimate is asserted here.</p>
+  </section>
+
+  <section class="brief-section" aria-labelledby="brief-pilot-title">
+    <div class="brief-section-heading"><span>03</span><h2 id="brief-pilot-title">A 90-day validation proposal</h2></div>
+    <p>Illustrative schedule from an agreed pilot start; milestones depend on data access. These are proposed acceptance gates, not completed results.</p>
+    <div class="brief-pilot-grid">
+      <article><p class="brief-day">Days 1–30</p><h3>Establish comparability</h3><p>Obtain authorized offers, invoices, uplift records and approved performance data. Record units, fees, validity, supply rights and exclusions.</p><p><strong>Gate:</strong> every admitted record has complete provenance; missing inputs block recommendations. Agree tolerances and a holdout period before analysis.</p></article>
+      <article><p class="brief-day">Days 31–60</p><h3>Replay without hindsight</h3><p>Use only information available at each historical decision. Compare against recorded practice and the same-constraint baseline; independently check fuel and weight balances.</p><p><strong>Gate:</strong> no unresolved hard-constraint violations; report coverage, burn error, reconciliation error and net value against pre-agreed tolerances.</p></article>
+      <article><p class="brief-day">Days 61–90</p><h3>Test prospective usefulness</h3><p>Run in shadow mode. Operations retains authority; log disagreements, overrides, analyst effort and data failures.</p><p><strong>Gate:</strong> evidence of repeatable user value, affordable integration and explicit operational sign-off. Stop or redesign if benefit disappears after costs or data remain inaccessible.</p></article>
+    </div>
+  </section>
+
+  <section class="brief-section" aria-labelledby="brief-research-title">
+    <div class="brief-section-heading"><span>04</span><h2 id="brief-research-title">A systems-research agenda</h2></div>
+    <p>Compare local delivery failure, refinery disruption and a correlated import shock. Test tankering alongside ground stocks, alternate suppliers and coordinated allocation. Stocks, restoration times and service priorities must come from documented evidence or labeled scenario ranges.</p>
+    <p>Report unmet fuel and service separately, additional burn and direct CO₂, cost, recovery time and who receives scarce supply. Vary performance, logistics and policy jointly; publish model-form disagreement and scenario regret instead of invented outage probabilities. Any service valuation or equity weighting must be explicit and tested.</p>
+    <p>This agenda relates to <a href="https://iiasa.ac.at/programs/ece">IIASA’s work on energy, services and inequalities</a> and <a href="https://iiasa.ac.at/programs/asa">systems methods, resilience and open science</a>. It is a proposed research direction, with no IIASA affiliation or endorsement. Release code, input classifications and reproducible results; protect contract confidentiality with permissioned access and publishable aggregates.</p>
+    <div class="brief-next"><strong>The next decision:</strong><span>Secure a data partner and an independent methods review before expanding product scope. Treat empirical validation—not more screens—as the route from prototype to credible planning tool.</span></div>
+  </section>
+  <footer class="brief-footer"><p>Prepared for critical discussion · External product and programme pages checked 13 November 2026 · Vendor descriptions are not independent validation.</p><p><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#calculations">Explore the model</a><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#research">Read the research</a><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#sources">Inspect data sources</a><a href="./downloads/Fuel_Atlas_Decision_Brief.pdf" download>Download PDF</a></p></footer>
+</div>
+<aside class="print-source-notes"><h2>Source links</h2><ol><li><a href="https://skymetrix.com/airtelligent/fuel/">https://skymetrix.com/airtelligent/fuel/</a></li><li><a href="https://www.openairlines.com/for-fuel-managers-ops-engineers/">https://www.openairlines.com/for-fuel-managers-ops-engineers/</a></li><li><a href="https://iiasa.ac.at/programs/ece">https://iiasa.ac.at/programs/ece</a></li><li><a href="https://iiasa.ac.at/programs/asa">https://iiasa.ac.at/programs/asa</a></li></ol><p>Source pages checked 13 November 2026. Product descriptions are vendor statements. No affiliation or endorsement is implied.</p></aside></main></body></html>

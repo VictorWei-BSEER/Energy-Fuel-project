@@ -2,7 +2,7 @@ import { mapMarkup, project } from "./world-map.js";
 import { airportData } from "./global-airports.js";
 import { MAP_VIEWS, routePath, fitRouteView, globalRotation } from "./flight-geography.js";
 import { createRotationMotion } from "./rotation-motion.js?v=20261113-global";
-import { optimizeRotation, defaultRotation } from "./flight-optimizer.js";
+import { optimizeRotation, defaultRotation } from "./flight-optimizer.js?v=20261113-unified";
 import {
   parseQuoteCsv,
   quoteForAirport,
@@ -24,6 +24,81 @@ const money = (value) =>
     ? "$" + value.toLocaleString("en-US", { maximumFractionDigits: 0 })
     : "—";
 const tonnes = (value) => (Number.isFinite(value) ? value.toFixed(2) : "—");
+// The numerical and CSV engines retain stable diagnostic strings. Translate
+// only the presentation layer so exported input/result contracts stay intact.
+function englishDiagnostic(value) {
+  let message = String(value);
+  const exact = {
+    "请提供轮转参数对象。": "Provide rotation parameters.",
+    "请提供油箱容量、最大起飞重量和最大落地重量。": "Provide tank, maximum takeoff and maximum landing capacities.",
+    "轮转必须包含 2–5 个连续航段。": "A rotation must contain 2–5 continuous legs.",
+    "参数数值范围过大，请使用吨和 USD/吨作为单位。": "Input magnitudes exceed the supported range. Use tonnes and USD per tonne.",
+    "初始油量超过油箱容量；当前模型不允许卸油。": "Initial fuel exceeds tank capacity; defuelling is not supported.",
+    "初始油量超过油箱容量；请修正初始油量。": "Initial fuel exceeds tank capacity. Correct the initial fuel input.",
+    "无法在油箱、重量、供油上限和相同终点油量约束下完成该轮转。": "No solution satisfies tank, weight, supply and common terminal-fuel constraints.",
+    "逐站按需加油方案受供油上限限制；提前携油可执行，但不计算对不可行基线的节省比例。": "The just-in-time baseline violates supply limits. Tankering is feasible; savings against an infeasible baseline are not reported.",
+    "比较日期须为有效的 YYYY-MM-DD 日期。": "The comparison date must be a valid YYYY-MM-DD date.",
+    "请提供 UTF-8 CSV 文本。": "Provide UTF-8 CSV text.",
+    "报价文件不可超过 256 KiB。": "The quotation file must not exceed 256 KiB.",
+    "报价文件为空。": "The quotation file is empty.",
+    "报价文件未包含记录。": "The quotation file has no records.",
+  };
+  if (exact[message]) return exact[message];
+  message = message
+    .replace(/报价文件最多允许 (\d+) 条记录。/g, "The quotation file allows at most $1 records.")
+    .replace(/第 (\d+) 行：/g, "Row $1: ")
+    .replace(/第 (\d+) 航段/g, "Leg $1: ")
+    .replace(/([^ ]+) 第 (\d+)、(\d+) 行有效期重叠，请先选定适用合同；这两行未导入。/g,
+      "$1: rows $2 and $3 overlap. Select the applicable contract; both records were excluded.")
+    .replace(/另有 (\d+) 组有效期重叠；所有冲突记录均未导入。/g,
+      "$1 further overlapping pairs; all conflicting records were excluded.")
+    .replace(/CSV 表头须且仅含：(.+)。仅接受已统一的 USD\/t 报价。/g,
+      "CSV headers must contain exactly: $1. Prices must already be normalized to USD/t.");
+  const phrases = [
+    ["最低必要燃油已超过", "minimum required fuel exceeds "],
+    ["，请调整载荷、保留油或机型。", "; adjust payload, reserve or aircraft limits."],
+    ["必须是大于零的有限数值。", " must be finite and positive."],
+    ["必须是非负的有限数值。", " must be finite and non-negative."],
+    ["必须小于 1。", " must be less than 1."],
+    ["参数缺失。", "parameters are missing."],
+    ["须从上一航段到达机场 ", "must depart from the preceding destination "],
+    [" 出发。", "."], ["出发机场缺失。", "origin airport is missing."], ["到达机场缺失。", "destination airport is missing."],
+    ["需要卸油，当前模型只允许非负加油。", "would require defuelling; uplift must be non-negative."],
+    ["无法满足到达保留油。", "cannot meet the arrival reserve."],
+    ["本站供油上限", "uplift limit"], ["本站无需加油", "zero uplift"],
+    ["最大起飞重量", "maximum takeoff weight"], ["最大落地重量", "maximum landing weight"],
+    ["基础航段耗油", "base leg burn"], ["滑行耗油", "taxi burn"],
+    ["到达保留油", "arrival reserve"], ["携油损耗比例", "extra-weight burn fraction"],
+    ["初始油量", "initial fuel"], ["油箱容量", "tank capacity"], ["无油重量", "zero-fuel weight"],
+    ["供货价格", "fuel price"], ["供油上限", "uplift limit"],
+    ["超限 ", " exceeds the limit by "], [" 吨。", " tonnes."],
+    ["引号结束后出现非分隔内容。", "unexpected text follows a closing quote."],
+    ["字段内的双引号必须转义。", "escape embedded double quotes."],
+    ["CSV 引号没有闭合。", "CSV quote is not closed."],
+    ["字段数量与表头不符。", "field count does not match the header."],
+    ["机场须为全球机场目录支持的大写 IATA 三字码。", "use a supported uppercase three-letter IATA code."],
+    ["供应商不可为空、过长或以公式字符开头。", "supplier must be non-empty, within the length limit and not start with a formula character."],
+    ["price_usd_per_t 须为大于零的有限 USD/t 数字。", "price_usd_per_t must be a finite positive USD/t number."],
+    ["有效期须为真实的 YYYY-MM-DD 日期，且开始日期不晚于结束日期。", "use valid YYYY-MM-DD dates with start no later than end."],
+    ["仅接受交付到机的 into-plane 报价。", "only into-plane quotations are accepted."],
+    ["请确认价格包含适用税费及加注费用，并将 fees_included 设为 true。", "confirm all applicable taxes and delivery fees are included; set fees_included to true."],
+    ["来源须为非空文档名称或无登录凭据的 HTTP(S) 链接，不可为公式。", "source must be a document name or credential-free HTTP(S) URL, not a formula."],
+    ["：", ": "],
+  ];
+  for (const [from, to] of phrases) message = message.replaceAll(from, to);
+  return message;
+}
+function decisionDiagnostics(plan) {
+  const comparable = !!plan?.baseline?.feasible && Number.isFinite(plan.extraBurnVsBaselineT);
+  const extraDirectCo2T = comparable ? plan.extraBurnVsBaselineT * 3.16 : null;
+  const carbonBreakEvenUsdPerTCo2 = comparable && extraDirectCo2T > 1e-9 && plan.savingsUsd > 0
+    ? plan.savingsUsd / extraDirectCo2T : null;
+  return { classification: "scenario-posthoc-comparison", comparableBaseline: comparable,
+    extraDirectCo2T, carbonBreakEvenUsdPerTCo2,
+    co2FactorTPerTFuel: 3.16,
+    boundary: "Direct combustion CO2 only; excludes lifecycle and non-CO2 effects. Carbon break-even compares these two fuel-cost plans and does not re-optimize for carbon." };
+}
+
 const airports = Object.fromEntries(airportData.map((a) => [a.code, a]));
 const illustrativePrices = {
   PEK: 925,
@@ -54,6 +129,8 @@ let mode = "demo",
   strategy = "optimized",
   region = "all",
   continent = "all";
+let quoteImportGeneration = 0;
+let mapFocusCode = input.legs[0].from;
 let motion = null;
 let motionGeneration = 0;
 let userPausedMotion = false;
@@ -69,7 +146,7 @@ let mapScope = "global";
 const mapView = { ...MAP_VIEWS.global };
 let mapUiScale = 1;
 let mapResizeObserver = null;
-const motionLabels = { refuel: "加油中", flight: "飞行中", arrival: "已抵达" };
+const motionLabels = { refuel: "Refuelling", flight: "In flight", arrival: "Arrived" };
 const dialog = $("#import-dialog");
 
 function activeQuote(code) {
@@ -84,7 +161,7 @@ function airportOptions(selected) {
   return airportData
     .map(
       (a) =>
-        `<option value="${a.code}" ${a.code === selected ? "selected" : ""}>${a.code} · ${a.city}</option>`,
+        `<option value="${a.code}" ${a.code === selected ? "selected" : ""}>${a.code} · ${a.name}</option>`,
     )
     .join("");
 }
@@ -94,26 +171,34 @@ function syncAircraftInputs() {
   $("#mlw").value = input.aircraft.maxLandingWeightT;
   $("#initial-fuel").value = input.initialFuelT;
 }
-function renderForm() {
+function renderForm({ focusLeg, focusKey } = {}) {
+  const active = document.activeElement;
+  const keepFocus = focusLeg !== undefined
+    ? { leg: focusLeg, key: focusKey || "from" }
+    : active?.dataset?.leg !== undefined && active.dataset.key
+      ? { leg: Number(active.dataset.leg), key: active.dataset.key }
+      : active?.dataset?.remove !== undefined
+        ? { leg: Math.min(Number(active.dataset.remove), input.legs.length - 1), key: "from" }
+        : null;
   $("#leg-rows").innerHTML = input.legs
     .map(
       (leg, i) =>
-        `<tr><td>${String(i + 1).padStart(2, "0")}</td><td><div class="leg-route"><select data-leg="${i}" data-key="from" aria-label="航段${i + 1}出发机场">${airportOptions(leg.from)}</select><span>↗</span><select data-leg="${i}" data-key="to" aria-label="航段${i + 1}到达机场">${airportOptions(leg.to)}</select></div></td><td><input data-leg="${i}" data-key="priceUsdPerT" aria-label="${leg.from}出发油价 USD每吨" type="number" min="0" step="any" value="${Number.isFinite(leg.priceUsdPerT) ? leg.priceUsdPerT : ""}" ${mode === "quotes" ? "readonly" : ""} placeholder="待报价"></td><td><input data-leg="${i}" data-key="baseBurnT" aria-label="航段${i + 1}基础耗油 吨" type="number" min="0" step="any" value="${leg.baseBurnT}" required></td><td class="uplift-result" data-uplift="${i}">—</td><td class="landing-result" data-landing="${i}">—</td><td><button type="button" class="remove-leg" data-remove="${i}" aria-label="删除航段${i + 1}" ${input.legs.length <= 2 ? "disabled" : ""}>×</button></td></tr>`,
+        `<tr><td>${String(i + 1).padStart(2, "0")}</td><td><div class="leg-route"><select data-leg="${i}" data-key="from" aria-label="Leg ${i + 1} origin airport">${airportOptions(leg.from)}</select><svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg><select data-leg="${i}" data-key="to" aria-label="Leg ${i + 1} destination airport">${airportOptions(leg.to)}</select></div></td><td><input data-leg="${i}" data-key="priceUsdPerT" aria-label="${leg.from} origin price, USD per tonne" type="number" min="0" step="any" value="${Number.isFinite(leg.priceUsdPerT) ? leg.priceUsdPerT : ""}" ${mode === "quotes" ? "readonly" : ""} placeholder="No quote"></td><td><input data-leg="${i}" data-key="baseBurnT" aria-label="Leg ${i + 1} base burn, tonnes" type="number" min="0" step="any" value="${leg.baseBurnT}" required></td><td class="uplift-result" data-uplift="${i}">—</td><td class="landing-result" data-landing="${i}">—</td><td><button type="button" class="remove-leg" data-remove="${i}" aria-label="Remove leg ${i + 1}" ${input.legs.length <= 2 ? "disabled" : ""}>×</button></td></tr>`,
     )
     .join("");
   $("#performance-rows").innerHTML = input.legs
     .map(
       (leg, i) =>
         `<tr><td>${leg.from} → ${leg.to}</td>${[
-          ["taxiBurnT", "滑行耗油", leg.taxiBurnT],
-          ["reserveT", "到达保留油", leg.reserveT],
-          ["carryBurnRate", "额外携油损耗百分比", leg.carryBurnRate * 100],
-          ["zeroFuelWeightT", "无油重量", leg.zeroFuelWeightT],
-          ["maxUpliftT", "供油上限", leg.maxUpliftT ?? ""],
+          ["taxiBurnT", "taxi burn, tonnes", leg.taxiBurnT],
+          ["reserveT", "arrival reserve, tonnes", leg.reserveT],
+          ["carryBurnRate", "extra-weight burn, percent", leg.carryBurnRate * 100],
+          ["zeroFuelWeightT", "zero-fuel weight, tonnes", leg.zeroFuelWeightT],
+          ["maxUpliftT", "uplift limit, tonnes", leg.maxUpliftT ?? ""],
         ]
           .map(
             ([key, label, value]) =>
-              `<td><input type="number" data-leg="${i}" data-key="${key}" aria-label="航段${i + 1}${label}" min="0" ${key === "carryBurnRate" ? 'max="99.99"' : ""} step="any" value="${value}" ${key === "maxUpliftT" ? 'placeholder="不限"' : "required"}></td>`,
+              `<td><input type="number" data-leg="${i}" data-key="${key}" aria-label="Leg ${i + 1} ${label}" min="0" ${key === "carryBurnRate" ? 'max="99.99"' : ""} step="any" value="${value}" ${key === "maxUpliftT" ? 'placeholder="No limit"' : "required"}></td>`,
           )
           .join("")}</tr>`,
     )
@@ -125,6 +210,11 @@ function renderForm() {
   ]
     .map((c) => airports[c]?.city ?? c)
     .join(" → ");
+  if (keepFocus) {
+    const field = [...$("#rotation-form").querySelectorAll("[data-leg][data-key]")]
+      .find(node => Number(node.dataset.leg) === keepFocus.leg && node.dataset.key === keepFocus.key);
+    field?.focus({ preventScroll: true });
+  }
 }
 function canShowMotion() {
   const panel = $("#workspace-calculations");
@@ -144,24 +234,25 @@ function setMotionControls(state = "unavailable") {
     toggle.setAttribute("aria-pressed", String(active));
     toggle.setAttribute(
       "aria-label",
-      active ? "暂停轮转动画" : reduced ? "已减少动态效果" : "继续轮转动画",
+      active ? "Pause rotation playback" : reduced ? "Static view — reduced motion" : "Resume rotation playback",
     );
     toggle.innerHTML = active
-      ? "Ⅱ <span>暂停</span>"
+      ? "Ⅱ <span>Pause</span>"
       : reduced
-        ? "<span>静态查看</span>"
-        : "▶ <span>继续</span>";
+        ? "<span>Static view</span>"
+        : "▶ <span>Resume</span>";
   }
   if ($("#motion-restart")) $("#motion-restart").disabled = unavailable;
   if ($("#motion-progress")) $("#motion-progress").disabled = unavailable;
   $("#play-route").disabled = unavailable;
+  $("#play-route").setAttribute("aria-label", reduced ? "Next leg" : "Replay rotation");
   $("#play-route").innerHTML = reduced
-    ? "→ <span>下一航段</span>"
-    : "↺ <span>重播轮转</span>";
+    ? "→ <span>Next leg</span>"
+    : "↺ <span>Replay</span>";
   $("#map-stage").classList.toggle("is-playing", active);
   const autoLabel = $(".motion-auto-label");
   if (autoLabel)
-    autoLabel.innerHTML = `<i aria-hidden="true"></i>${active ? "自动播放 · 航班模拟" : reduced ? "减少动态 · 逐段查看" : unavailable ? "等待可行方案" : "已暂停 · 航班模拟"}`;
+    autoLabel.innerHTML = `<i aria-hidden="true"></i>${active ? "Autoplay · scenario" : reduced ? "Reduced motion · inspect legs" : unavailable ? "Awaiting feasible plan" : "Paused · scenario"}`;
 }
 function stopPlayback() {
   motionGeneration++;
@@ -187,10 +278,10 @@ function stopPlayback() {
   );
   if ($("#motion-fuel")) $("#motion-fuel").textContent = "— t";
   if ($("#motion-cost")) $("#motion-cost").textContent = "—";
-  if ($("#motion-phase")) $("#motion-phase").textContent = "等待计算";
+  if ($("#motion-phase")) $("#motion-phase").textContent = "Awaiting calculation";
   if ($("#motion-summary"))
     $("#motion-summary").textContent =
-      "计算可行方案后，自动演示每站加油和飞行耗油。";
+      "Calculate a feasible plan to show refuelling and burn at each leg.";
   if ($("#motion-leg-buttons")) $("#motion-leg-buttons").innerHTML = "";
   if ($("#motion-progress")) $("#motion-progress").value = "0";
   setMotionControls();
@@ -215,7 +306,22 @@ function setViewport(view) {
   svg.querySelectorAll("[data-label-dx]").forEach(span => {
     span.setAttribute("dx", String(Number(span.dataset.labelDx) * mapUiScale));
   });
+  syncMapKeyboardFocus();
   if (motionFrame) renderPlanePosition(motionFrame);
+}
+function visibleMapAirports() {
+  const [x, y, width, height] = $("#flight-map").getAttribute("viewBox").split(/\s+/).map(Number);
+  return $$(".map-airport").filter(node => {
+    const px = Number(node.dataset.mapX), py = Number(node.dataset.mapY);
+    return px >= x && px <= x + width && py >= y && py <= y + height;
+  });
+}
+function syncMapKeyboardFocus() {
+  const visible = visibleMapAirports();
+  const chosen = visible.find(node => node.dataset.airport === mapFocusCode)
+    || visible.find(node => node.classList.contains("selected")) || visible[0];
+  if (chosen) mapFocusCode = chosen.dataset.airport;
+  for (const node of $$(".map-airport")) node.setAttribute("tabindex", node === chosen ? "0" : "-1");
 }
 function resizeMapSymbols() {
   const [x, y, width, height] = $("#flight-map").getAttribute("viewBox").split(/\s+/).map(Number);
@@ -331,15 +437,15 @@ function renderMotionFrame(frame, plan, lengths) {
     if ($("#motion-phase"))
       $("#motion-phase").textContent =
         frame.phase === "refuel" && leg.upliftT < 0.001
-          ? "无需加油"
+          ? "No uplift"
           : motionLabels[frame.phase];
     if ($("#motion-summary"))
       $("#motion-summary").textContent =
         frame.phase === "refuel"
-          ? `${leg.from} ${leg.upliftT < 0.001 ? "利用已携带燃油，本次无需补油。" : `计划加油 ${tonnes(leg.upliftT)} t，采购 ${money(leg.costUsd)}。`}`
+          ? `${leg.from} ${leg.upliftT < 0.001 ? "uses carried fuel; no uplift required." : `planned uplift ${tonnes(leg.upliftT)} t; fuel purchase ${money(leg.costUsd)}.`}`
           : frame.phase === "flight"
-            ? `${leg.from} 飞往 ${leg.to}，燃油随航段消耗；本段落地目标 ${tonnes(leg.landingFuelT)} t。`
-            : `已抵达 ${leg.to}，落地燃油 ${tonnes(leg.landingFuelT)} t。`;
+            ? `${leg.from} to ${leg.to}: fuel burns during this leg; arrival target ${tonnes(leg.landingFuelT)} t.`
+            : `Arrived at ${leg.to} with ${tonnes(leg.landingFuelT)} t of fuel.`;
   }
   const now = performance.now();
   if (now - motionHudTime > 55 || !frame.playing || frame.phaseProgress === 0) {
@@ -384,7 +490,7 @@ function setupMotion(progress = 0, autoplay = true) {
     $("#motion-leg-buttons").innerHTML = plan.legs
       .map(
         (leg, index) =>
-          `<button type="button" data-motion-leg="${index}" aria-current="${index === 0}"><span>${String(index + 1).padStart(2, "0")}</span><strong>${leg.from} → ${leg.to}</strong><small>${leg.upliftT < 0.001 ? "无需加油" : `+${tonnes(leg.upliftT)} t`}</small></button>`,
+          `<button type="button" data-motion-leg="${index}" aria-current="${index === 0}"><span>${String(index + 1).padStart(2, "0")}</span><strong>${leg.from} → ${leg.to}</strong><small>${leg.upliftT < 0.001 ? "No uplift" : `+${tonnes(leg.upliftT)} t`}</small></button>`,
       )
       .join("");
   const lengths = paths.map((path) => Math.max(0.001, path.getTotalLength()));
@@ -446,25 +552,28 @@ function toggleMotion() {
     if (canShowMotion()) motion.play();
   }
 }
-function setDirty(message = "参数已修改，重新计算以更新方案") {
+function setDirty(message = "Inputs changed. Recalculate to update the plan.") {
   stopPlayback();
   dirty = true;
   result = null;
   $("#plan-status").textContent = message;
   $("#savings").textContent = "—";
-  $("#savings-percent").textContent = "待计算";
+  $("#savings-percent").textContent = "Recalculate";
   $("#baseline-cost").textContent = "—";
   $("#optimized-cost").textContent = "—";
   $("#extra-burn").textContent = "—";
+  if ($("#extra-co2")) $("#extra-co2").textContent = "—";
+  if ($("#carbon-threshold")) $("#carbon-threshold").textContent = "—";
+  if ($("#carbon-note")) $("#carbon-note").textContent = "Recalculate a comparable feasible plan to evaluate the direct-emissions trade-off.";
   $("#download-plan").disabled = true;
   $("#play-route").disabled = true;
   $("#recommendation").innerHTML =
-    "<span>↗</span><p>参数已更新，点击「重新计算方案」查看新的加油建议。</p>";
+    "<svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg><p>Inputs changed. Select Recalculate to update the uplift recommendation.</p>";
   $$(".uplift-result,.landing-result").forEach((x) => (x.textContent = "—"));
   $("#strategy-cards").innerHTML = "";
   $("#constraint-note").textContent = "";
   $("#model-error").hidden = true;
-  $("#result-state").textContent = "等待计算 · 结果将在计算后更新";
+  $("#result-state").textContent = "Awaiting calculation · previous results cleared";
 }
 function collectInputs() {
   input.initialFuelT = Number($("#initial-fuel").value || NaN);
@@ -477,19 +586,19 @@ function calculate() {
   collectInputs();
   const errors = [];
   if (!$("#flight-date").value || !$("#flight-date").validity.valid)
-    errors.push("请选择有效的计划日期。");
+    errors.push("Select a valid planned date.");
   for (const [i, leg] of input.legs.entries()) {
     if (!airports[leg.from] || !airports[leg.to])
-      errors.push(`第 ${i + 1} 航段包含目录外机场。`);
+      errors.push(`Leg ${i + 1} includes an airport outside the directory.`);
     if (leg.from === leg.to)
-      errors.push(`第 ${i + 1} 航段的出发和到达机场不能相同。`);
+      errors.push(`Leg ${i + 1}: origin and destination must differ.`);
     if (mode === "quotes") {
       const quote = activeQuote(leg.from);
       if (!quote)
-        errors.push(`${leg.from} 在计划日期没有有效、含费用的到机报价。`);
+        errors.push(`${leg.from}: no valid all-in into-plane quotation for the planned date.`);
       else leg.priceUsdPerT = quote.priceUsdPerT;
     } else if (!Number.isFinite(leg.priceUsdPerT)) {
-      errors.push(`${leg.from} 尚未设定示例价格；请输入价格或导入有效报价。`);
+      errors.push(`${leg.from}: no scenario price entered. Enter a price or import a valid quote.`);
     }
   }
   if (errors.length) return showError(errors);
@@ -499,21 +608,29 @@ function calculate() {
   dirty = false;
   $("#model-error").hidden = true;
   $("#savings-label").textContent =
-    mode === "demo" ? "本次轮转预计节省 · 示例" : "本次轮转预计节省 · 用户报价";
+    mode === "demo" ? "Fuel-cost savings · scenario" : "Fuel-cost savings · user quotes";
   $("#savings").textContent = money(result.savingsUsd);
   $("#savings-percent").textContent = Number.isFinite(result.savingsPercent)
     ? `↓ ${result.savingsPercent.toFixed(1)}%`
     : result.baseline?.feasible
-      ? "零采购基线"
-      : "基线不可行";
+      ? "Zero-purchase baseline"
+      : "Baseline infeasible";
   $("#baseline-cost").textContent = result.baseline?.feasible
     ? money(result.baseline.totalCostUsd)
-    : "不可执行";
+    : "Infeasible";
   $("#optimized-cost").textContent = money(result.totalCostUsd);
   $("#extra-burn").textContent = Number.isFinite(result.extraBurnVsBaselineT)
     ? `+${tonnes(result.extraBurnVsBaselineT)} t`
-    : "无可比基线";
-  $("#result-state").textContent = "同一轮转 · 同一终点油量";
+    : "No comparable baseline";
+  const diagnostic = decisionDiagnostics(result);
+  if ($("#extra-co2")) $("#extra-co2").textContent = diagnostic.extraDirectCo2T === null ? "—" : tonnes(diagnostic.extraDirectCo2T);
+  if ($("#carbon-threshold")) $("#carbon-threshold").textContent = diagnostic.carbonBreakEvenUsdPerTCo2 === null ? "—" : `${money(diagnostic.carbonBreakEvenUsdPerTCo2)} /t CO₂`;
+  if ($("#carbon-note")) $("#carbon-note").textContent = diagnostic.carbonBreakEvenUsdPerTCo2 !== null
+    ? "Post-hoc comparison of these two plans: a uniform value on additional direct CO₂ would erase the fuel-cost saving at this threshold. This is not a carbon-optimized result or a market carbon price. Lifecycle and non-CO₂ effects are excluded."
+    : diagnostic.comparableBaseline
+      ? "No positive savings-versus-additional-emissions threshold for these plans. Direct combustion only; lifecycle and non-CO₂ effects are excluded."
+      : "A comparable feasible baseline is required for an additional-emissions or carbon break-even comparison.";
+  $("#result-state").textContent = "Same rotation · same terminal fuel";
   $("#cost-ratio").style.width =
     result.baseline?.feasible && result.baseline.totalCostUsd > 0
       ? `${Math.min(100, (result.totalCostUsd / result.baseline.totalCostUsd) * 100)}%`
@@ -522,12 +639,12 @@ function calculate() {
   $("#play-route").disabled =
     strategy === "baseline" && !result.baseline?.feasible;
   $("#plan-status").innerHTML =
-    '<span class="live-dot"></span> 已计算 · ' +
-    (mode === "demo" ? "使用示例价格与性能" : "使用用户报价与示例性能");
+    '<span class="live-dot"></span> Calculated · ' +
+    (mode === "demo" ? "Illustrative prices and performance" : "User quotes; illustrative performance");
   $("#result-disclosure").textContent =
     mode === "demo"
-      ? `${preset === "global" ? "跨洲手动示例；" : ""}价格与性能为演示假设，非实际航班或机场报价。`
-      : "报价由用户提供；性能仍为可编辑示例。";
+      ? `${preset === "global" ? "Intercontinental manual scenario. " : ""}Illustrative prices and performance, not an actual flight or observed airport quotation.`
+      : "User-supplied quotations; performance remains an editable scenario.";
   let candidate = result.legs.findIndex(
     (l, i) =>
       result.baseline?.feasible &&
@@ -537,13 +654,13 @@ function calculate() {
     const leg = result.legs[candidate],
       additional = leg.upliftT - result.baseline.legs[candidate].upliftT;
     $("#recommendation").innerHTML =
-      `<span>↗</span><p>在 <b>${leg.from}</b> 比按需方案多加 <b>${tonnes(additional)} t</b>，提前携油覆盖后续航段。${leg.bindingConstraints.includes("最大落地重量") ? "本段携油受落地重量限制。" : ""}</p>`;
+      `<svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg><p>At <b>${leg.from}</b>, uplift <b>${tonnes(additional)} t</b> more than the just-in-time baseline to carry fuel into later legs. ${leg.bindingConstraints.includes("最大落地重量") ? "Landing-weight capacity is binding on this leg." : ""}</p>`;
   } else
     $("#recommendation").innerHTML =
-      `<span>↗</span><p>${result.baseline?.feasible ? "当前价差不足以覆盖携油成本，逐站按需加油已是最优方案。" : "通过提前携油满足供油限制；逐站按需方案不可执行。"}</p>`;
+      `<svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg><p>${result.baseline?.feasible ? "Under these inputs, just-in-time uplift is already optimal; no additional tankering is recommended." : "Carrying fuel forward meets the supply constraint; the just-in-time baseline is infeasible."}</p>`;
   result.legs.forEach((leg, i) => {
     $(`[data-uplift="${i}"]`).innerHTML =
-      `${tonnes(leg.upliftT)}<small>${leg.upliftT < 0.001 ? "无需加油" : "本站加油"}</small>`;
+      `${tonnes(leg.upliftT)}<small>${leg.upliftT < 0.001 ? "No uplift" : "Uplift"}</small>`;
     $(`[data-landing="${i}"]`).textContent = tonnes(leg.landingFuelT);
   });
   renderStrategies();
@@ -551,20 +668,20 @@ function calculate() {
   renderAirports();
 }
 function showError(errors) {
-  setDirty("当前条件无法生成方案，请检查下方提示");
+  setDirty("No feasible plan. Check the input guidance below.");
   $("#model-error").hidden = false;
   $("#model-error").textContent = errors.length
-    ? errors.join(" ")
-    : "当前输入没有可行加油方案。";
-  $("#result-state").textContent = "当前无可行方案";
+    ? errors.map(englishDiagnostic).join(" ")
+    : "No feasible uplift plan for these inputs.";
+  $("#result-state").textContent = "No feasible plan";
   $("#recommendation").innerHTML =
-    "<span>!</span><p>请检查有效报价、航段连续性和重量约束后重新计算。</p>";
+    "<span>!</span><p>Check quotation validity, route continuity and fuel/weight constraints, then recalculate.</p>";
 }
 function renderStrategies() {
   const plan = strategy === "optimized" ? result : result?.baseline;
   if (!result || !plan?.feasible) {
     $("#strategy-cards").innerHTML =
-      '<p class="micro">此方案在当前条件下不可执行。请查看计算提示。</p>';
+      '<p class="micro">This plan is infeasible under the current inputs. Review the calculation guidance.</p>';
     return;
   }
   $("#strategy-cards").style.gridTemplateColumns =
@@ -572,16 +689,16 @@ function renderStrategies() {
   $("#strategy-cards").innerHTML = plan.legs
     .map(
       (leg, i) =>
-        `<article class="strategy-card"><header><span class="step">LEG ${String(i + 1).padStart(2, "0")} / ${input.legs.length}</span><span class="strategy-tag">${leg.upliftT < 0.001 ? "无需加油" : leg.carryFuelT > 0.01 ? "提前携油" : "按需加油"}</span></header><h3>${leg.from} <span>→</span> ${leg.to}<span>${escape(airports[leg.from].city)} → ${escape(airports[leg.to].city)}</span></h3><div class="fuel-bar"><i style="width:${Math.min(100, (leg.takeoffFuelT / input.aircraft.tankCapacityT) * 100)}%"></i></div><div class="fuel-bar-label"><span>起飞 ${tonnes(leg.takeoffFuelT)} t</span><span>落地 ${tonnes(leg.landingFuelT)} t</span></div><div class="strategy-figures"><div><span>本站加油</span><b>${tonnes(leg.upliftT)}</b><small>t</small></div><div><span>采购成本</span><b>${money(leg.costUsd)}</b></div></div><p>航段耗油 ${tonnes(leg.burnT)} t · 其中额外携油耗油 ${tonnes(leg.extraBurnT)} t</p></article>`,
+        `<article class="strategy-card"><header><span class="step">LEG ${String(i + 1).padStart(2, "0")} / ${input.legs.length}</span><span class="strategy-tag">${leg.upliftT < 0.001 ? "No uplift" : leg.carryFuelT > 0.01 ? "Tankering" : "Just in time"}</span></header><h3>${leg.from} <span>→</span> ${leg.to}<span>${escape(airports[leg.from].city)} → ${escape(airports[leg.to].city)}</span></h3><div class="fuel-bar"><i style="width:${Math.min(100, (leg.takeoffFuelT / input.aircraft.tankCapacityT) * 100)}%"></i></div><div class="fuel-bar-label"><span>Takeoff ${tonnes(leg.takeoffFuelT)} t</span><span>Arrival ${tonnes(leg.landingFuelT)} t</span></div><div class="strategy-figures"><div><span>Uplift</span><b>${tonnes(leg.upliftT)}</b><small>t</small></div><div><span>Fuel purchase</span><b>${money(leg.costUsd)}</b></div></div><p>Leg burn ${tonnes(leg.burnT)} t · including ${tonnes(leg.extraBurnT)} t of extra-weight burn</p></article>`,
     )
     .join("");
   const binding = plan.legs.flatMap((l) =>
     l.bindingConstraints
       .filter((c) => !["到达保留油", "本站无需加油"].includes(c))
-      .map((c) => `${l.from} → ${l.to}：${c}`),
+      .map((c) => `${l.from} → ${l.to}: ${englishDiagnostic(c)}`),
   );
   $("#constraint-note").textContent =
-    `终点燃油 ${tonnes(plan.finalFuelT)} t · 两方案终点库存一致。${binding.length ? "约束生效：" + binding.join("；") + "。" : ""}基础耗油由用户设定，修改航线后请同步更新性能参数。`;
+    `Terminal fuel ${tonnes(plan.finalFuelT)} t; both plans use the same terminal inventory. ${binding.length ? "Binding constraints: " + binding.join("; ") + ". " : ""}Base burn is user supplied; review performance after changing airports.`;
 }
 const labelOffsets = {
   PEK: [-37, -12],
@@ -609,11 +726,17 @@ function airportLabels(a, active) {
   if (!show) return "";
   const [dx, dy] = mapScope === "eastasia" ? (labelOffsets[a.code] || [10, -8]) : [10, -8];
   const price = priceFor(a.code);
-  return `<text x="${dx * mapUiScale}" y="${dy * mapUiScale}" data-label-x="${dx}" data-label-y="${dy}" class="airport-code">${a.code}<tspan class="airport-city" data-label-dx="4" dx="${4 * mapUiScale}">${a.city}</tspan></text>${active ? `<text x="${dx * mapUiScale}" y="${(dy + 19) * mapUiScale}" data-label-x="${dx}" data-label-y="${dy + 19}" class="airport-price">${Number.isFinite(price) ? "$" + Math.round(price).toLocaleString("en-US") : mode === "demo" ? "未设示例价" : "待报价"}<tspan class="airport-city"> /t${mode === "demo" ? " · 示例" : ""}</tspan></text>` : ""}`;
+  return `<text x="${dx * mapUiScale}" y="${dy * mapUiScale}" data-label-x="${dx}" data-label-y="${dy}" class="airport-code">${a.code}<tspan class="airport-city" data-label-dx="4" dx="${4 * mapUiScale}">${a.city}</tspan></text>${active ? `<text x="${dx * mapUiScale}" y="${(dy + 19) * mapUiScale}" data-label-x="${dx}" data-label-y="${dy + 19}" class="airport-price">${Number.isFinite(price) ? "$" + Math.round(price).toLocaleString("en-US") + `<tspan class="airport-city"> /t${mode === "demo" ? " · scenario" : ""}</tspan>` : mode === "demo" ? "Price not entered" : "Quote unavailable"}</text>` : ""}`;
 }
 function refreshMapLabels() {
   $$(".map-airport").forEach(node => {
-    node.querySelector(".airport-labels").innerHTML = airportLabels(airports[node.dataset.airport], node.classList.contains("selected"));
+    const airport = airports[node.dataset.airport];
+    const label = airportLabels(airport, node.classList.contains("selected"));
+    node.querySelector(".airport-labels").innerHTML = label;
+    if (label) {
+      node.setAttribute("aria-labelledby", `map-label-${airport.code}`);
+      node.setAttribute("aria-description", `${airport.name}; ${mode === "demo" ? "illustrative scenario" : "user quotation"}`);
+    } else node.removeAttribute("aria-labelledby");
   });
 }
 function routeCurve(from, to) {
@@ -637,30 +760,48 @@ function renderMap({ progress = 0, autoplay = true } = {}) {
         active = selected.has(a.code),
         price = priceFor(a.code);
       const label = airportLabels(a, active);
-      return `<g class="map-airport ${active ? "selected" : ""}" data-airport="${a.code}" transform="translate(${x},${y})" tabindex="0" role="button" aria-label="${a.name} ${a.code}，${mode === "demo" ? "示例价格" : "用户报价"}${Number.isFinite(price) ? Math.round(price) + "美元每吨" : "缺失"}"><circle class="ring" data-base-radius="${active ? 7 : 4}" r="${(active ? 7 : 4) * mapUiScale}"/><circle class="marker" data-base-radius="${active ? 3 : 1.7}" r="${(active ? 3 : 1.7) * mapUiScale}"/>${active ? `<circle class="airport-pulse" data-base-radius="7" r="${7 * mapUiScale}"/>` : ""}<g class="airport-labels">${label}</g></g>`;
+      return `<g class="map-airport ${active ? "selected" : ""}" data-airport="${a.code}" data-map-x="${x}" data-map-y="${y}" transform="translate(${x},${y})" tabindex="-1" role="button" ${label ? `aria-labelledby="map-label-${a.code}" aria-description="${a.name}; ${mode === "demo" ? "illustrative scenario" : "user quotation"}"` : ""} aria-label="${a.name} ${a.code}; ${mode === "demo" ? "illustrative price" : "user quote"}: ${Number.isFinite(price) ? Math.round(price) + " USD per tonne" : "missing"}"><circle class="ring" data-base-radius="${active ? 7 : 4}" r="${(active ? 7 : 4) * mapUiScale}"/><circle class="marker" data-base-radius="${active ? 3 : 1.7}" r="${(active ? 3 : 1.7) * mapUiScale}"/>${active ? `<circle class="airport-pulse" data-base-radius="7" r="${7 * mapUiScale}"/>` : ""}<g class="airport-labels" id="map-label-${a.code}">${label}</g></g>`;
     })
     .join("");
   $("#flight-map").innerHTML =
     `<defs><radialGradient id="plane-aura"><stop stop-color="#1769aa" stop-opacity=".18"/><stop offset="1" stop-color="#1769aa" stop-opacity="0"/></radialGradient></defs><g class="map-terrain">${mapMarkup()}</g><g class="rotation-routes">${routes}</g><g>${nodes}</g>`;
   $("#flight-map").dataset.scope = mapScope;
-  $("#flight-map").setAttribute("aria-label", "全球机场轮转示意地图，坐标为参考数据，航迹为大圆示意");
+  $("#flight-map").setAttribute("aria-label", "Airport scenario map. Arrow keys inspect visible airports; Home and End jump to the first or last. Enter or Space shows details; Escape dismisses them. Coordinates are sourced; routes are great-circle illustrations.");
   $("#map-mode").textContent =
-    mode === "demo" ? "DEMO / 示例价格" : "QUOTES / 用户报价";
+    mode === "demo" ? "SCENARIO / illustrative prices" : "QUOTES / user supplied";
   const showAirport = (code) => {
     const a = airports[code],
       quote = activeQuote(code),
       price = priceFor(code);
     $("#airport-tooltip").innerHTML =
-      `<b>${a.code} · ${a.name}</b><p><strong>${Number.isFinite(price) ? money(price) + " /t" : mode === "demo" ? "尚未设定示例价格" : "暂无可用报价"}</strong> ${mode === "demo" ? (Number.isFinite(price) ? "示例假设" : "未设示例价") : quote ? "用户提供 · into-plane" : "需导入有效报价"}</p><p>${mode === "demo" ? "演示用价格，不代表实际供货价。" : quote ? escape(quote.supplier) + " · " + escape(quote.validFrom) + " 至 " + escape(quote.validUntil) : "缺失数据不会自动补为示例价格。"}</p>`;
+      `<b>${a.code} · ${a.name}</b><p><strong>${Number.isFinite(price) ? money(price) + " /t" : mode === "demo" ? "No scenario price entered" : "No valid quotation"}</strong> ${mode === "demo" ? (Number.isFinite(price) ? "Illustrative" : "No scenario price") : quote ? "User supplied · into-plane" : "Import a valid quote"}</p><p>${mode === "demo" ? "Illustrative price; not an observed supplier offer." : quote ? escape(quote.supplier) + " · " + escape(quote.validFrom) + " to " + escape(quote.validUntil) : "Missing quotations are never filled with scenario prices."}</p>`;
     $("#airport-tooltip").hidden = false;
   };
   $$(".map-airport").forEach((node) => {
     node.addEventListener("pointerenter", () =>
       showAirport(node.dataset.airport),
     );
-    node.addEventListener("focus", () => showAirport(node.dataset.airport));
+    node.addEventListener("focus", () => {
+      mapFocusCode = node.dataset.airport;
+      syncMapKeyboardFocus();
+      showAirport(node.dataset.airport);
+    });
     node.addEventListener("click", () => showAirport(node.dataset.airport));
     node.addEventListener("keydown", (e) => {
+      const navigation = ["ArrowRight", "ArrowLeft", "ArrowDown", "ArrowUp", "Home", "End"];
+      if (navigation.includes(e.key)) {
+        e.preventDefault();
+        const visible = visibleMapAirports();
+        if (!visible.length) return;
+        let index = Math.max(0, visible.indexOf(node));
+        if (e.key === "Home") index = 0;
+        else if (e.key === "End") index = visible.length - 1;
+        else index = (index + (e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 1) + visible.length) % visible.length;
+        mapFocusCode = visible[index].dataset.airport;
+        syncMapKeyboardFocus();
+        visible[index].focus({ preventScroll: true });
+        return;
+      }
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         showAirport(node.dataset.airport);
@@ -668,6 +809,7 @@ function renderMap({ progress = 0, autoplay = true } = {}) {
       if (e.key === "Escape") $("#airport-tooltip").hidden = true;
     });
   });
+  syncMapKeyboardFocus();
   $("#map-stage").addEventListener(
     "pointerleave",
     () => {
@@ -695,16 +837,16 @@ function renderAirports() {
       (continent === "all" || a.continent === continent) &&
       (!query || `${a.code} ${a.name} ${a.city} ${a.region}`.toLowerCase().includes(query)),
   );
-  $("#airport-count").textContent = `${filtered.length} 个机场`;
+  $("#airport-count").textContent = `${filtered.length} airports`;
   $("#airport-rows").innerHTML =
     filtered
       .map((a) => {
         const price = priceFor(a.code),
           quote = activeQuote(a.code);
-        return `<tr><td><span class="code">${a.code}</span>${a.name}<small> / ${a.city}</small></td><td><span class="price ${Number.isFinite(price) ? "" : "missing"}">${Number.isFinite(price) ? money(price) : "—"}</span></td><td><span class="quote-status ${mode === "demo" ? "demo" : quote ? "supplied" : ""}">${mode === "demo" ? (Number.isFinite(price) ? "示例假设" : "未设示例价") : quote ? "用户报价" : "待报价"}</span></td><td>${mode === "demo" ? '<span class="missing">演示情景 · 非供应商报价</span>' : quote ? escape(quote.supplier) + " / into-plane" : '<span class="missing">需供应商报价</span>'}</td><td>${mode === "demo" ? '<span class="missing">无真实报价有效期</span>' : quote ? `${escape(quote.validFrom)} — ${escape(quote.validUntil)}<br>${quote.sourceUrl ? `<a href="${escape(quote.sourceUrl)}" target="_blank" rel="noopener noreferrer">查看来源 ↗</a>` : escape(quote.source)}` : '<span class="missing">尚未接入</span>'}</td></tr>`;
+        return `<tr><td><span class="code">${a.code}</span>${a.name}<small> / ${a.city}</small></td><td><span class="price ${Number.isFinite(price) ? "" : "missing"}">${Number.isFinite(price) ? money(price) : "—"}</span></td><td><span class="quote-status ${mode === "demo" ? "demo" : quote ? "supplied" : ""}">${mode === "demo" ? (Number.isFinite(price) ? "Illustrative" : "No scenario price") : quote ? "User quote" : "No quote"}</span></td><td>${mode === "demo" ? '<span class="missing">Scenario · not a supplier quote</span>' : quote ? escape(quote.supplier) + " / into-plane" : '<span class="missing">Supplier quote required</span>'}</td><td>${mode === "demo" ? '<span class="missing">No quotation validity</span>' : quote ? `${escape(quote.validFrom)} — ${escape(quote.validUntil)}<br>${quote.sourceUrl ? `<a href="${escape(quote.sourceUrl)}" target="_blank" rel="noopener noreferrer">View source</a>` : escape(quote.source)}` : '<span class="missing">Not connected</span>'}</td></tr>`;
       })
       .join("") ||
-    '<tr><td colspan="5" class="missing">没有匹配的机场。</td></tr>';
+    '<tr><td colspan="5" class="missing">No matching airports.</td></tr>';
 }
 function changeMode(next) {
   stopPlayback();
@@ -779,7 +921,7 @@ $("#rotation-form").addEventListener("change", (e) => {
     }
     renderForm();
     renderMap();
-    setDirty("航线已修改；请同步核对耗油参数后重新计算");
+    setDirty("Route changed. Review burn and payload inputs before recalculating.");
   }
   if (field.id === "flight-date") {
     for (const leg of input.legs) leg.priceUsdPerT = priceFor(leg.from);
@@ -795,13 +937,13 @@ $("#rotation-form").addEventListener("change", (e) => {
 $("#aircraft").addEventListener("change", () => {
   const preset = $("#aircraft").value === "a330";
   input.aircraft = {
-    name: preset ? "Airbus A330-300 · 示例" : "Boeing 787-9 · 示例",
+    name: preset ? "Airbus A330-300 · illustrative" : "Boeing 787-9 · illustrative",
     tankCapacityT: preset ? 97 : 110,
     maxTakeoffWeightT: preset ? 235 : 240,
     maxLandingWeightT: preset ? 187 : 190,
   };
   syncAircraftInputs();
-  setDirty("机型示例已切换，请核对性能参数后重新计算");
+  setDirty("Aircraft scenario changed. Review performance inputs before recalculating.");
 });
 $("#rotation-form").addEventListener("click", (e) => {
   const button = e.target.closest("[data-remove]");
@@ -814,7 +956,7 @@ $("#rotation-form").addEventListener("click", (e) => {
   for (const l of input.legs) l.priceUsdPerT = priceFor(l.from);
   renderForm();
   renderMap();
-  setDirty("航段已删除，请核对耗油参数后重新计算");
+  setDirty("Leg removed. Review burn and payload inputs before recalculating.");
 });
 $("#add-leg").addEventListener("click", () => {
   if (input.legs.length >= 5) return;
@@ -826,9 +968,9 @@ $("#add-leg").addEventListener("click", () => {
     to,
     priceUsdPerT: priceFor(from),
   });
-  renderForm();
+  renderForm({ focusLeg: input.legs.length - 1, focusKey: "from" });
   renderMap();
-  setDirty("已添加示例航段，请设定本段耗油与约束");
+  setDirty("Illustrative leg added. Set its burn, payload and constraints.");
 });
 function selectPreset(next) {
   preset = next === "eastasia" ? "eastasia" : "global";
@@ -915,10 +1057,12 @@ $("#use-quotes").addEventListener("click", () => {
   changeMode("quotes");
 });
 $("#clear-quotes").addEventListener("click", () => {
+  quoteImportGeneration++;
+  $("#import-feedback").setAttribute("aria-busy", "false");
   quotes = [];
   $("#quote-count").textContent = "0";
   $("#quote-file").value = "";
-  $("#import-feedback").textContent = "已清除本次页面中的报价。";
+  $("#import-feedback").textContent = "Quotes cleared for this session. Pending imports were cancelled.";
   if (mode === "quotes") changeMode("quotes");
 });
 $("#download-template").addEventListener("click", () =>
@@ -929,23 +1073,32 @@ $("#download-template").addEventListener("click", () =>
   ),
 );
 $("#quote-file").addEventListener("change", async (e) => {
+  const generation = ++quoteImportGeneration;
+  $("#import-feedback").setAttribute("aria-busy", "false");
   const file = e.target.files[0];
   if (!file) return;
   if (file.size > 256 * 1024) {
-    $("#import-feedback").textContent = "文件超过256 KiB，请缩小后重试。";
+    $("#import-feedback").textContent = "File exceeds 256 KiB. Choose a smaller CSV; previous quotes are retained.";
     return;
   }
+  $("#import-feedback").textContent = "Reading selected quotation file…";
+  $("#import-feedback").setAttribute("aria-busy", "true");
   try {
-    const parsed = parseQuoteCsv(await file.text(), {
+    const text = await file.text();
+    if (generation !== quoteImportGeneration) return;
+    const parsed = parseQuoteCsv(text, {
       today: $("#flight-date").value,
     });
     quotes = parsed.quotes;
     $("#quote-count").textContent = String(quotes.length);
     $("#import-feedback").textContent =
-      `已接受 ${quotes.length} 条用户报价。${parsed.errors.length ? "以下记录未导入：" + parsed.errors.join(" ") : "可切换「我的报价」计算。"}`;
+      `Accepted ${quotes.length} user quotation(s). ${parsed.errors.length ? "Rejected records: " + parsed.errors.map(englishDiagnostic).join(" ") : "Select My quotes to use them in the model."}`;
     if (mode === "quotes") changeMode("quotes");
   } catch {
-    $("#import-feedback").textContent = "无法读取此文件，请使用UTF-8 CSV重试。";
+    if (generation !== quoteImportGeneration) return;
+    $("#import-feedback").textContent = "Unable to read this file. Retry with UTF-8 CSV; previous quotes are retained.";
+  } finally {
+    if (generation === quoteImportGeneration) $("#import-feedback").setAttribute("aria-busy", "false");
   }
 });
 $("#download-plan").addEventListener("click", () => {
@@ -966,7 +1119,8 @@ $("#download-plan").addEventListener("click", () => {
         input,
         quotes: provenance,
         result,
-        limitations: "固定航线轮转；示例性能需由航司认可数据替换；不执行订单。",
+        decisionDiagnostics: decisionDiagnostics(result),
+        limitations: "Fixed-route uplift scenario. Replace illustrative performance with airline-approved data; no order execution.",
       },
       null,
       2,
@@ -975,12 +1129,12 @@ $("#download-plan").addEventListener("click", () => {
   );
 });
 const kindLabels = {
-  "public-posting": "公开挂牌 / REFERENCE",
-  "customer-quote": "客户报价 / CONTRACT",
-  "licensed-api": "商业接口 / API",
-  "supplier-directory": "供应商寻源 / DIRECTORY",
-  "supplier-rfq": "定向询价 / RFQ",
-  "market-benchmark": "市场基准 / CONTEXT",
+  "public-posting": "PUBLIC POSTING / REFERENCE",
+  "customer-quote": "CUSTOMER QUOTE / CONTRACT",
+  "licensed-api": "LICENSED API",
+  "supplier-directory": "SUPPLIER DIRECTORY",
+  "supplier-rfq": "SUPPLIER RFQ",
+  "market-benchmark": "MARKET BENCHMARK / CONTEXT",
 };
 async function renderSources() {
   try {
@@ -1004,12 +1158,12 @@ async function renderSources() {
     $("#source-cards").innerHTML = selected
       .map(
         (s) =>
-          `<a class="source-card" href="${escape(s.url)}" target="_blank" rel="noopener noreferrer"><span class="source-kind">${escape(kindLabels[s.type] ?? s.type)}</span><h3>${escape(s.name)}</h3><p>${escape(s.coverage)}<br>${escape(s.limitation)}</p><div class="source-access"><span>${escape(s.access)}</span><span>↗</span></div></a>`,
+          `<a class="source-card" href="${escape(s.url)}" target="_blank" rel="noopener noreferrer"><span class="source-kind">${escape(kindLabels[s.type] ?? s.type)}</span><h3>${escape(s.name)}</h3><p>${escape(s.coverage)}<br>${escape(s.limitation)}</p><div class="source-access"><span>${escape(s.access)}</span><svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg></div></a>`,
       )
       .join("");
   } catch {
     $("#source-cards").innerHTML =
-      '<p class="micro">来源目录暂时无法加载。可先查看台湾中油官方价格表和项目研究文档。</p>';
+      '<p class="micro">Source directory unavailable. Refer to CPC official postings and the project methodology.</p>';
   }
 }
 $("#motion-toggle")?.addEventListener("click", toggleMotion);

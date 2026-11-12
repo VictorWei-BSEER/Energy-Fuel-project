@@ -346,6 +346,20 @@ test('a transient main-source failure cannot roll current observations back or e
     ['payload from a different source', snapshots => { snapshots.get('data/market.json').source.id = 'eia-brent-daily'; }],
     ['payload with an incompatible unit', snapshots => { snapshots.get('data/market.json').source.unit = 'USD/tonne'; }],
     ['null observation row', snapshots => { snapshots.get('data/market.json').observations.push(null); }],
+    ['headline value absent from the dated history', snapshots => { snapshots.get('data/market.json').latest.value = 8.765; }],
+    ['duplicate daily observation', snapshots => { const data=snapshots.get('data/market.json'); data.observations.push(clone(data.observations[0])); }],
+    ['catalog and snapshot collection timestamps disagree', snapshots => { snapshots.get('data/market.json').fetchedAt = advance(currentJet.fetchedAt, 1000); }],
+    ['catalog and snapshot observation dates disagree', snapshots => { snapshots.get('data/catalog.json').feeds.find(row=>row.id===currentJet.source.id).observationDate = '2026-01-01'; }],
+    ['future collection timestamp', snapshots => { const data=snapshots.get('data/market.json'); data.fetchedAt = advance(new Date(Date.now()).toISOString(), 86400000); snapshots.get('data/catalog.json').feeds.find(row=>row.id===data.source.id).fetchedAt=data.fetchedAt; }],
+    ['invalid source collection status', snapshots => { snapshots.get('data/market.json').collection.status = 'failed'; }],
+    ['nonpositive price', snapshots => { const data=snapshots.get('data/market.json'); data.latest.value=0; data.observations.find(row=>row.date===data.latest.date).value=0; }],
+    ['FX latest differs from its historical record', snapshots => { const data=snapshots.get('data/fx.json'); data.latest=clone(data.latest); data.latest.rates.USD+=0.5; }],
+    ['unrecognized monthly flow', snapshots => { snapshots.get('data/jodi.json').observations[0].flow = 'JET_AVAILABLE_AT_AIRPORT'; }],
+    ['unrecognized monthly assessment', snapshots => { snapshots.get('data/jodi.json').observations[0].assessmentCode = '5'; }],
+    ['negative monthly balance', snapshots => { snapshots.get('data/jodi.json').observations[0].value = -1; }],
+    ['duplicate monthly record', snapshots => { const data=snapshots.get('data/jodi.json'); data.observations.push(clone(data.observations[0])); }],
+    ['duplicate airport identity', snapshots => { const data=snapshots.get('data/airports.json'); data.airports.push(clone(data.airports[0])); }],
+
     ['malformed FX rates', snapshots => { snapshots.get('data/fx.json').latest.rates.USD = '1.2'; }],
     ['unrecognized monthly country code', snapshots => { snapshots.get('data/jodi.json').observations[0].country = 'ZZ'; }],
   ];
@@ -387,4 +401,23 @@ test('a transient main-source failure cannot roll current observations back or e
     assert.equal(revised.fetchedAt, jet.fetchedAt);
     assert.equal(revised.latest.value, 7.234);
   });
+});
+
+
+test('market summaries expose staleness and collection failure beside the values', async t => {
+  const { $, remote, refresh } = await mount(t, { mode: 'main' });
+  const before = $('#jet-value').textContent;
+  const originalNow = Date.now;
+  Date.now = () => originalNow() + 30 * 86400000;
+  await refresh();
+  assert.match($('#jet-date').textContent, /Observed .*STALE · \d+ DAYS/);
+  assert.equal($('#jet-date').classList.contains('source-warning'), true);
+  assert.match($('#brent-date').textContent, /STALE/);
+  assert.match($('#fx-date').textContent, /STALE/);
+  const feed = remote.fixture.get('data/catalog.json').feeds.find(row=>row.id==='eia-usgc-jet-fuel-daily');
+  feed.lastAttemptStatus = 'failed'; feed.error = 'Collector temporarily unavailable';
+  await refresh();
+  assert.match($('#jet-date').textContent, /CACHED · COLLECTION FAILED/);
+  assert.equal($('#jet-value').textContent, before);
+  assert.match($('#observed-source-cards').textContent, /Collector temporarily unavailable/);
 });

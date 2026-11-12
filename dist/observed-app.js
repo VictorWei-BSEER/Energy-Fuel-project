@@ -34,12 +34,18 @@ function latestDaily(key){const d=dataset(key);return d?.latest&&validDate(d.lat
 function airportRows(){const d=dataset('airports');return Array.isArray(d?.airports)?d.airports.filter(a=>typeof a.iata==='string'&&finite(a.lat)&&finite(a.lon)&&a.lat>=-90&&a.lat<=90&&a.lon>=-180&&a.lon<=180):[];}
 function jodiRows(){const data=dataset('jodi');return Array.isArray(data?.observations)?data.observations.filter(r=>validDate(r.date)&&/^\d{4}-\d{2}$/.test(r.date)&&finite(r.value)&&r.product==='JETKERO'&&r.unit==='KTONS'):[];}
 function selectedJodi(){const period=$('#jodi-period').value,country=$('#jodi-country').value;return jodiRows().filter(r=>r.date===period&&(country==='all'||r.country===country)).sort((a,b)=>a.country.localeCompare(b.country)||a.flow.localeCompare(b.flow));}
+function summaryHealth(selector,key,description){
+ const target=$(selector),r=record(key),health=r?sourceHealth(r):null;
+ target.textContent=health?`${description} · ${health.label}`:description;
+ target.classList.toggle('source-warning',Boolean(health?.warning));
+ target.dataset.sourceHealth=health?.label||'NOT CONNECTED';
+}
 function renderSummary(){
- for(const key of ['jet','brent']){const latest=latestDaily(key);$(`#${key}-value`).textContent=latest?`$${latest.value.toFixed(key==='jet'?3:2)}`:'Unavailable';$(`#${key}-date`).textContent=latest?`Observed ${latest.date} · reporting lag`:'No valid published observation';}
+ for(const key of ['jet','brent']){const latest=latestDaily(key);$(`#${key}-value`).textContent=latest?`$${latest.value.toFixed(key==='jet'?3:2)}`:'Unavailable';summaryHealth(`#${key}-date`,key,latest?`Observed ${latest.date} · reporting lag`:'No valid published observation');}
  const fx=dataset('fx');const latestFx=fx?.latest;const validFx=latestFx&&validDate(latestFx.date,true)&&finite(latestFx.rates?.USD);
- $('#fx-value').textContent=validFx?latestFx.rates.USD.toFixed(4):'Unavailable';$('#fx-date').textContent=validFx?`Observed ${latestFx.date} · reference rate`:'No valid published observation';
+ $('#fx-value').textContent=validFx?latestFx.rates.USD.toFixed(4):'Unavailable';summaryHealth('#fx-date','fx',validFx?`Observed ${latestFx.date} · reference rate`:'No valid published observation');
  const jodi=jodiRows();const latestMonth=jodi.map(r=>r.date).sort().at(-1);const coverage=latestMonth?new Set(jodi.filter(r=>r.date===latestMonth).map(r=>r.country)):new Set();
- $('#jodi-value').textContent=latestMonth||'Unavailable';$('#jodi-date').textContent=latestMonth?`${coverage.size} reporting economies · monthly`:'No valid monthly records';
+ $('#jodi-value').textContent=latestMonth||'Unavailable';summaryHealth('#jodi-date','jodi',latestMonth?`${coverage.size} reporting economies · monthly`:'No valid monthly records');
  $('#observed-ticker-values').innerHTML=`<span class="ticker-item"><strong>EIA</strong><b>DAILY · REPORTING LAG</b></span><span class="ticker-item"><strong>ECB</strong><b>BUSINESS DAYS</b></span><span class="ticker-item"><strong>JODI</strong><b>MONTHLY</b></span>`;
 }
 function renderMap(){
@@ -74,10 +80,10 @@ function renderJodi(){
 }
 function sourceHealth({feed,data}){
  const date=data?.latest?.date||feed.observationDate;const invalid=!!date&&!validDate(date);const age=ageDays(date);const threshold=data?.staleAfterDays??(/monthly/i.test(feed.frequency||'')?90:/weekly/i.test(feed.frequency||'')?14:7);const stale=age!==null&&age>threshold;const failed=feed.lastAttemptStatus==='failed';
- if(invalid)return {label:'INVALID OBSERVATION DATE',warning:true,date};if(!data||feed.status!=='observed')return {label:feed.status==='restricted'?'ACCESS RESTRICTED':'NOT CONNECTED',warning:true,date};if(failed)return {label:'CACHED · COLLECTION FAILED',warning:true,date};if(stale)return {label:`STALE · ${age} DAYS`,warning:true,date};return {label:feed.role==='reference'?'SOURCED REFERENCE':'PUBLISHED · DELAYED',warning:false,date};
+ if(invalid)return {label:'INVALID OBSERVATION DATE',warning:true,date};if(!data||feed.status!=='observed')return {label:feed.status==='restricted'?'ACCESS RESTRICTED':'NOT CONNECTED',warning:true,date};if(failed)return {label:`CACHED · COLLECTION FAILED${stale?` · STALE ${age} DAYS`:''}`,warning:true,date};if(stale)return {label:`STALE · ${age} DAYS`,warning:true,date};return {label:feed.role==='reference'?'SOURCED REFERENCE':'PUBLISHED · DELAYED',warning:false,date};
 }
 function renderSources(){
- $('#observed-source-cards').innerHTML=state.records.map(r=>{const{feed,data,origin}=r;const health=sourceHealth(r);const url=safeUrl(feed.sourceUrl||data?.source?.url);const monthly=/^\d{4}-\d{2}$/.test(health.date||'');const limitations=feed.id===ids.jet?'Published U.S. Gulf Coast wholesale benchmark. No airport or Asian delivered-price inference is made here.':Array.isArray(feed.limitations)?feed.limitations.join(' '):feed.limitations||'';const type=feed.role==='reference'?'REFERENCE GEOGRAPHY':feed.id===ids.jet||feed.id===ids.brent?'REGIONAL BENCHMARK':'PUBLISHED CONTEXT';return `<article class="feed-card"><div class="feed-card-header"><span class="feed-role">${type}</span><span class="feed-health${health.warning?' warning':''}">${esc(health.label)}</span></div><h3>${esc(feed.title)}</h3><div class="feed-meta">Observation: <b>${esc(health.date||'No record-level date')}</b>${monthly?' · monthly period; age from month-end':''}<br>Collected: ${esc(data?.fetchedAt||feed.fetchedAt||'Not collected')}<br>Cadence: ${esc(feed.frequency||'Not specified')}<br>Original unit: ${esc(feed.unit||data?.source?.unit||'Not specified')}<br>Loaded from: ${esc(origin)}</div><p class="feed-note">${esc(limitations)}</p>${feed.lastAttemptStatus==='failed'?`<p class="source-use">Latest collection failed: ${esc(feed.error||'The previously collected observation is retained.')}</p>`:''}${url?`<a class="feed-source" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Original source ↗</a>`:''}</article>`;}).join('');
+ $('#observed-source-cards').innerHTML=state.records.map(r=>{const{feed,data,origin}=r;const health=sourceHealth(r);const url=safeUrl(feed.sourceUrl||data?.source?.url);const monthly=/^\d{4}-\d{2}$/.test(health.date||'');const limitations=feed.id===ids.jet?'Published U.S. Gulf Coast wholesale benchmark. No airport or Asian delivered-price inference is made here.':Array.isArray(feed.limitations)?feed.limitations.join(' '):feed.limitations||'';const type=feed.role==='reference'?'REFERENCE GEOGRAPHY':feed.id===ids.jet||feed.id===ids.brent?'REGIONAL BENCHMARK':'PUBLISHED CONTEXT';return `<article class="feed-card"><div class="feed-card-header"><span class="feed-role">${type}</span><span class="feed-health${health.warning?' warning':''}">${esc(health.label)}</span></div><h3>${esc(feed.title)}</h3><div class="feed-meta">Observation: <b>${esc(health.date||'No record-level date')}</b>${monthly?' · monthly period; age from month-end':''}<br>Collected: ${esc(data?.fetchedAt||feed.fetchedAt||'Not collected')}<br>Cadence: ${esc(feed.frequency||'Not specified')}<br>Original unit: ${esc(feed.unit||data?.source?.unit||'Not specified')}<br>Loaded from: ${esc(origin)}</div><p class="feed-note">${esc(limitations)}</p>${feed.lastAttemptStatus==='failed'?`<p class="source-use">Latest collection failed: ${esc(feed.error||'The previously collected observation is retained.')}</p>`:''}${url?`<a class="feed-source" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Original source</a>`:''}</article>`;}).join('');
 }
 const EXPECTED_UNITS={
  [ids.jet]:'USD/US gallon',[ids.brent]:'USD/barrel',[ids.fx]:'currency units per EUR',
@@ -101,20 +107,32 @@ function validateRecord({feed,data}){
  const fail=detail=>{throw new Error(`${feed.id}: invalid snapshot (${detail}).`);};
  if(!object(data)||!object(data.source)||data.source.id!==feed.id)fail('source identity');
  if(data.source.unit!==feed.unit||EXPECTED_UNITS[feed.id]&&data.source.unit!==EXPECTED_UNITS[feed.id])fail('source unit');
- if(timestamp(data.fetchedAt)===null)fail('collection timestamp');
+ const collected=timestamp(data.fetchedAt);
+ if(collected===null||collected>Date.now())fail('collection timestamp');
+ if(collected!==timestamp(feed.fetchedAt))fail('catalog/snapshot collection mismatch');
+ if(data.observedAt!==feed.observationDate)fail('catalog/snapshot observation mismatch');
+ if(data.collection?.status!=='ok')fail('collection status');
  const rows=data.observations;
+ const unique=(items,key)=>new Set(items.map(key)).size===items.length;
+ const latestDate=items=>items.map(row=>row.date).sort().at(-1);
+ const latestMatches=items=>data.latest.date===latestDate(items)&&data.observedAt===data.latest.date;
  if(feed.id===ids.jet||feed.id===ids.brent){
-  const valid=row=>object(row)&&validDate(row.date,true)&&finite(row.value);
+  const valid=row=>object(row)&&validDate(row.date,true)&&finite(row.value)&&row.value>0&&row.value<=1000;
   if(!Array.isArray(rows)||!rows.length||!rows.every(valid)||!valid(data.latest))fail('daily observation records');
+  if(!unique(rows,row=>row.date)||!latestMatches(rows)||!rows.some(row=>row.date===data.latest.date&&row.value===data.latest.value))fail('daily latest/history consistency');
  }else if(feed.id===ids.fx){
-  const valid=row=>object(row)&&validDate(row.date,true)&&row.base==='EUR'&&object(row.rates)&&finite(row.rates.USD)&&Object.entries(row.rates).every(([currency,value])=>/^[A-Z]{3}$/.test(currency)&&finite(value)&&value>0);
+  const valid=row=>object(row)&&validDate(row.date,true)&&row.base==='EUR'&&object(row.rates)&&row.rates.EUR===1&&['USD','JPY','CNY','HKD','KRW','SGD'].every(code=>finite(row.rates[code]))&&Object.entries(row.rates).every(([currency,value])=>/^[A-Z]{3}$/.test(currency)&&finite(value)&&value>0);
   if(!valid(data.latest)||!Array.isArray(rows)||!rows.length||!rows.every(valid))fail('currency reference records');
+  const latest=rows.find(row=>row.date===data.latest.date);
+  if(!unique(rows,row=>row.date)||!latestMatches(rows)||!latest||Object.keys(latest.rates).length!==Object.keys(data.latest.rates).length||Object.entries(data.latest.rates).some(([code,value])=>latest.rates[code]!==value))fail('currency latest/history consistency');
  }else if(feed.id===ids.jodi){
-  const valid=row=>object(row)&&typeof row.date==='string'&&/^\d{4}-\d{2}$/.test(row.date)&&validDate(row.date)&&Object.hasOwn(countries,row.country)&&row.product==='JETKERO'&&row.unit==='KTONS'&&typeof row.flow==='string'&&row.flow.length>0&&finite(row.value)&&['string','number'].includes(typeof row.assessmentCode);
+  const valid=row=>object(row)&&typeof row.date==='string'&&/^\d{4}-\d{2}$/.test(row.date)&&validDate(row.date)&&Object.hasOwn(countries,row.country)&&row.product==='JETKERO'&&row.unit==='KTONS'&&Object.hasOwn(flowNames,row.flow)&&finite(row.value)&&row.value>=0&&['1','2','3','4'].includes(String(row.assessmentCode));
   if(!Array.isArray(rows)||!rows.length||!rows.every(valid)||!object(data.latest)||!/^\d{4}-\d{2}$/.test(data.latest.date||'')||!validDate(data.latest.date))fail('monthly balance records');
+  if(!unique(rows,row=>`${row.date}:${row.country}:${row.flow}`)||!latestMatches(rows))fail('monthly latest/history consistency');
  }else if(feed.id===ids.airports){
   const valid=row=>object(row)&&typeof row.iata==='string'&&/^[A-Z]{3}$/.test(row.iata)&&typeof row.icao==='string'&&typeof row.name==='string'&&typeof row.country==='string'&&finite(row.lat)&&finite(row.lon)&&row.lat>=-90&&row.lat<=90&&row.lon>=-180&&row.lon<=180&&(row.city===undefined||typeof row.city==='string');
   if(!Array.isArray(data.airports)||!data.airports.length||!data.airports.every(valid))fail('airport coordinate records');
+  if(!unique(data.airports,row=>row.iata)||data.observedAt!==null)fail('airport identity/observation metadata');
  }
 }
 function rejectRegression(records){

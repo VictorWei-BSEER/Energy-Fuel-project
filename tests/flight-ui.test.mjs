@@ -5,7 +5,7 @@ import { parseHTML } from "linkedom";
 import { polyline } from "./svg-polyline-helper.mjs";
 
 let mountId = 0;
-async function mount(t, { preset = "eastasia" } = {}) {
+async function mount(t, { preset = "eastasia", reducedMotion = false } = {}) {
   const [html, sourceText] = await Promise.all([
     readFile(new URL("../dist/index.html", import.meta.url), "utf8"),
     readFile(
@@ -15,7 +15,7 @@ async function mount(t, { preset = "eastasia" } = {}) {
   ]);
   const { document, window } = parseHTML(html);
   window.location = { hash: "", replace() {} };
-  window.matchMedia = () => ({ matches: false });
+  window.matchMedia = () => ({ matches: reducedMotion });
   // Linkedom has no SVG geometry. Measure the emitted M/L polylines;
   // browser QA additionally verifies native SVG sampling and rendering.
   const geometryPrototypes = [
@@ -130,12 +130,12 @@ test("default rotation renders costs, uplift, common terminal fuel, and actual r
   assert.equal($("#savings").textContent, "$3,596");
   assert.equal($("#savings-percent").textContent, "↓ 11.5%");
   assert.match($('[data-uplift="0"]').textContent, /27\.10/);
-  assert.match($('[data-uplift="2"]').textContent, /0\.00.*无需加油/);
+  assert.match($('[data-uplift="2"]').textContent, /0\.00.*No uplift/);
   assert.match(
     $("#constraint-note").textContent,
-    /终点燃油 8\.00 t.*两方案终点库存一致/,
+    /Terminal fuel 8\.00 t.*same terminal inventory/,
   );
-  assert.match($("#result-disclosure").textContent, /演示假设/);
+  assert.match($("#result-disclosure").textContent, /Illustrative prices and performance/);
   assert.equal($("#download-plan").disabled, false);
   assert.equal(document.querySelectorAll(".strategy-card").length, 3);
   assert.equal(document.querySelectorAll(".source-card").length, 6);
@@ -151,7 +151,7 @@ test("editing parameters clears stale recommendations and prevents exporting or 
   assert.equal($("#strategy-cards").textContent, "");
   assert.equal($("#download-plan").disabled, true);
   assert.equal($("#play-route").disabled, true);
-  assert.match($("#recommendation").textContent, /重新计算/);
+  assert.match($("#recommendation").textContent, /Recalculate/);
   calculate();
   assert.equal($("#model-error").hidden, true);
   assert.notEqual($("#optimized-cost").textContent, "$27,674");
@@ -180,8 +180,8 @@ test("a feasible zero-cost baseline is not described as infeasible or rendered a
   assert.equal($("#baseline-cost").textContent, "$0");
   assert.equal($("#optimized-cost").textContent, "$0");
   assert.equal($("#savings").textContent, "$0");
-  assert.doesNotMatch($("#savings-percent").textContent, /不可行/);
-  assert.match($("#savings-percent").textContent, /零采购/);
+  assert.doesNotMatch($("#savings-percent").textContent, /infeasible/i);
+  assert.match($("#savings-percent").textContent, /Zero-purchase/);
   assert.doesNotMatch($("#cost-ratio").getAttribute("style"), /NaN|Infinity/);
   assert.equal($("#download-plan").disabled, false);
 });
@@ -203,7 +203,7 @@ test("missing customer quotes block calculation instead of falling back to synth
   const { $, document, click, airportRow } = await mount(t);
   click("#mode-quotes");
   assert.equal($("#model-error").hidden, false);
-  assert.match($("#model-error").textContent, /PVG.*没有有效.*报价/);
+  assert.match($("#model-error").textContent, /PVG.*no valid.*quotation/);
   assert.equal($("#savings").textContent, "—");
   assert.equal($("#optimized-cost").textContent, "—");
   assert.equal($("#download-plan").disabled, true);
@@ -213,7 +213,7 @@ test("missing customer quotes block calculation instead of falling back to synth
     assert.equal(field.hasAttribute("readonly"), true);
   }
   assert.equal(airportRow("PVG").querySelector(".price").textContent, "—");
-  assert.match(airportRow("PVG").textContent, /待报价/);
+  assert.match(airportRow("PVG").textContent, /No quote/);
 });
 
 test("blank mandatory performance input shows a diagnostic and never exports a stale result", async (t) => {
@@ -221,7 +221,7 @@ test("blank mandatory performance input shows a diagnostic and never exports a s
   input('[data-leg="0"][data-key="baseBurnT"]', "");
   calculate();
   assert.equal($("#model-error").hidden, false);
-  assert.match($("#model-error").textContent, /基础航段耗油.*有限数值/);
+  assert.match($("#model-error").textContent, /base leg burn.*finite/);
   assert.equal($("#download-plan").disabled, true);
   assert.equal($("#savings").textContent, "—");
 });
@@ -232,11 +232,11 @@ test("a supply-constrained feasible plan keeps the unavailable baseline and its 
   input('[data-leg="1"][data-key="maxUpliftT"]', 0);
   calculate();
   assert.equal($("#model-error").hidden, true);
-  assert.equal($("#baseline-cost").textContent, "不可执行");
+  assert.equal($("#baseline-cost").textContent, "Infeasible");
   assert.equal($("#savings").textContent, "—");
-  assert.equal($("#savings-percent").textContent, "基线不可行");
+  assert.equal($("#savings-percent").textContent, "Baseline infeasible");
   assert.equal($("#play-route").disabled, true);
-  assert.match($("#strategy-cards").textContent, /不可执行/);
+  assert.match($("#strategy-cards").textContent, /infeasible/i);
   click('[data-strategy="optimized"]');
   assert.equal($("#play-route").disabled, false);
   assert.match($("#strategy-cards").textContent, /LEG 01/);
@@ -250,10 +250,10 @@ test("global first load has a feasible intercontinental scenario and source-only
   assert.equal(document.querySelectorAll("#leg-rows tr").length, 4);
   assert.equal($("#baseline-cost").textContent, "$145,015");
   assert.equal($("#optimized-cost").textContent, "$138,620");
-  assert.match($("#result-disclosure").textContent, /跨洲手动示例.*非实际航班/);
+  assert.match($("#result-disclosure").textContent, /Intercontinental manual scenario.*not an actual flight/);
   assert.ok($('[data-key="from"]').querySelector('option[value="SYD"]'));
   assert.equal(airportRow("SYD").querySelector(".price").textContent, "—");
-  assert.match(airportRow("SYD").textContent, /未设示例价/);
+  assert.match(airportRow("SYD").textContent, /No scenario price/);
 });
 
 test("choosing an unpriced global origin requires an explicit price before optimization", async (t) => {
@@ -263,7 +263,7 @@ test("choosing an unpriced global origin requires an explicit price before optim
   fire('[data-leg="0"][data-key="from"]', "change");
   assert.equal($('[data-leg="0"][data-key="priceUsdPerT"]').value, "");
   calculate();
-  assert.match($("#model-error").textContent, /SYD.*尚未设定示例价格/);
+  assert.match($("#model-error").textContent, /SYD.*no scenario price entered/);
   assert.equal($("#download-plan").disabled, true);
   input('[data-leg="0"][data-key="priceUsdPerT"]', 1000);
   calculate();
@@ -278,5 +278,127 @@ test("continent filtering searches sourced global airports without manufacturing
   assert.ok(!codes.includes("PVG"));
   assert.equal($('[data-continent="AF"]').getAttribute("aria-pressed"), "true");
   assert.equal($('[data-continent="all"]').getAttribute("aria-pressed"), "false");
-  assert.match($("#airport-rows").textContent, /未设示例价/);
+  assert.match($("#airport-rows").textContent, /No scenario price/);
+});
+
+
+// This adapter verifies application focus choices; native keyboard/select and
+// screen-reader behavior still require the separate browser acceptance check.
+function trackFocus(t, document, window) {
+  const activeDescriptor = Object.getOwnPropertyDescriptor(document, "activeElement");
+  let active = document.body;
+  Object.defineProperty(document, "activeElement", { get: () => active, configurable: true });
+  const descriptors = [];
+  for (const prototype of [window.HTMLElement.prototype, window.SVGElement.prototype]) {
+    descriptors.push([prototype, Object.getOwnPropertyDescriptor(prototype, "focus")]);
+    Object.defineProperty(prototype, "focus", { configurable: true, value() {
+      active = this;
+      this.dispatchEvent(new window.Event("focus"));
+    } });
+  }
+  t.after(() => {
+    for (const [prototype, descriptor] of descriptors.reverse()) {
+      if (descriptor) Object.defineProperty(prototype, "focus", descriptor);
+      else delete prototype.focus;
+    }
+    if (activeDescriptor) Object.defineProperty(document, "activeElement", activeDescriptor);
+    else delete document.activeElement;
+  });
+}
+
+test("airport map has one keyboard entry and navigation excludes clipped airports", async t => {
+  const { $, document, window, fire } = await mount(t, { preset: "global", reducedMotion: true });
+  trackFocus(t, document, window);
+  assert.equal(document.querySelectorAll('.map-airport[tabindex="0"]').length, 1);
+  assert.equal(document.querySelector('.map-airport[tabindex="0"]').dataset.airport, "SIN");
+  $("#map-scope").value = "eastasia";
+  fire("#map-scope", "change");
+  const [x,y,w,h] = $("#flight-map").getAttribute("viewBox").split(/\s+/).map(Number);
+  const inView = node => Number(node.dataset.mapX) >= x && Number(node.dataset.mapX) <= x+w
+    && Number(node.dataset.mapY) >= y && Number(node.dataset.mapY) <= y+h;
+  const visible = [...document.querySelectorAll(".map-airport")].filter(inView);
+  assert.ok(visible.length < 67);
+  for (const node of document.querySelectorAll(".map-airport")) {
+    if (!inView(node)) assert.equal(node.getAttribute("tabindex"), "-1");
+  }
+  const entry = document.querySelector('.map-airport[tabindex="0"]');
+  assert.ok(inView(entry));
+  entry.focus();
+  for (let i = 0; i < visible.length + 2; i++) {
+    const event = new window.Event("keydown", { bubbles: true, cancelable: true });
+    event.key = "ArrowRight";
+    document.activeElement.dispatchEvent(event);
+    assert.ok(inView(document.activeElement));
+    assert.equal(document.querySelectorAll('.map-airport[tabindex="0"]').length, 1);
+  }
+  const escape = new window.Event("keydown", { bubbles: true, cancelable: true });
+  escape.key = "Escape";
+  document.activeElement.dispatchEvent(escape);
+  assert.equal($("#airport-tooltip").hidden, true);
+});
+
+test("route edits and deletion preserve a usable keyboard focus target", async t => {
+  const { $, document, window, fire, click } = await mount(t);
+  trackFocus(t, document, window);
+  const selector = '[data-leg="1"][data-key="from"]';
+  const old = $(selector);
+  old.focus();
+  Object.defineProperty(old, "value", { value: "KIX", configurable: true });
+  fire(selector, "change");
+  assert.notEqual($(selector), old);
+  assert.equal(document.activeElement, $(selector));
+  $('[data-remove="1"]').focus();
+  click('[data-remove="1"]');
+  assert.equal(document.activeElement, $('[data-leg="1"][data-key="from"]'));
+  click("#add-leg");
+  assert.equal(document.activeElement, $('[data-leg="2"][data-key="from"]'));
+});
+
+const quoteCsv = (supplier, price) =>
+  `airport,supplier,price_usd_per_t,valid_from,valid_until,delivery_basis,fees_included,source\nPVG,${supplier},${price},2026-01-01,2027-12-31,into-plane,true,Supplier document`;
+const flushImport = () => new Promise(resolve => setImmediate(resolve));
+function selectFile($, fire, file) {
+  Object.defineProperty($("#quote-file"), "files", { value: [file], configurable: true });
+  fire("#quote-file", "change");
+}
+
+test("latest quotation selection wins when file reads complete out of order", async t => {
+  const { $, fire, click, airportRow } = await mount(t);
+  let finishFirst;
+  selectFile($, fire, { size: 100, text: () => new Promise(resolve => { finishFirst = resolve; }) });
+  selectFile($, fire, { size: 100, text: async () => quoteCsv("Latest supplier", 900) });
+  await flushImport();
+  finishFirst(quoteCsv("Older supplier", 700));
+  await flushImport();
+  click("#mode-quotes");
+  assert.match(airportRow("PVG").textContent, /Latest supplier/);
+  assert.doesNotMatch(airportRow("PVG").textContent, /Older supplier/);
+  assert.equal(airportRow("PVG").querySelector(".price").textContent, "$900");
+  assert.equal($("#import-feedback").getAttribute("aria-busy"), "false");
+});
+
+test("clearing quotations invalidates a pending file read", async t => {
+  const { $, fire, click } = await mount(t);
+  let finish;
+  selectFile($, fire, { size: 100, text: () => new Promise(resolve => { finish = resolve; }) });
+  click("#clear-quotes");
+  finish(quoteCsv("Cancelled supplier", 700));
+  await flushImport();
+  assert.equal($("#quote-count").textContent, "0");
+  assert.match($("#import-feedback").textContent, /Quotes cleared/);
+  assert.equal($("#import-feedback").getAttribute("aria-busy"), "false");
+});
+
+test("decision diagnostics distinguish extra direct emissions from a carbon-optimized solution", async t => {
+  const { $, input, calculate } = await mount(t, { preset: "global" });
+  assert.equal($("#extra-co2").textContent, "20.46");
+  assert.equal($("#carbon-threshold").textContent, "$313 /t CO₂");
+  assert.match($("#carbon-note").textContent, /not a carbon-optimized result/);
+  input('[data-leg="0"][data-key="priceUsdPerT"]', 951);
+  assert.equal($("#extra-co2").textContent, "—");
+  assert.equal($("#carbon-threshold").textContent, "—");
+  input('[data-leg="1"][data-key="maxUpliftT"]', 0);
+  calculate();
+  assert.equal($("#extra-co2").textContent, "—");
+  assert.equal($("#carbon-threshold").textContent, "—");
 });

@@ -148,6 +148,7 @@ def package(output=ARTIFACTS):
     # The downloaded package must not link to an absent copy of itself or the
     # separate online planning app. Its core exhibit needs no external files.
     offline=entries['exhibit/index.html'].decode()
+    offline=re.sub(r'<!-- WORKSPACE-ENTRY:START -->.*?<!-- WORKSPACE-ENTRY:END -->', '', offline, flags=re.S)
     offline=re.sub(r'href="\.\./index\.html(?:#[^"]*)?"',
                    'href="../START-HERE.txt"', offline)
     offline=offline.replace('href="./downloads/submission-package.zip"',

@@ -1,4 +1,5 @@
 import { AIRPORT_DIRECTORY } from "./airport-directory.js";
+import { airportData } from "./global-airports.js";
 
 const countries = {
   CN: "China",
@@ -56,7 +57,7 @@ export function renderWorkspaceDirectory(root = document) {
     `参考目录保留 ${directory.airports.length} 个东亚及东南亚主要机场，` +
     `按 ${directory.year} 年旅客吞吐量排序，范围为 92–151°E、6°S–51°N。` +
     `入选下限为 ${directory.minimumAnnualPassengers.toLocaleString("en-US")} 人次。` +
-    "本表提供机场位置和客流背景；轮转优化与报价导入当前支持的 17 个东亚机场另行列示。客流不代表航油价格、供给或需求。";
+    `本表提供机场位置和客流背景；轮转优化与报价导入支持另行列示的全球 ${airportData.length} 个机场。客流不代表航油价格、供给或需求。`;
 
   rows.innerHTML = directory.airports
     .map(
@@ -76,7 +77,7 @@ export function renderWorkspaceDirectory(root = document) {
     .flatMap((source) => {
       const url = safeSourceUrl(source.url);
       return url
-        ? `<a href="${escape(url)}" target="_blank" rel="noopener noreferrer">${escape(source.title)} ↗</a>`
+        ? `<a href="${escape(url)}" target="_blank" rel="noopener noreferrer">${escape(source.title)}</a>`
         : [];
     })
     .join("");

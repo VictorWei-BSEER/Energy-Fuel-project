@@ -172,12 +172,12 @@ async function mount(t, { hash = "", reducedMotion = false, preset = "eastasia" 
   };
 }
 
-test("homepage restores the original three-tab dashboard with isolated source controls", async (t) => {
+test("homepage uses one five-tab workspace with isolated source controls", async (t) => {
   const ui = await mount(t);
   const { $, document, click, visible } = ui;
   assert.ok(document.querySelector(".topbar .wordmark"));
   assert.equal(
-    document.querySelector(".hero"),
+    document.querySelector("#workspace-calculations .hero"),
     null,
     "the large marketing hero no longer replaces the workbench",
   );
@@ -185,7 +185,7 @@ test("homepage restores the original three-tab dashboard with isolated source co
     [...document.querySelectorAll("[data-workspace]")].map(
       (tab) => tab.dataset.workspace,
     ),
-    ["calculations", "oil-markets", "sources"],
+    ["calculations", "oil-markets", "research", "briefing", "sources"],
   );
   assert.deepEqual(visible(), ["workspace-calculations"]);
   const ids = [...document.querySelectorAll("[id]")].map(
@@ -340,7 +340,7 @@ test("default playback visibly refuels, moves the plane, consumes fuel and updat
     Number.parseFloat($("#motion-fuel").textContent) < inFlightFuel,
     "fuel decreases in flight",
   );
-  assert.match($("#motion-summary").textContent, /飞往.*燃油/);
+  assert.match($("#motion-summary").textContent, /to .*fuel/);
   assert.ok(Number($("#motion-progress").value) > 0);
   assert.notEqual(
     document.querySelector(".route-trail").style.strokeDashoffset,
@@ -365,7 +365,7 @@ test("pause, seek, per-leg selection and restart expose the same solved fuel bal
   assert.equal($("#motion-toggle").dataset.state, "paused");
   click('[data-motion-leg="2"]');
   assert.equal($("#motion-current-leg").textContent, "HND → PVG");
-  assert.equal($("#motion-phase").textContent, "飞行中");
+  assert.equal($("#motion-phase").textContent, "In flight");
   assert.equal($("#motion-toggle").dataset.state, "paused");
   advance(1000); // Camera transition may run while playback remains paused.
   assert.equal($("#flight-map").dataset.activeLeg, "2");

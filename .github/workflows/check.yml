@@ -17,3 +17,18 @@ jobs:
       - run: npm run build
       - run: npm test
       - run: npm run check
+      - name: Verify generated workspace and briefing assets
+        run: |
+          node scripts/build-workspace.mjs --check
+          python3 scripts/build_brief.py --check
+      - name: Install Chromium for interface acceptance
+        run: npx playwright install --with-deps chromium
+      - name: Verify real-browser navigation and responsive workflows
+        run: npm run test:browser
+      - name: Retain browser review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-review
+          path: artifacts/browser-review/
+          if-no-files-found: ignore
