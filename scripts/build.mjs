@@ -29,3 +29,5 @@ const solverRoot = dirname(require.resolve('javascript-lp-solver/package.json'))
 const license = await readFile(join(solverRoot, 'LICENSE'), 'utf8');
 await writeFile('dist/vendor-licenses.txt', `javascript-lp-solver\nhttps://github.com/JWally/jsLPSolver\n\n${license}\n`);
 console.log('Built browser planning engine and bundled license.');
+
+await (await import('./build-workspace.mjs')).composeWorkspace();

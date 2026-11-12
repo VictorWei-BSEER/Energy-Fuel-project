@@ -1,24 +1,28 @@
 # Fuel Atlas / 全球航线与燃油优化
 
-The Asian energy security final project is at [research exhibit](dist/research/index.html), with the [full report](dist/research/downloads/Final_Project.pdf), [919-word reflection](dist/research/downloads/Analytical_Reflection.pdf) and [offline ZIP](dist/research/downloads/submission-package.zip). See [research/README.md](research/README.md) for reproduction and evidence limits.
+The main product is a shared, state-preserving workspace for the global flight model, market data, research report, project brief and sources. The [decision brief](docs/decision-brief.md) separates demonstrated capabilities from commercial and research hypotheses.
+
+The Asian energy security final project is in the Research tab (`/#research`), with the [full report](dist/research/downloads/Final_Project.pdf), [919-word reflection](dist/research/downloads/Analytical_Reflection.pdf) and [offline ZIP](dist/research/downloads/submission-package.zip). See [research/README.md](research/README.md) for reproduction and evidence limits.
 
 首页回答一个具体问题：**在既定的 2–5 航段轮转中，应该在哪一站加油、加多少，才能在满足油量与重量限制的同时降低新购燃油成本？** 航线保持不变；优化的是各站加油量与提前携油量。
 
-主页默认打开全球动态模型，采用白底、蓝色图表和分层导航的数据工具界面。67 个有来源坐标的机场覆盖六大洲；默认跨洲示例为 SIN → DXB → LHR → JFK → LAX，可一键切回 PVG → ICN → HND → PVG 东亚轮转。世界视图、东亚视图和适配航线均保留播放进度。价格与性能明确标为可编辑示例；缺失价格需要输入或导入有效报价，系统不会从坐标推断。研究报告保留为独立的次级入口。
+主页默认打开全球动态模型，采用白底、蓝色图表和分层导航的数据工具界面。67 个有来源坐标的机场覆盖六大洲；默认跨洲示例为 SIN → DXB → LHR → JFK → LAX，可一键切回 PVG → ICN → HND → PVG 东亚轮转。世界视图、东亚视图和适配航线均保留播放进度。价格与性能明确标为可编辑示例；缺失价格需要输入或导入有效报价，系统不会从坐标推断。研究报告和项目简报属于同一工作台，切换时保留模型与研究输入。
 
 | 入口 | 用途 |
 | --- | --- |
 | `/`、`/index.html`、`/#calculations` | 默认全球模型：67 个可选机场、固定轮转优化、世界地图、动画与逐段结果 |
 | `/#oil-markets` | 原油市页签：WTI / Brent 公共图表与已采集的市场观测 |
+| `/#research` | 研究报告、交互敏感性分析、方法、参考文献与课程提交文件 |
+| `/#briefing` | 商业假设、试点验收门槛、系统研究议程与可下载项目简报 |
 | `/#sources` | 报价与来源页签：用户报价、数据时效、原始观测、50 机场参考目录与方法 |
 | `/network.html#calculations` | 保留的多期供应链情景模型 |
 | `/network.html#oil-markets` | 保留的 WTI / Brent 公共油市图表 |
 | `/network.html#sources` | 原观测数据、刷新状态、50 机场目录与模型来源 |
 | `/planner.html` | 跳转到 `/network.html#calculations` |
 
-研究页 `/research/` 可通过顶部“动态模型 / Model”返回全球工作台。
+旧入口 `/research/` 自动定位到同一工作台的 Research 页签；`/research/#essay` 保留具体章节。`/research/?standalone` 和离线 ZIP 可单独打开研究展品。
 
-首页的三个页签直接响应 `#calculations`、`#oil-markets` 和 `#sources` 深链接；切换时保留表单和方案状态。原供应链模型另保留在 `network.html`，其库存、供应商和运输参数不代表飞机模型的数据或性能来源。
+首页五个页签直接响应 `#calculations`、`#oil-markets`、`#research`、`#briefing` 和 `#sources` 深链接；研究章节使用 `#research/essay` 等地址；切换时保留表单和方案状态。原供应链模型另保留在 `network.html`，其库存、供应商和运输参数不代表飞机模型的数据或性能来源。
 
 ## Run and verify
 
@@ -84,7 +88,7 @@ Three stress cases share the same underlying assumptions. Cost comparisons appea
 
 See [model formulation](docs/model.md) for equations, timing, costs, tolerances and limits.
 
-The retained planning map includes 50 airports within the existing East/Southeast Asia frame, selected using 2024 total passenger traffic, with a cutoff of 15.2 million passengers per year. This differs from the 17 East Asian airports currently selectable on the homepage. Select an airport for its traffic context or inspect dense areas with map zoom. Selection methodology and references are in the retained Sources tab and [airport directory notes](docs/airport-directory.md). Traffic rankings do not supply airport fuel prices or model demand.
+The retained planning map includes 50 airports within the existing East/Southeast Asia frame, selected using 2024 total passenger traffic, with a cutoff of 15.2 million passengers per year. This is a separately selected reference directory, distinct from the 67-airport global sample selectable on the homepage. Select an airport for its traffic context or inspect dense areas with map zoom. Selection methodology and references are in the retained Sources tab and [airport directory notes](docs/airport-directory.md). Traffic rankings do not supply airport fuel prices or model demand.
 
 ## 保留的油市与观测数据
 
@@ -120,18 +124,21 @@ The homepage oil-market/source tabs and retained `network.html` app load the lat
 
 ## Structure
 
-- `dist/index.html`, `dist/flight.css`, `dist/workspace-flight.css`: restored three-tab dashboard, compact calculations overview, map/decision split, rotation inputs and quote import dialog.
+- `src/workspace/index.template.html`, `scripts/build-workspace.mjs`: source and deterministic composition for the five mounted workspaces. Edit the template, not generated `dist/index.html`.
+- `dist/application.css`: shared navigation, content widths and final interface rules; research styles are scoped to its panel.
+- `dist/brief/brief.html`, `scripts/build_brief.py`: project brief source and reproducible print/Markdown artifacts.
+- `dist/index.html`, `dist/flight.css`, `dist/workspace-flight.css`: generated application, model map/decision split, rotation inputs and quote import dialog.
 - `dist/flight-app.js`: rotation editing, price modes, strategy switching, map/row/cost motion integration, airport search/filtering, import and JSON export.
 - `dist/rotation-motion.js`: deterministic refuel/flight/arrival playback with pause, restart, seek, leg progress and reduced-motion behavior.
 - `dist/workspace-directory.js`: Sources-only 50-airport reference table and source links, independent of the legacy map controls.
 - `dist/flight-optimizer.js`: pure fixed-rotation solver, baseline, fuel/weight constraints, diagnostics and demonstration input.
 - `dist/fuel-quotes.js`: `QUOTE_CSV_TEMPLATE`, `parseQuoteCsv` and `quoteForAirport`; bounded CSV parsing and applicable quotation selection.
-- `dist/asia-map.js`: shared SVG geography and projection; homepage routes are schematic paths.
+- `dist/world-map.js`, `dist/global-airports.js`, `dist/flight-geography.js`: sourced world geography, 67-airport sample and date-line-safe great-circle display paths. The retained network map still uses `asia-map.js`.
 - `dist/data/fuel-sources.json`: source-card catalog with access and price-basis limitations; no invented airport quotes.
 - `dist/fonts/`: local Manrope and Instrument Serif fonts with licenses.
 - `src/planner.js`: multi-period LP, validation, scenarios and diagnostics.
 - `dist/planner.js`: generated self-contained browser bundle (do not hand-edit).
-- `dist/workspace.js`, `dist/styles.css`, `dist/dashboard.css`: shared three-tab navigation and original dashboard foundation; calculations selected by default with persistent form state across tabs.
+- `dist/workspace.js`, `dist/styles.css`, `dist/dashboard.css`: shared hash routing and original dashboard foundation; calculations selected by default with persistent form state across tabs.
 - `dist/network.html`: retained supply-chain calculations with the original map controls and supporting market/source tabs.
 - `dist/airport-map.js`, `src/airport-directory.js`, `dist/data/airport-directory.json`: the versioned 50-airport directory, marker layout, selection, zoom and source table. `scripts/build_airport_directory.py` rebuilds the coordinate join from an OurAirports CSV; `src/airport-traffic-2024.json` preserves the traffic candidates and references.
 - `dist/observed-app.js`: observed market summaries, original-unit tables, source health, reference geography and exports.
@@ -145,7 +152,7 @@ The homepage oil-market/source tabs and retained `network.html` app load the lat
 
 The homepage uses HTML, CSS, native JavaScript ES modules and SVG, with browser-local computation and no map-service key. The new rotation solver has no server solver dependency; the retained multi-period model uses `javascript-lp-solver` bundled by esbuild. See [design scope and acceptance constraints](docs/design-brief.md).
 
-No orders are executed. The rotation model does not select routes, add stops or replace flight-performance and dispatch calculations. Linear carry-burn assumptions must be replaced with airline-approved operational data before actual use. Vessel lots, source inventories, blending, taxes, contract obligations, hedging and credit/accounting workflows remain outside the retained supply-chain model. Planning routes and plane playback are schematic; they are not observed ship or aircraft positions. Playback fuel and cost values come from the currently selected plan rather than invented live data. Browser DOM and motion behavior are tested; visual cross-browser inspection remains a separate check.
+No orders are executed. The rotation model does not select routes, add stops or replace flight-performance and dispatch calculations. Linear carry-burn assumptions must be replaced with airline-approved operational data before actual use. Vessel lots, source inventories, blending, taxes, contract obligations, hedging and credit/accounting workflows remain outside the retained supply-chain model. Planning routes and plane playback are schematic; they are not observed ship or aircraft positions. Playback fuel and cost values come from the currently selected plan rather than invented live data. Numerical, DOM and real Chromium navigation/layout checks are included. Browser QA is separate from aircraft calibration, empirical price validation and assistive-technology certification.
 
 ## 全球地图与本次界面更新
 
@@ -154,3 +161,14 @@ No orders are executed. The rotation model does not select routes, add stops or 
 界面参考 IEA 的 [Data and statistics](https://www.iea.org/data-and-statistics) 和 [Energy Statistics Data Browser](https://www.iea.org/data-and-statistics/data-tools/energy-statistics-data-browser) 的内容层级与数据浏览结构，保留 Fuel Atlas 自身品牌，不表示与 IEA 存在隶属或合作关系。
 
 研究下载包仍是 12 November 2026 的可复现课程提交快照，不是完整交易平台安装包。在线主页包含动态航班与供应链模型；完整平台源代码可从本仓库下载并通过 `npm ci`、`npm run dev` 本地运行。
+
+## Review and browser acceptance
+
+See [the review record](docs/reviews/README.md) for findings, corrections and remaining evidence limits. The research prototype does not claim IIASA affiliation, investment readiness, verified commercial savings or operational dispatch approval.
+
+```sh
+npx playwright install chromium
+npm run test:browser
+```
+
+The browser runner starts its own local server unless a base URL is supplied. On systems with a preinstalled Chromium, use `FUEL_BROWSER_PATH=/path/to/chromium`. It exercises navigation state, deep links, keyboard controls, quote workflow and responsive layouts with controlled public-feed fixtures; live provider availability is a separate integration concern. Review screenshots are written to the runner’s artifact directory.

@@ -1,0 +1,186 @@
+/* Shared application layout. The five workspaces keep the same chrome. */
+html { scroll-padding-top: 86px; }
+body.institutional { --blue: #0057b8; --surface: #f3f6fa; }
+.institutional [hidden] { display: none !important; }
+.institutional .workspace-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  gap: 0;
+  isolation: isolate;
+  box-shadow: 0 1px 0 #173a5b04;
+}
+.institutional .workspace-tabs { gap: 32px; min-width: 0; }
+.institutional .workspace-tabs > button { font-size: 14px; min-height: 56px; }
+.institutional .workspace-tabs > button[aria-selected="true"] { color: #004995; }
+.institutional .workspace-tabs > button > span[lang] { font-size: 11px; }
+.institutional .topbar { height: 76px; }
+.institutional .action-icon { display: inline-block; width: 15px; height: 15px; flex: 0 0 15px; vertical-align: -2px; }
+.institutional .recommendation > .action-icon { width: 18px; height: 18px; flex-basis: 18px; color: #0057b8; margin-top: 3px; }
+.institutional .topbar .demo-badge { background: #edf4fb; color: #28547f; }
+.institutional .workspace-panel:focus { outline: none; }
+.institutional :is(a,button,input,select,summary,[tabindex]):focus-visible {
+  outline: 3px solid #0057b8;
+  outline-offset: 3px;
+}
+.institutional .workspace-panel > .overview-head { padding: 32px 0 28px; }
+.institutional .workspace-panel > .overview-head h1 { font-size: 38px; line-height: 1.17; }
+.institutional .workspace-intro { max-width: 850px; font-size: 15px; line-height: 1.65; }
+.institutional .flight-planner .map-stage::after { display: none; }
+.institutional .flight-planner .map-top h2 { font-size: 22px; }
+.institutional .flight-planner .map-tag { font-size: 11px; padding: 5px 8px; }
+.institutional .flight-planner .map-bottom { border-top: 1px solid #d9e1ea; }
+.institutional #motion-leg-buttons button > span,
+.institutional #motion-leg-buttons button > small { color: #405c78; opacity: 1; font-size: 11px; line-height: 1.45; }
+.institutional #motion-leg-buttons button > strong { font-size: 12px; line-height: 1.45; }
+.institutional .flight-planner .legend .geography { color: #526477; font-size: 11px; opacity: 1; }
+.institutional .flight-planner .decision-card .micro { font-size: 12px; line-height: 1.65; }
+.institutional .flight-planner .decision-card h2 { font-size: 25px; line-height: 1.2; }
+.institutional .flight-planner .decision-foot { gap: 14px; font-size: 12px; align-items: baseline; }
+.institutional .flight-planner .decision-foot b { white-space: nowrap; }
+.institutional .flight-planner .decision-foot + .decision-foot { border-top: 0; margin-top: 0; padding-top: 5px; }
+.institutional .flight-planner .model-diagnostic { font-size: 12px; line-height: 1.65; color: #526477; margin-top: 12px; }
+.institutional .flight-planner .model-diagnostic summary { color: #174d88; cursor: pointer; font-weight: 600; }
+.institutional .flight-planner .model-diagnostic p { margin: 9px 0 0; }
+.institutional .flight-planner .model-diagnostic strong { color: #142b46; }
+.institutional .flight-planner .leg-table th { font-size: 12px; }
+.institutional .flight-planner .leg-table small,
+.institutional .flight-planner .advanced summary span { font-size: 11px; }
+.institutional .flight-planner .strategy-figures span,
+.institutional .flight-planner .strategy-figures small,
+.institutional .flight-planner .strategy-card > p { font-size: 12px; }
+.institutional .flight-planner .strategy-card,
+.institutional .flight-planner .strategy-card > *,
+.institutional .flight-planner .strategy-figures > * { min-width: 0; }
+.institutional .flight-planner .strategy-card h3 { flex-wrap: wrap; }
+.institutional .flight-planner .strategy-card h3 > span:last-child { overflow-wrap: anywhere; }
+.institutional .flight-planner .strategy-figures { grid-template-columns: repeat(2,minmax(0,1fr)); }
+.institutional .flight-planner .strategy-figures span { overflow-wrap: anywhere; }
+.institutional .observed-summary [data-health="stale"],
+.institutional .observed-summary [data-status="stale"] { color: #875212; }
+.institutional .observed-summary [data-health="error"],
+.institutional .observed-summary [data-status="error"] { color: #9d2a20; }
+.institutional .observed-summary article { min-width: 0; }
+.institutional .observed-summary article > span { overflow-wrap: anywhere; }
+.institutional .observed-summary article > .source-warning { color: #875212; font-weight: 600; }
+.institutional .observed-summary article > p,
+.institutional .public-market-heading > div > p,
+.institutional .public-market-instrument > span,
+.institutional .public-market-disclosure { color: #526477; opacity: 1; font-size: 12px; }
+.institutional #public-wti > span,
+.institutional #public-brent > span { color: #405c78; opacity: 1; font-size: 11px; }
+.institutional #public-market-symbol { color: #334f6e; }
+.institutional #workspace-oil-markets :is(.public-market-attribution > span,.public-market-status dt,#public-market-message,.public-market-fallback > span,.airport-api-status > span,.observed-disclosure,#refresh-status) { color: #526477; opacity: 1; font-size: 12px; line-height: 1.65; }
+.institutional #workspace-sources :is(.sources-intro,.action-status,td small) { color: #526477; }
+.institutional #workspace-sources #airports .airport-table td:first-child small,
+.institutional #workspace-sources #sources .source-card .source-kind { color: #526477; opacity: 1; }
+.institutional #workspace-sources .airport-note a { color: #0057b8; text-decoration: underline; }
+.institutional #workspace-sources :is(.feed-meta,.feed-note,.table-note,.market-heading .eyebrow,#last-check) { color: #526477; opacity: 1; font-size: 12px; line-height: 1.65; }
+.institutional #workspace-sources .feed-role { color: #405c78; font-size: 11px; opacity: 1; }
+.institutional #workspace-sources .feed-health { color: #267361; font-size: 11px; opacity: 1; }
+.institutional #workspace-sources .feed-health.warning { color: #875212; }
+.institutional #workspace-sources .sources-intro { font-size: 15px; line-height: 1.65; }
+.institutional .site-footer { font-size: 12px; gap: 24px; }
+.institutional .site-footer button { color: #0057b8; font-size: 12px; text-decoration: underline; }
+
+/* Research is content inside the application, rather than a second website. */
+#workspace-research { --blue: #0057b8; --ink: #142b46; --muted: #526477; }
+#workspace-research .section-shell { width: 100%; max-width: none; margin: 0; }
+#workspace-research .section-nav {
+  width: 100%;
+  max-width: none;
+  padding: 16px 0;
+  margin: 0;
+  gap: 22px;
+  border-bottom: 1px solid #e2e8ef;
+  font-size: 12px;
+  position: static;
+}
+#workspace-research .hero { padding: 32px 0; gap: 40px; grid-template-columns: minmax(0,1fr) 320px; }
+#workspace-research .hero h1 { font-size: 38px; line-height: 1.17; max-width: 830px; }
+#workspace-research .hero-deck { font-size: 17px; line-height: 1.65; }
+#workspace-research .hero-copy { margin: 0; letter-spacing: normal; }
+#workspace-research .hero-copy p { letter-spacing: normal; }
+#workspace-research .eyebrow { font-size: 11px; letter-spacing: .8px; color: #0057b8; }
+#workspace-research :is(.eyebrow,.map-attribution,.source-note,.mini-heading,.chart-note,.quantity-basis,.control-note) { font-family: Arial, "PingFang SC", "Microsoft YaHei", sans-serif; }
+#workspace-research .map-attribution { position: static; inset: auto; z-index: auto; transform: none; max-width: none; width: auto; }
+#workspace-research .research-map .map-label { opacity: 1; }
+#workspace-research .finding-cover { border-radius: 0; background: #f5f8fc; }
+#workspace-research .finding-conclusion strong { display: block; }
+#workspace-research .evidence-strip { padding: 24px; border-radius: 0; }
+#workspace-research .section-heading h2 { font-size: 28px; line-height: 1.2; letter-spacing: -.5px; }
+#workspace-research .section-heading > p { font-size: 14px; }
+#workspace-research .scenario-controls { background: #f5f8fc; }
+#workspace-research .experiment-grid,
+#workspace-research .security-cards article,
+#workspace-research .research-map,
+#workspace-research .methods-grid { border-radius: 0; }
+#workspace-research .essay-prose { max-width: 940px; font-size: 16px; line-height: 1.9; }
+#workspace-research .references-section li { overflow-wrap: anywhere; }
+#workspace-research :is(p,li) a { text-decoration: underline; }
+#workspace-research .route-table :is(td,th) { font: inherit; font-size: 13px; line-height: 1.65; color: #142b46; }
+#workspace-research .route-table th { font-weight: 600; }
+#workspace-research :is(section,article,details)[id] { scroll-margin-top: 82px; }
+#workspace-briefing .project-brief-content { max-width: none; }
+#workspace-briefing .brief-heading { padding: 32px 0 28px; }
+#workspace-briefing .project-brief-content h1 { font-size: 38px; line-height: 1.17; }
+#workspace-briefing .brief-eyebrow { color: #0057b8; letter-spacing: .8px; }
+#workspace-briefing .brief-deck { font-size: 17px; }
+#workspace-briefing .brief-section { padding: 36px 0; }
+#workspace-briefing .brief-thesis { max-width: 1100px; }
+#workspace-briefing .brief-footer { padding-bottom: 0; }
+#workspace-briefing .project-brief-content :is(td,th) { font: inherit; font-size: 14px; line-height: 1.65; color: #142b46; }
+#workspace-briefing .project-brief-content th { font-weight: 600; }
+
+@media (max-width: 1150px) {
+  .institutional .workspace-tabs { gap: 28px; }
+  #workspace-research .hero { gap: 28px; grid-template-columns: minmax(0,1fr) 290px; }
+}
+@media (max-width: 900px) {
+  .institutional .workspace-navigation { overflow-x: auto; scrollbar-width: thin; }
+  .institutional .workspace-tabs { flex: 0 0 auto; }
+  #workspace-research .hero { grid-template-columns: minmax(0,1fr); }
+  #workspace-research .finding-cover { max-width: none; }
+  #workspace-research .hero h1 { max-width: 820px; }
+  #workspace-research .section-nav { flex-wrap: nowrap; overflow-x: auto; }
+}
+@media (max-width: 600px) {
+  html { scroll-padding-top: 74px; }
+  .institutional .topbar { height: 70px; }
+  .institutional .workspace-navigation { padding: 0 16px; }
+  .institutional .workspace-tabs { gap: 23px; }
+  .institutional .workspace-tabs > button { font-size: 13px; min-height: 52px; }
+  .institutional .workspace-panel > .overview-head { padding: 26px 0 22px; }
+  .institutional .workspace-panel > .overview-head h1,
+  #workspace-research .hero h1,
+  #workspace-briefing .project-brief-content h1 { font-size: 31px; letter-spacing: -.7px; }
+  .institutional .workspace-intro { font-size: 14px; }
+  .institutional .flight-planner .map-tag { font-size: 10px; max-width: 110px; }
+  .institutional .flight-planner .decision-card h2 { font-size: 25px; }
+  .institutional .flight-planner .strategy-card > p { line-height: 1.7; }
+  .institutional .flight-planner .strategy-card { display: block; }
+  .institutional .flight-planner .strategy-card h3 { margin: 14px 0 20px; }
+  .institutional .flight-planner .strategy-figures { margin: 20px 0; }
+  .institutional .flight-planner .strategy-figures b { overflow-wrap: anywhere; }
+  .institutional .site-footer { font-size: 11px; }
+  #workspace-research .hero { padding: 26px 0; }
+  #workspace-research .hero-deck { font-size: 16px; }
+  #workspace-research .evidence-strip { padding: 20px; }
+  #workspace-research .section-heading h2 { font-size: 25px; }
+  #workspace-research .essay-prose { font-size: 15px; line-height: 1.85; }
+  #workspace-briefing .brief-heading { padding: 26px 0; }
+  #workspace-briefing .brief-section { padding: 28px 0; }
+}
+@media print {
+  html { scroll-padding-top: 0; }
+  .institutional .topbar,
+  .institutional .workspace-navigation,
+  .institutional .site-footer { display: none; }
+  .institutional main { padding: 0; max-width: none; }
+  #workspace-research .section-nav { display: none; }
+  #workspace-research .hero { grid-template-columns: minmax(0,1fr) 220px; padding-top: 0; }
+  #workspace-research .hero h1 { font-size: 23pt; }
+  #workspace-research .section-heading h2 { font-size: 19pt; }
+  #workspace-research .essay-prose { font-size: 10pt; line-height: 1.7; }
+  #workspace-briefing .project-brief-content h1 { font-size: 24pt; }
+}

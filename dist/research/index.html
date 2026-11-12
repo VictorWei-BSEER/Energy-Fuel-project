@@ -2,6 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- WORKSPACE-ENTRY:START -->
+  <script>
+  (function () {
+    if (!/^https?:$/.test(location.protocol) || new URLSearchParams(location.search).has('standalone')) return;
+    var section = location.hash.slice(1);
+    try { section = decodeURIComponent(section); } catch (_) { section = ''; }
+    var target = new URL('../index.html', location.href);
+    target.hash = 'research' + (section && section !== 'main' ? '/' + encodeURIComponent(section) : '');
+    location.replace(target.href);
+  }());
+  </script>
+  <!-- WORKSPACE-ENTRY:END -->
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#ffffff">
   <meta name="description" content="A reproducible study of fuel tankering, local supply interruptions and East Asian aviation security. Explore the price, fuel and emissions thresholds without invented airport quotes.">

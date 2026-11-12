@@ -211,3 +211,45 @@ test("default scenario is editable, explicitly synthetic, and does not mutate in
   input.legs[0].priceUsdPerT = 1;
   assert.notEqual(defaultRotation().legs[0].priceUsdPerT, 1);
 });
+
+
+test("fuel units retain numerical resolution and cannot turn tiny negative uplift into savings", () => {
+  const reference = optimizeRotation(small());
+  for (const scale of [1e-12, 1e-9, 1, 1e6, 1e12]) {
+    const input = small();
+    input.initialFuelT *= scale;
+    for (const key of ["tankCapacityT", "maxTakeoffWeightT", "maxLandingWeightT"]) input.aircraft[key] *= scale;
+    for (const leg of input.legs) {
+      leg.priceUsdPerT /= scale;
+      for (const key of ["baseBurnT", "taxiBurnT", "reserveT", "zeroFuelWeightT"]) leg[key] *= scale;
+    }
+    const result = optimizeRotation(input);
+    assert.equal(result.feasible, true, `scale ${scale}`);
+    near(result.totalCostUsd, reference.totalCostUsd);
+    for (let i = 0; i < input.legs.length; i++) {
+      assert.ok(result.legs[i].upliftT >= 0, `negative uplift at scale ${scale}`);
+      near(result.legs[i].upliftT / scale, reference.legs[i].upliftT);
+      near(result.legs[i].landingFuelT / scale, reference.legs[i].landingFuelT);
+    }
+    near((input.initialFuelT + result.totalUpliftT - result.totalBurnT) / scale, result.finalFuelT / scale);
+  }
+});
+
+test("the unconstrained two-leg decision agrees with the research marginal-delivery threshold", () => {
+  const hourlyCoefficient = 0.035;
+  const durationHours = 4;
+  const retained = 1 - hourlyCoefficient * durationHours;
+  const originPrice = 1000;
+  const input = small([originPrice, originPrice / retained], hourlyCoefficient * durationHours);
+  input.legs.forEach(leg => { leg.baseBurnT = 1; });
+  const tied = optimizeRotation(input);
+  balances(input, tied);
+  near(tied.savingsUsd, 0);
+  near(tied.extraBurnVsBaselineT, 0);
+  input.legs[1].priceUsdPerT += 10;
+  const profitable = optimizeRotation(input);
+  balances(input, profitable);
+  near(profitable.savingsUsd, 10);
+  near(profitable.extraBurnVsBaselineT, 1 / retained - 1);
+  near(3.16 * profitable.extraBurnVsBaselineT, 0.5144186046511628);
+});

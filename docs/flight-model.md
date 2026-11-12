@@ -24,7 +24,7 @@
 | 每段 | `zeroFuelWeightT` | 本段无油重量，含按用户输入固定的载荷 |
 | 每段 | `maxUpliftT` | 可选本站供油上限；省略为不额外限制，0 表示本段出发站不能加油 |
 
-纯计算函数允许零价情景；报价 CSV 要求单价大于零。UI 另限制 17 个可选机场并拒绝同站出发/到达。计划日期和报价有效期在 UI/报价模块匹配，模型只接收最终数值。
+纯计算函数允许零价情景；报价 CSV 要求单价大于零。UI 另限制共享目录中的 67 个可选机场并拒绝同站出发/到达。计划日期和报价有效期在 UI/报价模块匹配，模型只接收最终数值。
 
 ## 油量平衡与成本
 
@@ -66,7 +66,7 @@ U_i ≤ maxUpliftT_i                            若设置供油上限
 
 ## 求解与输出
 
-最多 5 个变量，通过终点库存等式与活动约束枚举有界线性问题的顶点。成本近似相同时优先更少额外耗油，再优先更少携油，结果确定。约束容差 `1e-7`，成本比较容差 `1e-6`；页面可四舍五入，计算保持完整精度。
+最多 5 个变量，通过终点库存等式与活动约束枚举有界线性问题的顶点。成本近似相同时优先更少额外耗油，再优先更少携油，结果确定。燃油可行性容差按问题的质量尺度计算：`64 × Number.EPSILON × max(油箱容量, 初始油量, 各段最低出发油量)`；成本比较容差 `1e-6 USD`。仅将容差以内的负携油/负加油数值舍入为零，不删除微小正油量。该容差用于浮点数误差处理，不是获准超出运行限制的裕度；页面可四舍五入，计算保持完整精度。
 
 | 输出 | 含义 |
 | --- | --- |
@@ -98,3 +98,13 @@ UI 的方案 JSON 另包含 `schemaVersion`、计划日期、价格模式、性�
 ## Global workspace extension — 13 November 2026
 
 The UI now opens a separate, explicitly hypothetical four-leg SIN–DXB–LHR–JFK–LAX scenario from `flight-geography.js`. Its fuel and price inputs are manual assumptions, not empirical aircraft performance or supplier offers. The original East Asia `defaultRotation()` remains available from the preset control and its reference results are unchanged. Both presets use the same constrained uplift optimizer and matched terminal fuel rule. The global directory expands airport selection and quote-code recognition; geography supplies neither prices nor fuel burn. `world-map.js` and spherical route interpolation provide display geometry only.
+
+## 与研究报告的区别
+
+全球工作台使用固定 2–5 航段的受约束加油优化；研究报告使用单次边际燃油运输的阈值模型。工作台的 `carryBurnRate` 是**整个航段**每吨额外携油的损耗比例；研究的 `burnCoefficientPerHour` 是**每小时**系数。只有采用线性研究假设并指定时长 `t` 时，才可令 `carryBurnRate = k × t`；若采用指数研究假设，则应令 `carryBurnRate = 1 − exp(−k × t)`。这是一种模型映射，不是机型或航线性能校准，也不意味着工作台默认示例来自研究中的三条亚洲连接。
+
+研究阈值比较相同目的地可用燃油，但没有油箱、重量或实际供油可行性检验。工作台在给定的人工性能与报价参数下检查上述约束。两者均不推断机场供货能力、航班取消概率、真实利润或区域福利。
+
+可比方案的额外直接燃烧排放为 `3.16 × extraBurnVsBaselineT`，单位 t CO₂；3.16 来自研究已列明的 ICAO Jet A/Jet A-1 因子，不含生命周期和非 CO₂ 效应。在节省与额外排放都为正时，`savingsUsd / (3.16 × extraBurnVsBaselineT)` 给出**当前方案**燃油采购节省被额外碳价值抵消的 USD/t CO₂ 阈值；它既不是观测碳价，也不是重新纳入碳目标优化后的最优决策。
+
+可选独立核验：安装 NumPy/SciPy 后运行 `python3 scripts/audit-flight-model.py`。脚本用与生产代码不同的加油量/落地油量变量和 SciPy/HiGHS，比较 600 个固定种子的可行/不可行输入，并检验现金成本与燃油平衡。它是数值复核，不是实际飞机运行认证。
