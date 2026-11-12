@@ -40,6 +40,8 @@ The runner starts and stops its own static HTTP server when no base URL is suppl
 
 Synthetic prices, service allowances, supply limits and generic aircraft performance are scenario inputs. Passing UI tests does not turn them into airport offers, observed inventories or certified dispatch data. Geography provenance is separately exposed.
 
+Axe retained manual-review candidates for some color contrast, SVG visible/accessibility-name matching and inline link presentation. Their selectors are preserved in the JSON report; zero automated violations is not a blanket accessibility certification.
+
 Chromium is the exercised browser. Keyboard navigation and automated WCAG 2/2.1 A/AA checks do not replace screen-reader, Safari, Firefox or comprehensive accessibility testing. Native date input formatting follows the browser's locale. Original source titles, brands, units, formulas, IATA codes and explicitly labeled English download artifacts are permitted in either interface language.
 
 ## Final acceptance evidence
@@ -48,5 +50,5 @@ The full successful run is recorded in `/workspace/artifacts/fuel-atlas-configur
 
 Verified stateful workflows include one-leg calculation without false tankering savings; airport changes, stop reordering and one-to-five-leg editing; all 67 complete component sums; JSON and CSV downloads; regional assumptions changing the affected route price; preserving manual prices during shared-assumption updates; active animation, hidden-tab pause and manual progress retention; imported quote counts and feedback translating without losing prices; and missing quotation origins blocking calculation with no illustrative-price fallback.
 
-A separate rerun using the runner's automatically started and cleaned-up HTTP server is in progress against the frozen application. The preceding complete run has passed; the self-start check will be appended when it finishes. Independent model and implementation tests remain separate evidence and are not counted as browser acceptance groups.
+The separate self-start rerun also passed all 13 groups against the frozen application, with the same 40 layout combinations and 10 zero-violation accessibility scans. Its evidence is `/workspace/artifacts/fuel-atlas-configurable-review/final/browser-review.json`; the runner stopped its owned server after completion. Independent model and implementation tests remain separate evidence and are not counted as browser acceptance groups.
 
