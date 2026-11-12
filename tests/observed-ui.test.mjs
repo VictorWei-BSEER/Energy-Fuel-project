@@ -15,7 +15,7 @@ async function until(predicate, message = 'observed interface settles') {
   assert.ok(predicate(), message);
 }
 async function mount(t, { mode = 'unavailable', noData = false, prepareRemote = () => {} } = {}) {
-  const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../dist/network.html', import.meta.url), 'utf8');
   const catalog = JSON.parse(await readFile(new URL('../dist/data/catalog.json', import.meta.url), 'utf8'));
   const fixture = new Map([['data/catalog.json', catalog]]);
   for (const feed of catalog.feeds) if (feed.path) fixture.set(feed.path, JSON.parse(await readFile(new URL(`../dist/${feed.path}`, import.meta.url), 'utf8')));

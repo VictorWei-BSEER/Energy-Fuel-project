@@ -54,7 +54,7 @@
   function renderBalance(result) {
     const chart = $('#balance-chart'), width = 680, x = 20, usefulWidth = width * result.retentionFraction;
     chart.setAttribute('aria-label', `${format(result.extraOriginUpliftT, 3)} tonnes extra origin uplift: ${format(result.requiredDeliveryT, 3)} useful tonnes delivered and ${format(result.additionalBurnT, 3)} additional tonnes burned.`);
-    chart.innerHTML = `<text x="${x}" y="20" class="svg-value" font-size="16">${format(result.extraOriginUpliftT, 3)} t extra origin uplift</text><rect x="${x}" y="36" width="${usefulWidth}" height="28" fill="#59634c"/><rect x="${x + usefulWidth}" y="36" width="${width - usefulWidth}" height="28" fill="#bd3c29"/><text x="${x}" y="91" class="svg-label" font-size="15">1.000 t delivered</text><text x="${x + width}" y="91" class="svg-label" text-anchor="end" font-size="15">${format(result.additionalBurnT, 3)} t burned</text>`;
+    chart.innerHTML = `<text x="${x}" y="20" class="svg-value" font-size="16">${format(result.extraOriginUpliftT, 3)} t extra origin uplift</text><rect x="${x}" y="36" width="${usefulWidth}" height="28" fill="#0055b8"/><rect x="${x + usefulWidth}" y="36" width="${width - usefulWidth}" height="28" fill="#ad701e"/><text x="${x}" y="91" class="svg-label" font-size="15">1.000 t delivered</text><text x="${x + width}" y="91" class="svg-label" text-anchor="end" font-size="15">${format(result.additionalBurnT, 3)} t burned</text>`;
   }
   function update() {
     $('#duration-value').textContent = `${format(Number($('#duration').value))} hours`;
@@ -108,10 +108,10 @@
     if (plotted.some(item => !item.range)) { $('#route-table-rows').innerHTML = '<tr><td colspan="4">Incomplete frozen sensitivity ranges.</td></tr>'; return; }
     const max = Math.max(10, Math.ceil(Math.max(...plotted.map(item => item.range.premiumPctMax)) / 10) * 10);
     const x = value => 130 + value / max * 470, ticks = Array.from({ length: 7 }, (_, i) => max * i / 6);
-    const grid = ticks.map(value => `<line x1="${x(value)}" y1="26" x2="${x(value)}" y2="248" stroke="#d2d3c7"/><text x="${x(value)}" y="277" class="svg-label" font-size="13" text-anchor="middle">${format(value, 0)}%</text>`).join('');
+    const grid = ticks.map(value => `<line x1="${x(value)}" y1="26" x2="${x(value)}" y2="248" stroke="#d9e2ed"/><text x="${x(value)}" y="277" class="svg-label" font-size="13" text-anchor="middle">${format(value, 0)}%</text>`).join('');
     const bars = plotted.map(({ row, range }, index) => {
       const y = 65 + index * 75;
-      return `<text x="0" y="${y + 5}" class="svg-value" font-size="17">${esc(row.routeId.replace('-', '–'))}</text><line x1="${x(range.premiumPctMin)}" y1="${y}" x2="${x(range.premiumPctMax)}" y2="${y}" stroke="#59634c" stroke-width="3"/><line x1="${x(range.premiumPctMin)}" y1="${y - 7}" x2="${x(range.premiumPctMin)}" y2="${y + 7}" stroke="#59634c"/><line x1="${x(range.premiumPctMax)}" y1="${y - 7}" x2="${x(range.premiumPctMax)}" y2="${y + 7}" stroke="#59634c"/><circle cx="${x(row.breakEvenPremiumPct)}" cy="${y}" r="7" fill="#bd3c29"/><text x="${x(row.breakEvenPremiumPct)}" y="${y - 16}" class="svg-value" font-size="16" text-anchor="middle">${format(row.breakEvenPremiumPct)}%</text>`;
+      return `<text x="0" y="${y + 5}" class="svg-value" font-size="17">${esc(row.routeId.replace('-', '–'))}</text><line x1="${x(range.premiumPctMin)}" y1="${y}" x2="${x(range.premiumPctMax)}" y2="${y}" stroke="#6688aa" stroke-width="3"/><line x1="${x(range.premiumPctMin)}" y1="${y - 7}" x2="${x(range.premiumPctMin)}" y2="${y + 7}" stroke="#6688aa"/><line x1="${x(range.premiumPctMax)}" y1="${y - 7}" x2="${x(range.premiumPctMax)}" y2="${y + 7}" stroke="#6688aa"/><circle cx="${x(row.breakEvenPremiumPct)}" cy="${y}" r="7" fill="#0055b8"/><text x="${x(row.breakEvenPremiumPct)}" y="${y - 16}" class="svg-value" font-size="16" text-anchor="middle">${format(row.breakEvenPremiumPct)}%</text>`;
     }).join('');
     $('#route-chart').innerHTML = grid + bars;
     $('#route-table-rows').innerHTML = plotted.map(({ row, range }) => `<tr><th scope="row">${esc(row.routeId.replace('-', '–'))}</th><td>${format(row.distanceKm, 0)} km</td><td>${format(row.durationH)} h</td><td><strong>${format(row.breakEvenPremiumPct)}%</strong><small>${format(range.premiumPctMin)}–${format(range.premiumPctMax)}%</small></td></tr>`).join('');

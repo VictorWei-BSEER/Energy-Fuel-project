@@ -9,7 +9,7 @@ let mountId = 0;
 const officialScript = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
 const flush = () => new Promise(resolve => setImmediate(resolve));
 async function mount(t, { hidden = false } = {}) {
-  const html = await readFile(new URL('../dist/index.html', import.meta.url), 'utf8');
+  const html = await readFile(new URL('../dist/network.html', import.meta.url), 'utf8');
   const { document, window } = parseHTML(html);
   document.querySelector('#workspace-oil-markets').hidden = hidden;
   const originals = new Map(), timers = new Map();
