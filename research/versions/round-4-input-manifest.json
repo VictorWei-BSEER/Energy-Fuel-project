@@ -1,0 +1,11 @@
+{
+  "research/report.json": "bc2533a9c7cdc65ec04c655d5f2ac4c2e5ca39b9dca011ffe4fb88cfe1fa2882",
+  "dist/research/index.html": "5c111ad7caf69fb52380b806725f89a9d73c8b6d208f47d604c943380b12aa57",
+  "dist/research/research.js": "669c499f2da0d452de84da27c71d1b1473201a46de2a77155d871a1408df2888",
+  "dist/research/research.css": "18ff9d917cb9392292c49357581128ee76951ef111b2d43ff31d22492838d4ac",
+  "scripts/build_research.py": "d246c439ff1255118258339a0b08f1ddd7ba910e4b4d58985325ae71e2f771c5",
+  "scripts/render_research.py": "64e607c344830d7a8fdcf90bc46924ca34b023728a78f12fe2b1332ae4943b7f",
+  "dist/research/downloads/Final_Project.pdf": "2b309f1021d6d937ac48d123d83dfd03927e80f08a3fc6884971825793a48d1b",
+  "dist/research/downloads/Analytical_Reflection.docx": "a25dd7e8f391379b9fd4137eb0b6d06a5037f201dbea6e103ff0b26313be1b8a",
+  "dist/research/downloads/Analytical_Reflection.pdf": "145dd6cfd98032f8d9b4266cab6993d67561fc94e6f04d79c6919e8d939c2745"
+}

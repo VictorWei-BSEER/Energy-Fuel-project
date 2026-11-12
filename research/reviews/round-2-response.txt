@@ -1,0 +1,34 @@
+ROUND 2 REVISION RESPONSE
+
+Review scope: frozen model, classified inputs, 36 central CSV cases and 486 sensitivity CSV cases. The separate technical review independently reconstructed geometry, marginal fuel balances, cash flows and price thresholds. Its original report is preserved as round-2-independent-audit-original.txt. The original round-2-input-manifest.json is unchanged.
+
+R2-01 — Paired physical denominators and CSV completeness
+The original JSON already included local-interruption burn and CO2, but the CSV exports omitted them. Added localAdditionalBurnT and localAdditionalCo2T to results.csv and sensitivity.csv. The existing additionalBurnT/additionalCo2T columns describe the amount required to deliver the specified net quantity; the local columns describe the quantity actually consumed using the bounded extra-origin headroom.
+
+At four hours, k=0.035/hour, linear retention:
+- One tonne NET DELIVERED: 1.162790697674 tonnes extra origin uplift, 0.162790697674 tonnes burn, 0.514418604651 tonnes combustion CO2.
+- One tonne EXTRA ORIGIN HEADROOM, with a one-tonne destination gap: 0.86 tonnes displaced local uplift, 0.14 tonnes burn, 0.4424 tonnes combustion CO2, 0.14 tonnes unfilled gap.
+These are different denominators and cannot be combined as one outcome. The README now states this explicitly. A new test checks both CSVs' export logic, fuel conservation, combustion-factor consistency and this specific four-hour distinction. All 522 exported cases have independently checked local burn and CO2.
+
+R2-02 — Availability of the counterfactual
+The economic comparison assumes that the ordinary destination purchase is available. The separate local-interruption calculation asks how much of a specified uplift gap can be displaced if the origin supplies extra fuel. It does not assign an avoided purchase cost to an unavailable transaction, estimate disruption welfare or demonstrate flight continuation. README language now separates these cases. A shared regional quota remains an additional-burn accounting identity rather than a prediction of cancellations or optimal emergency allocation.
+
+R2-03 — Exact concurrent overflow guard and audit history
+The historical manifest captured model.py SHA256 ae74979c86be7394949f5023dfbe0da3d4320fd1ccefe5eee71b7b946cb3f870. While that manifest was being prepared, before the implementation agent received the freeze instruction, the following finite-output guard was added immediately after burn = used - displaced in local_interruption:
+
+    if not all(math.isfinite(value) for value in (used, displaced, burn, burn * co2)):
+        raise ValueError("interruption quantities exceed the finite numerical domain")
+
+This produced model SHA256 af261410c6fa93dbd20b2e29b07f626ffefedf805863dca0963b7848aef2dde9, which was the version actually examined in the independent numerical audit. The discrepancy was disclosed to the coordinating agent and reviewer. The guard rejects finite but extreme inputs whose calculated emissions overflow; it does not alter any study-domain equations or results. The existing boundary test exercises local_interruption(1e308, 1e308, 20, .04) and expects ValueError. Historical manifests and audit reports have not been rewritten to conceal the timing.
+
+R2-04 — Portable provenance and repeatable audit
+Copied the separate reviewer's audit script into research/reviews/independent_numerical_check.py. Changed its absolute workspace path to one resolved from the script location; replaced the mutable app airport file with airport-source-snapshot.json, an exact copy of the original cutoff snapshot whose SHA256 matches inputs.json. Added checks for the two new CSV fields and JSON/CSV consistency. The adapted script prints its report without mutating the research artifacts. round-2-independent-audit-revised.txt is the actual post-revision execution output. The original audit report remains separately preserved.
+
+Verification actually executed after revision:
+- 21 unit tests pass, including the deliberately invalid reproduction fixture that prints a mismatch before being correctly rejected.
+- python3 research/model.py --check passes.
+- Independent audit passes 522 exported cash-flow/mass-balance/local-emissions cases, 1,296 monotonic adjacent comparisons, 243 structural pairs, six envelope checks, boundary and invalid-domain checks, and frozen-source provenance checks.
+- inputs.json and results.json remain byte-identical to the historical manifest. Removing only the two added columns from either new CSV recreates its historical CSV byte-for-byte. Therefore no existing scenario value or equation changed.
+- round-2-revised-manifest.json records the actual revised files, including code, tests, notes and archived source evidence. It does not replace the original manifest.
+
+Remaining limits: the published carrying range is not a route/aircraft calibration; linear and exponential retention laws are author approximations. Airport quotes, usable inventory, supplier capacity and aircraft dispatch feasibility remain unknown. Sensitivity envelopes are finite scenario extrema, not confidence intervals. The audit establishes numerical implementation consistency, not empirical accuracy or operational suitability.

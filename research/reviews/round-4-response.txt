@@ -1,0 +1,7 @@
+ROUND 4 AUTHOR RESPONSE — 12 November 2026
+
+R4-01: HTML reference generation trims an existing final period before adding punctuation. PDF/DOCX already apply this rule. Corrected reference7 without altering factual text.
+R4-02: Added explicit pip-install, system-font and complete rebuild commands. Improved on the manual-copy suggestion: build, render and integrity scripts now select dist/research in the repository or exhibit in an extracted ZIP automatically. Numerical reproduction remains standard-library only.
+R4-03: Added actual validation scope to report, research README and publication QA record; explicitly states no real browser or assistive-technology run. Four completed rounds are now documented.
+
+The reviewer independently extracted the draft ZIP and reproduced deterministic outputs, 21 tests, and the numerical audit. Original Round 4 report, input manifest and ZIP identity are preserved under versions/. Final publications are regenerated and the package resealed after these changes; acceptance uses checksum/link/data/essay validation plus the recorded PDF inspection. Final hashes live in the publication manifest and sealed ZIP SHA256SUMS.json, avoiding self-referential archive hashes.

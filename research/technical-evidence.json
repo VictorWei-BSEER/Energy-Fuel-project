@@ -1,0 +1,223 @@
+{
+  "retrieved_at": "2026-11-12",
+  "purpose": "Evidence register for a conditional East Asian airline tankering threshold model. Public sources support mechanism and parameter sensitivity, not live airport contract quotes or dispatch optimization.",
+  "research_question": "Under what destination fuel-price premiums can fuel tankering be privately economical on selected Asian air links, and how do fuel burn, emissions and supply-disruption considerations change that threshold?",
+  "sources": [
+    {
+      "id": "ICAO_ENV_2022_TANKERING",
+      "title": "Economic Fuel Tankering: A Threat to Aviation Decarbonisation",
+      "authors": [
+        "Laurent Tabernier",
+        "Robin Deransy",
+        "Dan Rutherford"
+      ],
+      "publisher": "ICAO Environmental Report 2022, Chapter 6",
+      "year": 2022,
+      "url": "https://www.icao.int/sites/default/files/environmental-protection/Documents/EnvironmentalReports/2022/ENVReport2022_Art38.pdf",
+      "pages": "149–152; coefficient on p150 (PDF page 2)",
+      "source_type": "Official ICAO-hosted chapter by EUROCONTROL/ICCT authors, citing ICAO Doc 10013 §4.1.2",
+      "findings": [
+        "Marginal fuel burn from added onboard weight is typically 2.5–4.5% of that added weight per flight hour; aircraft characteristics matter.",
+        "Operational tankering addresses refuelling difficulties or disruptions; economic tankering exploits cheaper origin fuel and services.",
+        "Tankering is additional to the fuel needed for a safe flight, including required reserves."
+      ],
+      "permitted_use": "Use k in [0.025,0.045] per hour as a literature-informed sensitivity range. Do not attach it to a named aircraft as a calibrated value.",
+      "limitations": [
+        "The source does not prescribe linear or exponential compounding; that is a separate author assumption.",
+        "The authors' policy argument is not itself a worldwide legal prohibition.",
+        "European historical prevalence estimates cannot establish contemporary Asian prevalence."
+      ]
+    },
+    {
+      "id": "EUROCONTROL_2019",
+      "title": "Fuel tankering: economic benefits and environmental impact",
+      "publisher": "EUROCONTROL Think Paper #1",
+      "publication_date": "2019-06-21",
+      "url": "https://www.eurocontrol.int/publication/fuel-tankering-european-skies-economic-benefits-and-environmental-impact",
+      "pdf_url": "https://www.eurocontrol.int/sites/default/files/2020-01/eurocontrol-think-paper-1-fuel-tankering.pdf",
+      "pages": "Table 1 on report p2; methodology and study scope later in report",
+      "source_type": "Primary modelling study",
+      "findings": [
+        "The study used June 2018 ECAC traffic, BADA performance models and negotiated prices from two airlines.",
+        "Annualized model estimates were 286000 tonnes additional fuel, 901000 tonnes CO2 and EUR265 million net airline savings.",
+        "Its representative full-tankering table shows additional fuel equivalent to 2.21% of baseline outbound trip fuel at 300 NM and 4.66% at 600 NM."
+      ],
+      "limitations": [
+        "The table percentages are not hourly marginal carry coefficients.",
+        "These are historical European model estimates, not measured current Asian tankering.",
+        "The emissions aggregate uses the study's 3.15 factor; do not silently recalculate only parts of those published aggregate results with 3.16.",
+        "Study distance cutoffs are not universal aircraft feasibility limits."
+      ]
+    },
+    {
+      "id": "TABERNIER_ET_AL_2021",
+      "title": "Fuel Tankering: Economic Benefits and Environmental Impact for Flights Up to 1500 NM (Full Tankering) and 2500 NM (Partial Tankering)",
+      "authors": [
+        "Laurent Tabernier",
+        "Esther Calvo Fernández",
+        "Andreas Tautz",
+        "Robin Deransy",
+        "Peter Martin"
+      ],
+      "publication_date": "2021-01-31",
+      "journal": "Aerospace 8(2), 37",
+      "doi": "10.3390/aerospace8020037",
+      "url": "https://www.mdpi.com/2226-4310/8/2/37",
+      "source_type": "Peer-reviewed primary study by EUROCONTROL researchers",
+      "sections": "§3 carry coefficient; §4 data, assumptions and constraints",
+      "findings": [
+        "Models 66% of June 2018 ECAC flights, with negotiated fuel prices at 140 airports supplied by two major airlines.",
+        "Uses aircraft performance, maximum takeoff/landing weights, tank capacity, 80.3% load factor, 124 kg per passenger, EUR30 minimum gain and EUR20 per tonne CO2.",
+        "Treats full and partial tankering within defined study ranges and annualizes one month's traffic."
+      ],
+      "limitations": [
+        "Private historical fuel prices are unavailable for reproducing a present-day Asian savings estimate.",
+        "No inference of named-aircraft feasibility from distance alone.",
+        "Extra burn divided by baseline trip fuel is not necessarily extra burn divided by net tankered fuel, especially under partial tankering.",
+        "Excludes operational tankering and carrying fuel for more than one subsequent leg."
+      ]
+    },
+    {
+      "id": "RAND_2015",
+      "title": "Tankering Fuel on U.S. Air Force Transport Aircraft: An Assessment of Cost Savings",
+      "authors": [
+        "Tanguy Hubert",
+        "Christopher Guo",
+        "Christopher A. Mouton",
+        "James D. Powers"
+      ],
+      "publisher": "RAND Corporation",
+      "year": 2015,
+      "report_number": "RR837",
+      "url": "https://www.rand.org/content/dam/rand/pubs/research_reports/RR800/RR837/RAND_RR837.pdf",
+      "pages": "Report pp12–14; PDF pages 30–32",
+      "source_type": "Primary technical analysis",
+      "findings": [
+        "Defines transport factor K as excess fuel loaded at origin divided by fuel effectively delivered to the destination.",
+        "If X is net fuel delivered and xi is the burn factor, origin uplift is (1+xi)X and extra en-route burn is xi X.",
+        "Identifies available aircraft capacity, fuel burn penalty, subsequent mission fuel requirement and price difference as separate decision factors.",
+        "Separates internal accounting savings from wider organizational resource savings."
+      ],
+      "limitations": [
+        "Historical U.S. military aircraft and prices do not calibrate Asian commercial aircraft.",
+        "Useful for definitions and algebra, not contemporary route coefficients or airport quotations."
+      ]
+    },
+    {
+      "id": "ICAO_CORSIA_CO2",
+      "title": "CORSIA FAQ, question 3.59",
+      "publisher": "ICAO",
+      "url": "https://www.icao.int/sites/default/files/environmental-protection/CORSIA/CORSIA-FAQ.html",
+      "source_type": "Official methodological guidance",
+      "findings": [
+        "CO2 emissions equal fuel mass multiplied by the conversion factor.",
+        "Jet-A, Jet-A1, TS-1 and No.3 Jet fuel use 3.16 kg CO2 per kg fuel.",
+        "Questions 3.61–3.62 permit actual density or a standard 0.8 kg/litre for CORSIA fuel-mass conversion."
+      ],
+      "limitations": [
+        "3.16 measures combustion CO2, not lifecycle greenhouse gases or non-CO2 aviation effects.",
+        "A model shadow carbon price is not automatically an operator's actual CORSIA liability.",
+        "Avoid volume-to-mass conversion unless density assumptions are explicit."
+      ]
+    },
+    {
+      "id": "REFUELEU_2023_ARTICLE5",
+      "title": "Regulation (EU) 2023/2405 Article 5 and European Commission FAQ",
+      "publisher": "European Union / European Commission",
+      "publication_date": "2023-10-18",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/2405/oj/eng",
+      "accessible_official_explanation": "https://transport.ec.europa.eu/transport-modes/air/environment/refueleu-aviation/faq-refueleu-aviation_en",
+      "guidance_url": "https://eur-lex.europa.eu/eli/C/2024/5997/oj/eng",
+      "pages_or_sections": "Commission FAQ question 33; Article 5",
+      "source_type": "Binding EU regulation, with official interpretation",
+      "findings": [
+        "Covered operators must uplift at least 90% of yearly aviation fuel required at each covered Union departure airport.",
+        "The denominator is annual required trip and taxi-out fuel for covered flights, not tank capacity or every individual flight.",
+        "Safety-related justifications and specified exemptions exist; obligations can include non-EU operators departing Union airports."
+      ],
+      "limitations": [
+        "SIN–HKG, HKG–NRT and SIN–NRT are outside Union airports, so use as a policy comparator, not a direct legal constraint on these links.",
+        "The model must not present a blanket global ban on tankering.",
+        "Current case-specific exemption guidance must be checked before making compliance claims."
+      ]
+    }
+  ],
+  "additional_current_policy_source": {
+  "id": "EC_NOTICE_2026_FUEL_UPLIFT",
+  "title": "Commission Notice: Guidance clarifying certain EU rules applicable to passengers and tourism as well as transport operators, including in light of the current reduced supply of jet fuel from the Middle East",
+  "publisher": "European Commission",
+  "publication_date": "2026-05-12",
+  "notice": "C/2026/2669",
+  "url": "https://eur-lex.europa.eu/eli/C/2026/2669/oj/eng",
+  "section": "3(b), Fuel uplift obligations for aircraft operators",
+  "source_type": "Official interpretative notice",
+  "findings": [
+    "Reiterates the annual 90% uplift rule and safety-related grounds for falling below it.",
+    "Destination fuel shortages can be supported by NOTAMs, supplier communication or operator management-system reports, with justification in annual reporting.",
+    "Significant jet-fuel price increases alone are not a safety exemption."
+  ],
+  "limitations": [
+    "EU comparator only for the proposed Asian routes.",
+    "Statements describing supply conditions in May 2026 must not be relabelled as November 2026 conditions."
+  ]
+},
+  "model": {
+    "denominator": "D is net extra usable fuel arriving at the destination, in tonnes. B is incremental fuel burned because fuel is tankered. b=B/D. Extra origin uplift equals D+B.",
+    "mass_balance": "B = D*b; Q_origin = D*(1+b); Q_origin-B=D",
+    "costs": "With pA,pB in currency per tonne fuel, C in currency per tonne CO2, fixed incremental cost F in currency: savings = D*(pB-pA*(1+b)-3.16*C*b)-F.",
+    "threshold": "With delta=(pB-pA)/pA, delta_star = b*(1+3.16*C/pA)+F/(D*pA).",
+    "selected_linear_heuristic": "Let k be an assumed fraction of additional departure fuel burned per airborne hour and t airborne hours. a=1-k*t, b=1/a-1. Require 0<=k*t<1. Treat k in [0.025,0.045] as sensitivity informed by ICAO, not ICAO's prescribed discrete model.",
+    "structural_alternative": "Continuous incremental-weight decay dm/dt=-k*m gives a=exp(-k*t) and b=exp(k*t)-1. This is an author-derived alternative, not a validated aircraft performance model.",
+    "interpretation": "At positive kt the linear-origin-weight formulation produces more incremental burn than exponential weight decay with the same numeric k. Call it conservative relative to this alternative, not necessarily conservative relative to actual aircraft.",
+    "time": "Use airborne hours. Geographic great-circle distance is not flown distance; time derived from assumed ground speed remains an engineering scenario. Do not silently use scheduled gate-to-gate block time as airborne time.",
+    "quantity": "D=1 tonne is a normalization for threshold and emissions comparisons. It is not proof that a specific flight can carry that much.",
+    "feasibility_requirements": [
+      "Aircraft-specific performance and flight profile",
+      "Maximum takeoff and landing weight",
+      "Tank capacity",
+      "Passenger and cargo payload",
+      "Mandatory reserves",
+      "Fuel required after arrival",
+      "Weather, winds, actual routing and operational restrictions"
+    ],
+    "exclusions": [
+      "No actual airport contract price inferred from commodity benchmarks",
+      "No live executable arbitrage claim",
+      "No measured current Asian tankering prevalence",
+      "No national resilience benefit inferred solely from aircraft tankering",
+      "No airline flight scheduling or dispatch recommendation"
+    ],
+    "policy_logic": "Tankering may reduce one aircraft's destination uplift requirement, conditional on feasibility. It requires more fuel at origin and increases aggregate burn. National supply security additionally requires inventories, terminals, pipelines, delivery capacity and disruption dependencies."
+  },
+  "illustrative_check": {
+    "inputs": {
+      "k_per_hour": 0.035,
+      "t_hours": 4,
+      "D_tonnes": 1,
+      "pA_currency_per_tonne": 1000,
+      "C_currency_per_tonne_CO2": 100,
+      "F_currency": 0
+    },
+    "classification": "All numeric inputs here except ICAO factor and literature k range are scenario settings; no market observation.",
+    "expected_linear": {
+      "survival": 0.86,
+      "b": 0.16279069767441862,
+      "extra_burn_tonnes": 0.16279069767441862,
+      "extra_CO2_tonnes": 0.5144186046511628,
+      "zero_carbon_threshold_percent": 16.27906976744186,
+      "with_carbon_threshold_percent": 21.42325581395349
+    },
+    "expected_exponential": {
+      "b": 0.15027379885722741,
+      "extra_CO2_tonnes": 0.47486520438883867,
+      "zero_carbon_threshold_percent": 15.027379885722741
+    }
+  },
+  "review_questions": [
+    "Are every price and time input visibly classified as observed, proxy or assumed?",
+    "Is the arrival-net versus departure-uplift denominator explicit throughout?",
+    "Do methods, chart units, essay numbers and code agree?",
+    "Does the policy section separate private economic incentive, operational resilience and system energy security?",
+    "Are legal comparisons geographically and temporally scoped?"
+  ]
+}
