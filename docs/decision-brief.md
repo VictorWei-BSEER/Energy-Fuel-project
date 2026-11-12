@@ -1,108 +1,94 @@
-# Fuel Atlas — project decision brief
+# Fuel Atlas 使用说明
 
-Prepared 13 November 2026 (UTC+8). This brief supports a critical investment or research discussion. It is not a financing offer, operational dispatch authorization or claim of endorsement by any named institution.
+更新于 2026 年 11 月 13 日
 
-## The decision problem
+选好航线，生成一组数据，看看每一站怎么加油。
 
-An airline buying cheaper fuel at one airport may carry it to a later station and avoid a more expensive purchase. Additional weight burns fuel, consumes capacity and can affect payload. A valid recommendation therefore needs comparable into-plane offers, the fixed mission and approved aircraft constraints—not simply a price spread on a map.
+## 情景数据
 
-Fuel Atlas makes that trade-off inspectable. Its research asks a related systems question: when a local supply interruption occurs, does airborne fuel transfer preserve useful connectivity, or shift scarcity and emissions to another part of the network? The commercial and public-policy objectives are not automatically the same.
+机场坐标来自公开地理数据。价格、供油上限和飞机参数是用于推演的生成数据，相同设置会得到相同结果。有自己的数据后，可以逐项替换。
 
-**Proposed next decision:** secure a data partner and independent methods review for a bounded shadow pilot. Do not expand into a broad energy-trading platform before testing that the narrower workflow creates repeatable value.
+## 1 选择航线
 
-## What exists, and what remains unproven
+先选择出发地和目的地，再按需要添加经停，组成 1–5 段连续航线。地图会随选择变化。模型沿这条航线计算各站加油量。也可以单独打开示例航线。
 
-| Capability | What can be inspected today | Evidence needed next |
+## 2 生成数据
+
+为航线生成一组完整数据。机场油价和供油上限按情景规则设定，飞行时间、耗油和备份油根据距离及所选飞机参数计算。生成后可以继续修改。
+
+## 3 计算方案
+
+修改后运行计算。模型会检查油量平衡、油箱容量、起降重量、备份油和各机场的供油上限。当前设置无法完成航线时，结果会指出需要调整的限制。
+
+## 4 比较两种方案
+
+比较每站按需加油和提前多买燃油两种方案。两者采用相同的初始油量和终点油量。除了采购成本，也要看额外耗油、各站加油量与剩余燃油。播放航线可以查看这些数值沿途如何变化。
+
+## 5 换入自己的数据
+
+导入带有效期的机场报价，选好飞行日期，再更新飞机和供油参数。报价统一为包含到机费用的美元/公吨。缺失或有效期重叠的报价会提示修正。最后可以导出输入和结果，保存本次比较。
+
+## 成本降低意味着什么
+
+采购成本降低，可能同时伴随更多飞行耗油。用于携油的额外燃油已经计入采购成本。评估最终收益时，再补充单独的碳费用、操作费用和载荷影响。
+
+## 接下来接哪些数据
+
+| 数据 | 来源 | 在模型中的用途 |
 | --- | --- | --- |
-| Fixed-rotation fuel model | Browser-local optimization over 2–5 fixed legs, explicit fuel and weight constraints, optional uplift limits and equal terminal fuel across comparison strategies | Aircraft-specific incremental performance, operational tolerances, real supply constraints and prospective validation |
-| Global geography | A sourced 67-airport sample across six inhabited continents with a global map and route visualization | Geography does not prove fuel availability, quoted prices or world-market coverage |
-| Quotation handling | Bounded CSV import, dates, delivery basis, included-fee declaration, missing/overlapping quote rejection | Contract verification, buyer entitlements, supplier acceptance, quantity tiers and reconciled invoicing |
-| Public data | Separate official-source benchmark/context feeds, timestamps and last-known observations | Licensed airport offers and usable airport stock/delivery data remain a different dataset |
-| Research | Reproducible marginal tankering calculations, documented assumptions, route sensitivity and institutional Asian energy-security cases | Calibrated empirical estimates, causal identification and a validated network-service model |
+| 机场航油价格 | 供应商报价、航司合同与发票 | 替换生成价格，同时保留有效期、币种、单位、费用与采购条件。 |
+| 飞机性能 | 航司认可的性能与飞行计划数据 | 替换耗油率、重量限制、备份油和额外重量耗油参数。 |
+| 实际供油能力 | 供应商、机场燃油运营商及合同供油权利 | 设置每次停靠可获得的加油量，并测试供油中断。 |
+| 市场基准 | 公开能源价格、汇率与国家燃油平衡数据 | 观察市场背景并设置情景，机场合同价单独接入。 |
 
-The flight optimizer, marginal tankering study and separate supply-chain planner have distinct units, state variables and purposes. They are not one calibrated global energy model. No realized airline savings, customer contracts, revenue, retention or prospective operational trial is included in the project evidence.
+## 先从一个变化开始
 
-## Commercial hypothesis and competitive context
+先改一个机场的价格或供油上限，重新计算并比较。再试不同的飞机参数或航线，更容易看清结果由什么驱动。研究报告里有更详细的携油成本分析。
 
-The initial buyer hypothesis is an airline fuel procurement team working with flight operations. The proposed workflow is to reconcile dated offers, replay a fixed rotation, identify a feasible uplift alternative, inspect the constraints that drive it and retain the input/result record. Begin with one fleet type and a small airport network.
 
-A paid pilot followed by a subscription is a pricing hypothesis, not a validated business model. Buyer interviews must establish the budget owner, existing workflow, willingness to pay and procurement lead time. Delivery economics must include data licensing, integration, domain support, security review and ongoing maintenance. No total-addressable-market estimate is asserted because an eligible customer count, achievable contract value and adoption evidence have not been established.
+# Fuel Atlas Model guide
 
-This is an existing product category. [Skymetrix’s Fuel page](https://skymetrix.com/airtelligent/fuel/) describes fuel procurement, flight-event integration and tankering support. [OpenAirlines’ fuel-manager page](https://www.openairlines.com/for-fuel-managers-ops-engineers/) describes operational fuel analytics, data gathering and reporting. These are vendor descriptions, not independent performance comparisons; their savings claims are not transferred to Fuel Atlas.
+Updated 13 November 2026
 
-The differentiation to test is whether transparent resilience scenarios and decision provenance fill an unmet workflow alongside existing systems. A map, optimizer and attractive interface are insufficient evidence of a defensible advantage. Permissioned data access, validated performance, practical integration and user trust could become advantages only if the team establishes them.
+Choose a route, generate a scenario and compare the fuel plan at each stop.
 
-## Economic value bridge
+## Scenario data
 
-For the same mission and feasible service outcome:
+Airport coordinates come from public geographic data. Prices, supply limits and aircraft parameters are generated assumptions for exploring the model. The same settings produce the same inputs. Replace them with your own data when available.
 
-**Net value = matched baseline purchase cost − feasible alternative purchase cost − additional non-fuel costs.**
+## 1 Choose the route
 
-The model’s purchase-cost difference already accounts for modeled carriage burn through the extra fuel that must be purchased. Do not subtract the same burn twice. Separately reconcile additional carbon charges, handling, displaced-payload value, contract penalties and implementation costs. Where a fee is already included in an into-plane price, do not deduct it again.
+Choose the departure and destination, then add stops to build a continuous route of 1–5 legs. The map follows your choices. The model keeps this route fixed and chooses how much fuel to buy at each stop. An example route is available separately.
 
-Keep payload, reserves, initial fuel, terminal fuel, applicable offers and information timing consistent. Existing fuel is already owned; incremental purchase cost is not full accounting profit. A comparison against an infeasible baseline measures a feasibility difference, not an achieved saving percentage. Lost-service valuations require a separate agreed method rather than assigning arbitrary cancellation costs.
+## 2 Generate the inputs
 
-Report both gross and net differences, coverage of eligible rotations, rejected cases, analyst time saved and the distribution of outcomes. An average alone could conceal a small set of bad recommendations or an impractical data burden. Annualization should follow validated operating frequency and observed eligibility, not a multiplication of a selected favorable example.
+Generate a complete scenario for the route. Airport prices and supply limits come from the scenario rules. Distance and the selected aircraft profile give flight time, fuel burn and reserves. You can then edit the values you want to test.
 
-## Proposed 90-day pilot
+## 3 Run the calculation
 
-The timeline starts after a partner agrees to participate; the dates are relative and depend on access. These are proposed gates, not completed milestones.
+Run the optimizer after editing. It checks fuel balance, tank capacity, takeoff weight, landing weight, reserves and each airport’s uplift limit. If the route cannot be served with those inputs, the result shows which limits need attention.
 
-### Days 1–30: establish comparability
+## 4 Compare both plans
 
-Obtain authorized offers, invoices, uplift records and airline-approved performance data. Record product, units, currency, fee coverage, validity, buyer rights, supply limits and exclusions. Separate the operational record from public benchmark context.
+Compare buying as needed at every stop with buying extra fuel earlier. Both plans start and finish with the same fuel. Read the purchase cost alongside extra burn, uplift by airport and remaining fuel. Playback shows how those values change along the route.
 
-Acceptance: every admitted record has complete required provenance, units and delivery basis; missing material inputs block recommendations. Agree numerical tolerances, material-error criteria, eligible use cases and a holdout period before evaluating performance. Confirm who may access contracts and what can be published.
+## 5 Bring in your own data
 
-### Days 31–60: replay without hindsight
+Import dated airport quotes, choose the flight date and update the aircraft and supply inputs. Prices use USD per metric tonne with into-plane fees included. Missing or overlapping quotes are shown for correction. Export the inputs and results to keep a copy of the comparison.
 
-Replay historical rotations with only information that was available at each decision time. Compare the output with recorded practice and the same-constraint modeled baseline. Independently verify fuel mass balance, uplift limits, tank capacity, takeoff weight, landing weight and terminal fuel.
+## How to read a lower cost
 
-Acceptance: no unresolved hard-constraint violation. Report quote coverage, fuel-burn prediction error, invoice-reconciliation error and net value against the pre-agreed tolerances. Explain disagreements rather than labeling every difference from recorded practice an improvement. Keep calibration cases separate from the holdout evaluation.
+A lower purchase cost can come with more fuel burned in flight. That extra fuel is already included in the purchase calculation. Add any separate carbon charges, handling costs or payload effects when assessing the final benefit.
 
-### Days 61–90: test prospective usefulness
+## Data to connect next
 
-Run in shadow mode, with operations retaining authority. Log recommendations, operator disagreements, override reasons, analyst effort, latency and data failures. No recommendation automatically changes dispatch or places a fuel order.
-
-Acceptance: repeatable user value, affordable integration and explicit operational sign-off. Stop or redesign if the net benefit disappears after costs, needed data remain inaccessible, performance errors overturn decisions or workflow overhead exceeds the benefit. Any move beyond shadow use requires a separate approved operational process.
-
-## Systems-research agenda
-
-Compare three mechanisms: a local delivery failure, refinery disruption and a correlated import shock. Test tankering against ground stocks, alternate suppliers and coordinated allocation. A supply interruption and a price increase should not be treated as the same event.
-
-Relevant measurements include unmet fuel, unmet service, additional fuel burn, direct CO₂, procurement cost, recovery time and distribution of scarce fuel across operators and communities. Fuel shortfall is not automatically a count of cancelled flights; translating fuel to service requires a validated demand and mission representation. Priority-service and equity weights must be stated and tested rather than hidden in a composite risk score.
-
-Jointly vary aircraft performance, supply logistics, restoration times and policy assumptions. Report feasible sets, model-form disagreement and scenario regret. Do not attach invented occurrence probabilities to scenarios. Scenario ranges are not statistical confidence intervals. Keep direct aircraft CO₂ separate from lifecycle emissions and non-CO₂ climate effects.
-
-This agenda is relevant to [IIASA’s Energy, Climate, and Environment programme](https://iiasa.ac.at/programs/ece), which connects energy, services, local constraints and inequalities, and [Advancing Systems Analysis](https://iiasa.ac.at/programs/asa), which emphasizes resilience, decision methods and open science. This is a proposed fit with public programme themes, not an affiliation, invitation, joint project or endorsement.
-
-Publish equations, input classifications, code versions, sensitivity design and reproducible outputs. Protect confidential contracts through appropriate access controls; publish de-identified or aggregate results only when authorized. Engage an independent domain reviewer and a data partner before extending the claim from conditional research to operational decision support.
-
-## Source and claim ledger
-
-External product and programme pages were checked on 13 November 2026 (UTC+8).
-
-| Claim | Direct supporting source | Interpretation boundary |
+| Input | Source | Use in the model |
 | --- | --- | --- |
-| The current project solves fixed-rotation uplift choices | `dist/flight-optimizer.js`; `docs/flight-model.md`; corresponding model tests | Demonstrated code behavior is not aircraft calibration or dispatch approval |
-| The geographic sample contains 67 airports | `dist/data/global-airports.json`; `docs/global-geography.md` | An editorial sample, not universal market coverage or a traffic ranking |
-| Quotation import requires dates and comparable basis | `dist/fuel-quotes.js`; `docs/airport-fuel-pricing.md` | Parsing does not authenticate a contract or guarantee supply |
-| The research reports conditional marginal tankering results | `research/report.json`; `research/inputs.json`; `research/model.py` | The results do not identify current airport arbitrage or actual service preservation |
-| Skymetrix describes procurement, flight-event integration and tankering support | [Fuel — Skymetrix](https://skymetrix.com/airtelligent/fuel/) | Vendor product description; no independent comparative or savings claim |
-| OpenAirlines describes operational fuel analytics and reporting | [Fuel Managers & Operations Engineers — OpenAirlines](https://www.openairlines.com/for-fuel-managers-ops-engineers/) | Vendor product description; no transfer of marketing savings figures |
-| Energy, services and inequality are relevant IIASA research themes | [ECE — IIASA](https://iiasa.ac.at/programs/ece) | Research relevance only, no institutional relationship |
-| Resilience, analytical methods and open science are relevant IIASA themes | [ASA — IIASA](https://iiasa.ac.at/programs/asa) | Research relevance only, no institutional relationship |
+| Airport fuel prices | Supplier quotes, airline contracts and invoices | Replace generated prices. Keep validity, currency, units, fees and buyer terms together. |
+| Aircraft performance | Airline-approved performance and flight-planning data | Replace burn rates, weight limits, reserves and the extra-weight fuel penalty. |
+| Fuel availability | Suppliers, airport fuel operators and contracted delivery rights | Set usable uplift limits for each visit and test a supply interruption. |
+| Market benchmarks | Public energy prices, exchange rates and national fuel balances | Track the market background and set scenarios. Airport contract prices remain separate inputs. |
 
-All proposed customer choices, revenue approach, validation timetable, acceptance gates and future research work are the project’s own hypotheses or recommendations. They are not facts asserted by the cited organizations.
+## Try one change at a time
 
-## Rebuild the review handout
-
-The website brief fragment is `dist/brief/brief.html`; `dist/brief/brief.css` contains its scoped presentation. Run `python3 scripts/build_brief.py` to generate a standalone print view, the downloadable Markdown note and a source-hash manifest. Run `python3 scripts/build_brief.py --check` to verify those generated assets against their current source.
-
-For the optional PDF, use an already installed Chromium binary:
-
-```sh
-python3 scripts/build_brief.py --pdf --chromium /absolute/path/to/chromium
-```
-
-The builder installs nothing. The print view embeds its CSS and uses system fonts, with no external runtime assets. It rewrites app navigation to the hosted main workspace and prints full source URLs. Browser/version metadata may change PDF bytes; source hashes define content provenance. Review the rendered pages after changes rather than relying on the existence of a PDF file alone.
+Change one airport price or supply limit, recalculate and compare. Then vary the aircraft or route. This makes it easier to see what is driving the result. The research tab explains the fuel-carriage trade-off in more detail.

@@ -78,15 +78,18 @@ function embedResearch(html) {
 }
 
 export async function composeWorkspace({ check = false } = {}) {
-  const [template, research, css, brief] = await Promise.all([
+  const [template, research, css, brief, fuelData, sources] = await Promise.all([
     read('src/workspace/index.template.html'), read('dist/research/index.html'),
     read('dist/research/research.css'), read('dist/brief/brief.html'),
+    read('dist/data-view/panel.html'), read('dist/data-view/sources.html'),
   ]);
-  for (const marker of ['<!-- WORKSPACE:RESEARCH -->', '<!-- WORKSPACE:BRIEF -->']) {
+  for (const marker of ['<!-- WORKSPACE:RESEARCH -->', '<!-- WORKSPACE:BRIEF -->', '<!-- WORKSPACE:DATA -->', '<!-- WORKSPACE:SOURCES -->']) {
     if (template.split(marker).length !== 2) throw new Error(`Expected one ${marker} marker`);
   }
   const html = template.replace('<!-- WORKSPACE:RESEARCH -->', embedResearch(research))
-    .replace('<!-- WORKSPACE:BRIEF -->', brief.trim());
+    .replace('<!-- WORKSPACE:BRIEF -->', brief.trim())
+    .replace('<!-- WORKSPACE:DATA -->', fuelData.trim())
+    .replace('<!-- WORKSPACE:SOURCES -->', sources.trim());
   const { document } = parseHTML(html);
   const ids = [...document.querySelectorAll('[id]')].map(node => node.id);
   if (ids.length !== new Set(ids).size) throw new Error('Composed workspace has duplicate IDs');

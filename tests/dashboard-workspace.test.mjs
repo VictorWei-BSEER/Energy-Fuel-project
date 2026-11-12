@@ -10,12 +10,6 @@ async function mount(t, { hash = "", reducedMotion = false, preset = "eastasia" 
     new URL("../dist/index.html", import.meta.url),
     "utf8",
   );
-  const sources = JSON.parse(
-    await readFile(
-      new URL("../dist/data/fuel-sources.json", import.meta.url),
-      "utf8",
-    ),
-  );
   const { document, window } = parseHTML(html);
   const originals = new Map();
   const geometryDescriptors = [];
@@ -29,6 +23,7 @@ async function mount(t, { hash = "", reducedMotion = false, preset = "eastasia" 
     addEventListener: (_name, callback) => mediaListeners.add(callback),
   };
   window.matchMedia = () => media;
+  window.localStorage = { getItem: () => "en", setItem() {} };
   window.location = {
     hash,
     replace() {
@@ -80,10 +75,7 @@ async function mount(t, { hash = "", reducedMotion = false, preset = "eastasia" 
       return frameId;
     },
     cancelAnimationFrame: (id) => frames.delete(id),
-    fetch: async (url) => {
-      assert.equal(url, "./data/fuel-sources.json");
-      return { ok: true, json: async () => sources };
-    },
+    fetch: async (url) => { throw new Error(`The route model must not fetch an unrelated live feed: ${url}`); },
   })) {
     originals.set(name, Object.getOwnPropertyDescriptor(globalThis, name));
     Object.defineProperty(globalThis, name, {
@@ -100,7 +92,7 @@ async function mount(t, { hash = "", reducedMotion = false, preset = "eastasia" 
   Object.defineProperty($("#flight-date"), "validity", {
     value: { valid: true },
   });
-  for (const [id, initial] of [["aircraft", "b787"], ["scenario-preset", "global"], ["map-scope", "global"]]) {
+  for (const [id, initial] of [["aircraft", "widebody"], ["scenario-preset", "global"], ["map-scope", "global"]]) {
     let value = initial;
     Object.defineProperty($(`#${id}`), "value", {
       get: () => value, set: next => { value = String(next); }, configurable: true,
@@ -132,9 +124,11 @@ async function mount(t, { hash = "", reducedMotion = false, preset = "eastasia" 
     $(selector).dispatchEvent(
       new window.Event(type, { bubbles: true, cancelable: true }),
     );
-  if (preset !== "global") {
+  if (preset) {
     $("#scenario-preset").value = preset;
     fire("#scenario-preset", "change");
+    fire("#load-example", "click");
+    fire("#rotation-form", "submit");
   }
   const click = (selector) => fire(selector, "click");
   const input = (selector, value) => {
@@ -173,7 +167,7 @@ async function mount(t, { hash = "", reducedMotion = false, preset = "eastasia" 
 }
 
 test("homepage uses one five-tab workspace with isolated source controls", async (t) => {
-  const ui = await mount(t);
+  const ui = await mount(t, { preset: null });
   const { $, document, click, visible } = ui;
   assert.ok(document.querySelector(".topbar .wordmark"));
   assert.equal(
@@ -204,22 +198,21 @@ test("homepage uses one five-tab workspace with isolated source controls", async
     $("#rotation-form").closest(".workspace-panel").id,
     "workspace-calculations",
   );
-  for (const selector of [
-    "#airport-rows",
-    "#observed-airport-rows",
-    "#source-cards",
-    "#observed-source-cards",
-  ]) {
-    assert.equal(
-      $(selector).closest(".workspace-panel").id,
-      "workspace-sources",
-    );
-  }
+  assert.equal($("#data-airport-rows").closest(".workspace-panel").id, "workspace-oil-markets");
+  assert.equal($("#data-assumption-form").closest(".workspace-panel").id, "workspace-oil-markets");
+  assert.ok(document.querySelector("#workspace-sources .data-source-table"));
+  assert.equal(document.querySelector("#public-market"), null);
+  assert.equal(document.querySelector("#animated-plane"), null, "first visit has no preloaded or playing route");
+  assert.equal($("#motion-toggle").dataset.state, "unavailable");
+  assert.equal($("#savings").textContent, "—");
   const scriptSources = [...document.querySelectorAll("script[src]")].map(
     (script) => script.getAttribute("src").split("?")[0],
   );
-  assert.ok(scriptSources.includes("./public-market.js"));
-  assert.ok(scriptSources.includes("./observed-app.js"));
+  assert.ok(!scriptSources.includes("./public-market.js"));
+  assert.ok(!scriptSources.includes("./observed-app.js"));
+  assert.ok(!scriptSources.includes("./workspace-directory.js"));
+  assert.ok(scriptSources.includes("./data-view.js"));
+  assert.ok(scriptSources.includes("./i18n.js"));
   assert.ok(!scriptSources.includes("./planner-app.js"));
   assert.ok(!scriptSources.includes("./airport-map.js"));
   ui.input("#initial-fuel", 20);
@@ -229,11 +222,11 @@ test("homepage uses one five-tab workspace with isolated source controls", async
   assert.deepEqual(visible(), ["workspace-sources"]);
   click("#workspace-tab-calculations");
   assert.equal($("#initial-fuel").value, "20", "tab changes preserve edits");
-  assert.deepEqual(ui.history, ["#oil-markets", "#sources", "#calculations"]);
+  assert.deepEqual(ui.history, ["#fuel-data", "#sources", "#calculations"]);
 });
 
-test("global landing autoplays an intercontinental route and scope changes preserve the solved plan", async (t) => {
-  const { $, fire, click, advance } = await mount(t, { preset: "global" });
+test("explicit global example calculates a playable route and scope changes preserve the solved plan", async (t) => {
+  const { $, document, fire, click, advance } = await mount(t, { preset: "global" });
   assert.equal($("#motion-toggle").dataset.state, "playing");
   assert.equal($("#motion-current-leg").textContent, "SIN → DXB");
   assert.equal($("#flight-map").getAttribute("viewBox"), "0 0 1440 720");
@@ -256,10 +249,16 @@ test("global landing autoplays an intercontinental route and scope changes prese
   assert.equal($("#optimized-cost").textContent, cost);
   $("#scenario-preset").value = "eastasia";
   fire("#scenario-preset", "change");
-  assert.equal($("#optimized-cost").textContent, "$27,674");
-  click("#reset-plan");
-  assert.equal($("#scenario-preset").value, "eastasia");
+  assert.equal($("#optimized-cost").textContent, cost, "choosing an example does not replace a plan before it is loaded");
+  click("#load-example");
+  assert.equal($("#optimized-cost").textContent, "—");
+  fire("#rotation-form", "submit");
+  assert.equal($("#model-error").hidden, true);
+  assert.notEqual($("#optimized-cost").textContent, "—");
   assert.equal($("#motion-current-leg").textContent, "PVG → ICN");
+  click("#reset-plan");
+  assert.equal(document.querySelectorAll("#leg-rows tr").length, 1);
+  assert.equal($("#motion-toggle").dataset.state, "unavailable");
 });
 
 test("a dateline route reveals only the traveled trail on either map edge", async (t) => {
@@ -308,18 +307,18 @@ test("symbol scale follows SVG meet geometry and resize preserves a paused camer
   assert.ok(Math.abs(Number($('[data-airport="SIN"] .ring').getAttribute("r")) - 7 * 260 / 300) < 1e-8);
 });
 
-test("default playback visibly refuels, moves the plane, consumes fuel and updates the cost and route trail", async (t) => {
+test("an explicitly calculated route visibly refuels, moves the plane, consumes fuel and updates the cost and route trail", async (t) => {
   const { $, document, advance } = await mount(t);
   assert.equal($("#motion-toggle").dataset.state, "playing");
   assert.equal($("#motion-toggle").getAttribute("aria-pressed"), "true");
   assert.equal($("#flight-map").dataset.phase, "refuel");
   assert.equal($("#motion-current-leg").textContent, "PVG → ICN");
-  assert.equal($("#motion-fuel").textContent, "8.00 t");
+  assert.equal($("#motion-fuel").textContent, "0.00 t");
   assert.equal(document.querySelectorAll("[data-motion-leg]").length, 3);
   const initialPlanePosition = $("#animated-plane").getAttribute("transform");
   advance(500);
   assert.ok(
-    Number.parseFloat($("#motion-fuel").textContent) > 8,
+    Number.parseFloat($("#motion-fuel").textContent) > 0,
     "fuel rises while the first uplift is added",
   );
   assert.notEqual(
@@ -377,6 +376,10 @@ test("pause, seek, per-leg selection and restart expose the same solved fuel bal
 
 test("switching strategies rebuilds the motion plan while respecting pause and progress; edits cancel stale playback", async (t) => {
   const { $, document, click, input, advance, fire } = await mount(t);
+  input('[data-leg="0"][data-key="priceUsdPerT"]', 650);
+  input('[data-leg="1"][data-key="priceUsdPerT"]', 1300);
+  input('[data-leg="2"][data-key="priceUsdPerT"]', 1700);
+  fire("#rotation-form", "submit");
   input("#motion-progress", 50);
   const previousPlane = $("#animated-plane");
   const optimizedCost = $("#motion-cost").textContent;
@@ -409,11 +412,12 @@ test("switching strategies rebuilds the motion plan while respecting pause and p
     "recalculation preserves an intentional pause",
   );
   click("#reset-plan");
-  assert.equal(
-    $("#motion-toggle").dataset.state,
-    "playing",
-    "explicit reset resumes the default demonstration",
-  );
+  assert.equal($("#motion-toggle").dataset.state, "unavailable", "clearing a route removes the previous plan");
+  assert.equal(document.querySelector("#animated-plane"), null);
+  click("#load-example");
+  assert.equal($("#motion-toggle").dataset.state, "unavailable", "loading an example waits for an explicit calculation");
+  fire("#rotation-form", "submit");
+  assert.equal($("#motion-toggle").dataset.state, "playing");
 });
 
 test("workspace and document visibility pause autoplay and resume only when the user has not paused it", async (t) => {

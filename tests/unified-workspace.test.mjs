@@ -47,6 +47,8 @@ test('all five product views share one mounted shell and preserve independent fo
   assert.ok(document.querySelector('main').lastElementChild.classList.contains('site-footer'), 'the shared footer follows every mounted panel');
   assert.equal(document.querySelector('#workspace-research iframe'), null);
   assert.equal(document.querySelector('#workspace-research .masthead'), null);
+  const plannerChildren = [...document.querySelector('#planner').children];
+  assert.ok(plannerChildren.indexOf(document.querySelector('#rotation')) < plannerChildren.indexOf(document.querySelector('.workspace-grid')), 'route inputs precede the map in reading and keyboard order');
   const ids = [...document.querySelectorAll('[id]')].map(node => node.id);
   assert.equal(new Set(ids).size, ids.length);
   const field = $('#initial-fuel');
@@ -75,7 +77,7 @@ test('research deep links, internal references and browser history select the ri
   const { $, document, window, click, visible, scrolled, focused } = ui;
   assert.deepEqual(visible(), ['workspace-research']);
   assert.deepEqual(scrolled, ['essay']);
-  assert.equal(document.title, 'Research report — Fuel Atlas');
+  assert.equal(document.title, '研究报告 — 燃油图谱');
   click('#workspace-research a[href="#research/methods"]');
   assert.equal(window.location.hash, '#research/methods');
   assert.equal(focused.at(-1), 'methods');
@@ -86,14 +88,14 @@ test('research deep links, internal references and browser history select the ri
   assert.deepEqual(visible(), ['workspace-research']);
   assert.equal(scrolled.at(-1), 'essay');
   assert.equal($('#workspace-tab-research').getAttribute('aria-selected'), 'true');
-  window.location.hash = '#briefing/brief-pilot-title';
+  window.location.hash = '#briefing/guide-data-title';
   window.dispatchEvent(new window.Event('popstate'));
   assert.deepEqual(visible(), ['workspace-briefing']);
-  assert.equal(scrolled.at(-1), 'brief-pilot-title');
+  assert.equal(scrolled.at(-1), 'guide-data-title');
   assert.equal(document.querySelectorAll('[role="tab"][tabindex="0"]').length, 1);
 });
 
-test('keyboard roving navigation covers research and project brief without changing tab semantics', async t => {
+test('keyboard roving navigation covers research and model guide without changing tab semantics', async t => {
   const ui = await mount(t, '#research');
   const key = (id, value) => {
     const event = new ui.window.Event('keydown', { bubbles: true, cancelable: true });

@@ -80,3 +80,12 @@
 .project-brief-content .brief-actions a:first-child:hover { background: #003d83; }
 .project-brief-content .brief-actions a span { font-size: 11px; font-weight: 400; }
 @media print { .project-brief-content .brief-actions { display: none; } }
+.project-brief-content .guide-scenario { background: #eef5fc; padding: 20px 24px; margin: 24px 0; border-left: 3px solid #0057b8; max-width: none; }
+.project-brief-content .guide-scenario h2 { font-size: 18px; margin-bottom: 8px; }
+.project-brief-content .guide-steps { margin: 0 0 26px; padding: 0; list-style: none; }
+.project-brief-content .guide-steps > li { display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 18px; padding: 22px 0; border-top: 1px solid #d9e2ec; }
+.project-brief-content .guide-steps h2 { font-size: 22px; margin-bottom: 10px; }
+.project-brief-content .guide-step-number { display: flex; justify-content: center; align-items: center; height: 30px; width: 30px; border-radius: 50%; background: #eef5fc; color: #0057b8; font-size: 14px; font-weight: 600; }
+.project-brief-content .brief-section > h2 { margin-bottom: 16px; }
+.project-brief-content .model-guide-content table { font-size: 14px; }
+@media print { .project-brief-content .guide-steps > li { break-inside: avoid; padding: 14px 0; } .project-brief-content .guide-steps h2 { font-size: 13pt; } .project-brief-content .guide-scenario { padding: 12px 16px; margin: 16px 0; } }

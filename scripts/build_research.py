@@ -116,10 +116,10 @@ def content():
     page=substitute_marker(page,'REFERENCES',refs)
     policy=''.join('<p class="policy-statement">'+linked_text(x)+'</p>' for x in report['sections'][5]['paragraphs'][1:4])
     page=substitute_marker(page,'POLICY',policy)
-    links=[('submission-package.zip','Complete offline submission package','ZIP'),
-           ('Final_Project.pdf','Full report, analysis and review record','PDF'),
-           ('Analytical_Reflection.pdf',f'{report["reflection"]["wordCount"]}-word analytical reflection','PDF'),
-           ('Analytical_Reflection.docx','Editable analytical reflection','DOCX'),
+    links=[('submission-package.zip','English offline research package','ZIP'),
+           ('Final_Project.pdf','English full report','PDF'),
+           ('Analytical_Reflection.pdf',f'{report["reflection"]["wordCount"]}-word English reflection','PDF'),
+           ('Analytical_Reflection.docx','English editable reflection','DOCX'),
            ('results.csv','Central cases: 36 rows','CSV'),('sensitivity.csv','Sensitivity cases: 486 rows','CSV'),
            ('inputs.json','Classified model inputs','JSON'),('results.json','Full computed results','JSON')]
     rendered_links=[]
@@ -153,7 +153,7 @@ def package(output=ARTIFACTS):
                    'href="../START-HERE.txt"', offline)
     offline=offline.replace('href="./downloads/submission-package.zip"',
                             'href="../START-HERE.txt"')
-    offline=offline.replace('Complete offline submission package <span>ZIP ↓</span>',
+    offline=offline.replace('English offline research package <span>ZIP ↓</span>',
                             'Offline package instructions <span>TXT ↗</span>')
     entries['exhibit/index.html']=offline.encode()
     for source in RESEARCH.rglob('*'):

@@ -1,28 +1,22 @@
 # Fuel Atlas / 全球航线与燃油优化
 
-The main product is a shared, state-preserving workspace for the global flight model, market data, research report, project brief and sources. The [decision brief](docs/decision-brief.md) separates demonstrated capabilities from commercial and research hypotheses.
+Fuel Atlas starts with the route you choose. It derives a complete set of scenario inputs, then calculates how much fuel to buy at each stop. The shared workspace includes the model, fuel data, research, a model guide and the data replacement plan. A top-right language switch changes the whole interface between Chinese and English while retaining the current work.
 
-The Asian energy security final project is in the Research tab (`/#research`), with the [full report](dist/research/downloads/Final_Project.pdf), [919-word reflection](dist/research/downloads/Analytical_Reflection.pdf) and [offline ZIP](dist/research/downloads/submission-package.zip). See [research/README.md](research/README.md) for reproduction and evidence limits.
-
-首页回答一个具体问题：**在既定的 2–5 航段轮转中，应该在哪一站加油、加多少，才能在满足油量与重量限制的同时降低新购燃油成本？** 航线保持不变；优化的是各站加油量与提前携油量。
-
-主页默认打开全球动态模型，采用白底、蓝色图表和分层导航的数据工具界面。67 个有来源坐标的机场覆盖六大洲；默认跨洲示例为 SIN → DXB → LHR → JFK → LAX，可一键切回 PVG → ICN → HND → PVG 东亚轮转。世界视图、东亚视图和适配航线均保留播放进度。价格与性能明确标为可编辑示例；缺失价格需要输入或导入有效报价，系统不会从坐标推断。研究报告和项目简报属于同一工作台，切换时保留模型与研究输入。
+首页从一个空白航段开始。选择出发机场、目的机场和后续停靠点，即可建立 1–5 个连续航段。通用机型参数按机场距离推导航时、耗油和保留油，67 个机场采用统一价格公式。所有经济与性能输入都标为情景数据，并附有计算依据和后续数据来源。示例路线通过“载入示例”单独打开，计算由用户发起。
 
 | 入口 | 用途 |
 | --- | --- |
-| `/`、`/index.html`、`/#calculations` | 默认全球模型：67 个可选机场、固定轮转优化、世界地图、动画与逐段结果 |
-| `/#oil-markets` | 原油市页签：WTI / Brent 公共图表与已采集的市场观测 |
-| `/#research` | 研究报告、交互敏感性分析、方法、参考文献与课程提交文件 |
-| `/#briefing` | 商业假设、试点验收门槛、系统研究议程与可下载项目简报 |
-| `/#sources` | 报价与来源页签：用户报价、数据时效、原始观测、50 机场参考目录与方法 |
+| `/#calculations` | 选择航线、调整参数、计算各站购油量，查看地图和逐段动态结果 |
+| `/#fuel-data` | 查看 67 个机场的价格构成、调整共享假设、下载完整数据和计算依据 |
+| `/#research` | 亚洲能源安全研究、交互分析、方法、参考文献与课程提交文件 |
+| `/#briefing` | 模型使用说明和中英文 PDF |
+| `/#sources` | 各类输入的数据获取方案和供应商报价导入 |
 | `/network.html#calculations` | 保留的多期供应链情景模型 |
-| `/network.html#oil-markets` | 保留的 WTI / Brent 公共油市图表 |
-| `/network.html#sources` | 原观测数据、刷新状态、50 机场目录与模型来源 |
-| `/planner.html` | 跳转到 `/network.html#calculations` |
+| `/network.html#oil-markets` | 保留的公开市场观测工具 |
 
-旧入口 `/research/` 自动定位到同一工作台的 Research 页签；`/research/#essay` 保留具体章节。`/research/?standalone` 和离线 ZIP 可单独打开研究展品。
+`#oil-markets` 兼容跳转到新航油数据页。研究章节可通过 `#research/essay` 等地址打开。所有主工作台页签共用导航，切换保留表单、计算和进度状态。页面重载只恢复语言偏好，不保存报价或模型输入。
 
-首页五个页签直接响应 `#calculations`、`#oil-markets`、`#research`、`#briefing` 和 `#sources` 深链接；研究章节使用 `#research/essay` 等地址；切换时保留表单和方案状态。原供应链模型另保留在 `network.html`，其库存、供应商和运输参数不代表飞机模型的数据或性能来源。
+The Asian energy security project includes a [full report](dist/research/downloads/Final_Project.pdf), [919-word reflection](dist/research/downloads/Analytical_Reflection.pdf) and [offline ZIP](dist/research/downloads/submission-package.zip). See [research/README.md](research/README.md) for reproduction. The research exhibit retains its published case study; the interactive route model uses the route and inputs selected in the model tab.
 
 ## Run and verify
 
@@ -43,15 +37,15 @@ npm run check
 
 ## 首页操作与模型
 
-1. 在“示例场景”查看地图、轮转与加油建议。可编辑价格、基础耗油和已有燃油，以及展开后的性能、保留油与重量参数。
-2. 添加或删除航段，将轮转保持为 2–5 个连续航段。修改机场后需同步核对耗油与载荷；系统不会从城市距离推断真实性能。
-3. 点击“重新计算方案”，比较逐站按需基线与优化方案的成本、加油量、落地燃油和额外携油耗油。不可行输入显示诊断；编辑后旧结果立即失效。
-4. 有效方案加载后即开始轮转演示：飞机沿路径移动，当前航段高亮，加油阶段的油量和累计采购成本上升，飞行阶段燃油下降。可暂停、重播、拖动进度或选择航段；切换“优化方案 / 逐站按需”时，各图表和演示使用对应方案。离开计算页签或页面进入后台时暂停；系统减少动态效果偏好下不自动播放，可手动选择静态进度。演示不是实时飞机位置、真实加油过程或实际飞行时间。
-5. 导入报价并切到“我的报价”，按计划日期匹配出发站价格；计算后可导出包含输入、报价来源和结果的 JSON。
+1. 选择出发和目的机场。按需添加、删除或调整停靠顺序，航段保持连续。选择通用宽体机或窄体机，查看生成的耗油、保留油和重量参数。
+2. 在航油数据页查看每个机场的价格构成，调整基础价、运输系数、税费或供油上限。修改共享假设会更新模型中的生成输入，保留明确的手动修改，并使旧结果失效。
+3. 点击计算，比较逐站按需方案与优化方案的采购成本、加油量、落地燃油和携油损耗。超出机型情景适用范围或无法满足约束时，页面给出具体原因。
+4. 计算后可播放、暂停、拖动进度或选择航段。切换方案会同步更新地图与燃油成本。离开模型页签或将页面放到后台时，播放暂停。
+5. 取得供应商报价后，通过 CSV 导入并选择“我的报价”，按计划日期匹配。模型 JSON 导出保留航线、输入、报价来源和结果。
 
-新轮转引擎直接枚举小规模有界线性问题的顶点。额外携油增加本段耗油；油箱容量在滑行前检查，起飞和落地重量分别检查。两方案使用相同初始燃油与相同终点库存，避免通过耗尽最后一站燃油制造节省。逐站按需基线因供油上限而不可行时，只展示可行性差异，不输出节省比例。方程、输入输出和默认示例见[固定轮转模型](docs/flight-model.md)。
+价格由共同航油基础价、区域差价、参照机场距离运输成本、加注服务费和税费组成。机型使用明确的通用性能假设，几何数据来自 OurAirports。生成数据、公式和接入方案见[情景数据说明](docs/scenario-data.md)。
 
-“示例场景”的机场价格不是市场观测。787-9、A330-300 选项也是可编辑的参数标签，不代表机型认证性能。更换为用户报价后，耗油、保留油与重量参数仍需替换为航司认可的数据。
+固定航线优化器枚举有界线性问题的顶点，检查油量连续性、油箱、起飞重量、落地重量、保留油和每次到访供油上限。两方案使用相同的初始燃油和终点剩余油量。若逐站按需方案因供油不足而不可行，结果展示可行性差异。数学定义见[固定轮转模型](docs/flight-model.md)。
 
 ### 报价 CSV
 
@@ -120,14 +114,16 @@ The collector needs HTTPS access to the official source hosts. The managed build
 
 The refresh workflow checks the three EIA/ECB market feeds hourly at minute 17, checks all five sources daily at 22:47 UTC, supports manual dispatch, and runs on relevant source changes. GitHub schedules are best effort and may run late. Scheduled Actions run from the default branch. It commits only `dist/data/`, reports partial failures, and fails if no selected feed refreshed.
 
-The homepage oil-market/source tabs and retained `network.html` app load the latest collected dataset from GitHub `main`, then the previous data branch, then its bundled fallback. The observed monitor checks every 60 seconds while visible and has a manual check button; hidden pages pause automatic checks. Requests for all feeds use the same selected source location; each feed keeps its own observation date and freshness. These are periodic collected snapshots, not real-time exchange or supplier quotes. The hosted UI does not need to be redeployed for remote dataset updates. A failed check retains the last loaded observations and their timestamps. Remote observations do not change the homepage demonstration prices or user quotation collection.
+The retained `network.html` app loads the latest collected dataset from GitHub `main`, then the previous data branch, then its bundled fallback. The observed monitor checks every 60 seconds while visible and has a manual check button; hidden pages pause automatic checks. Requests for all feeds use the same selected source location; each feed keeps its own observation date and freshness. These are periodic collected snapshots, not real-time exchange or supplier quotes. The hosted UI does not need to be redeployed for remote dataset updates. A failed check retains the last loaded observations and their timestamps. The main route model uses its generated scenario dataset or imported user quotations. Public market observations stay in the separate legacy monitor.
 
 ## Structure
 
 - `src/workspace/index.template.html`, `scripts/build-workspace.mjs`: source and deterministic composition for the five mounted workspaces. Edit the template, not generated `dist/index.html`.
 - `dist/application.css`: shared navigation, content widths and final interface rules; research styles are scoped to its panel.
-- `dist/brief/brief.html`, `scripts/build_brief.py`: project brief source and reproducible print/Markdown artifacts.
+- `dist/brief/brief.html`, `scripts/build_brief.py`: bilingual model guide source and reproducible print/Markdown artifacts.
 - `dist/index.html`, `dist/flight.css`, `dist/workspace-flight.css`: generated application, model map/decision split, rotation inputs and quote import dialog.
+- `dist/scenario-data.js`, `dist/scenario-settings.js`, `dist/data-view.js`: deterministic scenario generation, shared parameters and airport/input inspection.
+- `dist/i18n.js`, `dist/locales/`: full-interface language switching and bilingual copy.
 - `dist/flight-app.js`: rotation editing, price modes, strategy switching, map/row/cost motion integration, airport search/filtering, import and JSON export.
 - `dist/rotation-motion.js`: deterministic refuel/flight/arrival playback with pause, restart, seek, leg progress and reduced-motion behavior.
 - `dist/workspace-directory.js`: Sources-only 50-airport reference table and source links, independent of the legacy map controls.
@@ -152,7 +148,7 @@ The homepage oil-market/source tabs and retained `network.html` app load the lat
 
 The homepage uses HTML, CSS, native JavaScript ES modules and SVG, with browser-local computation and no map-service key. The new rotation solver has no server solver dependency; the retained multi-period model uses `javascript-lp-solver` bundled by esbuild. See [design scope and acceptance constraints](docs/design-brief.md).
 
-No orders are executed. The rotation model does not select routes, add stops or replace flight-performance and dispatch calculations. Linear carry-burn assumptions must be replaced with airline-approved operational data before actual use. Vessel lots, source inventories, blending, taxes, contract obligations, hedging and credit/accounting workflows remain outside the retained supply-chain model. Planning routes and plane playback are schematic; they are not observed ship or aircraft positions. Playback fuel and cost values come from the currently selected plan rather than invented live data. Numerical, DOM and real Chromium navigation/layout checks are included. Browser QA is separate from aircraft calibration, empirical price validation and assistive-technology certification.
+The user chooses airport order and the model optimizes fuel uplift along that route. Playback follows the computed fuel balances. Real operational evaluation requires calibrated aircraft performance, applicable supplier terms and confirmed supply constraints. Numerical tests, DOM checks and real Chromium flows verify the implemented calculations and interface.
 
 ## 全球地图与本次界面更新
 
@@ -164,11 +160,11 @@ No orders are executed. The rotation model does not select routes, add stops or 
 
 ## Review and browser acceptance
 
-See [the review record](docs/reviews/README.md) for findings, corrections and remaining evidence limits. The research prototype does not claim IIASA affiliation, investment readiness, verified commercial savings or operational dispatch approval.
+See [the review record](docs/reviews/README.md) for findings, corrections and validation evidence.
 
 ```sh
 npx playwright install chromium
 npm run test:browser
 ```
 
-The browser runner starts its own local server unless a base URL is supplied. On systems with a preinstalled Chromium, use `FUEL_BROWSER_PATH=/path/to/chromium`. It exercises navigation state, deep links, keyboard controls, quote workflow and responsive layouts with controlled public-feed fixtures; live provider availability is a separate integration concern. Review screenshots are written to the runner’s artifact directory.
+The browser runner starts its own local server unless a base URL is supplied. On systems with a preinstalled Chromium, use `FUEL_BROWSER_PATH=/path/to/chromium`. It exercises navigation state, deep links, keyboard controls, quote workflow and responsive layouts including user-selected routes, both languages, generated-data downloads and quotation imports. Review screenshots are written to the runner’s artifact directory.

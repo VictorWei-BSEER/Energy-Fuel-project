@@ -4,6 +4,7 @@ import { readFile, access } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import vm from 'node:vm';
 import { parseHTML } from 'linkedom';
+import { researchMessages } from '../dist/locales/research.js';
 
 const exhibit = new URL('../dist/research/', import.meta.url);
 const [html, script, css, inputText, resultText] = await Promise.all([
@@ -28,7 +29,8 @@ function pureModel() {
   return sandbox.FuelResearch;
 }
 
-function mount() {
+function mount(initialLanguage = null) {
+  let language = initialLanguage;
   const { document, window } = parseHTML(html);
   const form = document.querySelector('#scenario-form');
   const defaults = new Map([...form.querySelectorAll('input')].map(input => [input, {
@@ -71,7 +73,12 @@ function mount() {
       revokeObjectURL: url => revoked.push(url),
     },
   };
+  if (language) sandbox.FuelI18n = { t(key, values = {}) {
+    const template = researchMessages[key]?.[language] ?? key;
+    return template.replace(/\{\{([\w.]+)\}\}/g, (token, name) => Object.hasOwn(values, name) ? String(values[name]) : token);
+  } };
   vm.runInNewContext(script, sandbox, { filename: 'research.js' });
+  const setLanguage = value => { language = value; document.dispatchEvent(new window.Event('languagechange')); };
   const $ = selector => document.querySelector(selector);
   const emit = (selector, type) => $(selector).dispatchEvent(new window.Event(type, { bubbles: true, cancelable: true }));
   const setValue = (selector, value) => { $(selector).value = String(value); emit(selector, 'input'); };
@@ -82,7 +89,7 @@ function mount() {
     }
     emit(`input[name="model"][value="${model}"]`, 'change');
   };
-  return { $, document, window, setValue, chooseModel, emit, blobs, downloads, revoked, timers, networkCalls: () => networkCalls };
+  return { $, document, window, setValue, chooseModel, emit, setLanguage, blobs, downloads, revoked, timers, networkCalls: () => networkCalls };
 }
 
 test('research browser model reproduces all 36 frozen Python cases and both quantity bases', () => {
@@ -148,7 +155,7 @@ test('research default display keeps net delivery and gross-origin interruption 
   assert.equal($('#local-burn-value').textContent, '0.140');
   assert.equal($('#local-co2-value').textContent, '0.442');
   assert.equal($('#local-case-delivery').textContent, '0.860');
-  assert.match($('.result-boundary').textContent, /both purchase options are available/);
+  assert.match($('.result-boundary').textContent, /fuel is available at both airports/);
   assert.match($('#alternative-result').textContent, /15\.0%/);
   assert.match($('#balance-chart').getAttribute('aria-label'), /1\.163.*1\.000.*0\.163/);
   assert.equal(document.querySelectorAll('#study-airports circle').length, inputs.airports.length);
@@ -168,11 +175,11 @@ test('research controls update price thresholds, carbon costs and formulation th
   assert.equal($('#displacement-value').textContent, '0.720');
   setValue('#carbon-price', 100);
   assert.equal($('#premium-value').textContent, '51.2');
-  assert.match($('#premium-explanation').textContent, /illustrative input/);
+  assert.match($('#premium-explanation').textContent, /scenario origin price/);
   setValue('#extra-cost', 100);
   assert.equal($('#premium-value').textContent, '61.2');
   chooseModel('exponential');
-  assert.match($('#alternative-result').textContent, /Linear sensitivity: 61\.2%/);
+  assert.match($('#alternative-result').textContent, /Linear approximation: 61\.2%/);
   assert.notEqual($('#premium-value').textContent, '61.2');
   emit('#reset-scenario', 'click');
   assert.equal($('#duration').value, '4');
@@ -253,4 +260,31 @@ test('offline exhibit embeds exact frozen data, accessible controls and local ru
   }
   assert.match(css, /@media\s+print/);
   assert.match(css, /prefers-reduced-motion/);
+});
+
+
+test('research language changes translate dynamic results without resetting controls or calculations', () => {
+  const { $, setValue, chooseModel, setLanguage } = mount('en');
+  const durationInput = $('#duration');
+  setValue('#duration', 6);
+  setValue('#carbon-price', 100);
+  chooseModel('exponential');
+  const premium = $('#premium-value').textContent;
+  const burn = $('#burn-value').textContent;
+  setLanguage('zh');
+  assert.equal($('#duration'), durationInput);
+  assert.equal(durationInput.value, '6');
+  assert.equal($('input[name="model"]:checked').value, 'exponential');
+  assert.equal($('#duration-value').textContent, '6.0 小时');
+  assert.match($('#premium-explanation').textContent, /携油耗油/);
+  assert.match($('#alternative-result').textContent, /线性近似/);
+  assert.match($('#balance-chart').textContent, /送达 1.000 吨/);
+  assert.match($('#study-airports').textContent, /新加坡/);
+  assert.match($('#route-table-rows').textContent, /千米/);
+  assert.equal($('#premium-value').textContent, premium);
+  assert.equal($('#burn-value').textContent, burn);
+  setLanguage('en');
+  assert.equal($('#duration-value').textContent, '6.0 hours');
+  assert.match($('#balance-chart').textContent, /1.000 t delivered/);
+  assert.equal($('#premium-value').textContent, premium);
 });

@@ -1,0 +1,39 @@
+<div class="fuel-data-view">
+  <header class="data-page-head">
+    <div><p class="eyebrow" data-i18n="data.eyebrow">Inputs you can inspect</p><h1 data-i18n="data.title">Fuel data</h1></div>
+    <span class="data-badge" data-i18n="data.badge">Scenario data</span>
+    <p data-i18n="data.intro">A complete starting dataset for 67 airports. Prices follow the same formula, and flight inputs follow the route and aircraft you choose. Change the assumptions here to update your model.</p>
+  </header>
+  <section class="data-card" aria-labelledby="data-assumption-title">
+    <div class="data-section-head"><div><p class="eyebrow" data-i18n="data.step1">01 / Shared assumptions</p><h2 id="data-assumption-title" data-i18n="data.assumptions">Build a consistent price picture</h2></div><button type="button" class="outline-button" id="data-reset" data-i18n="data.reset">Restore defaults</button></div>
+    <p class="data-copy" data-i18n="data.priceReason">The starting base of USD 800/t gives every airport a common reference. Regional adjustments create an explicit supply scenario. Distance to a regional reference airport adds a transport proxy, followed by service and tax adjustments.</p>
+    <form id="data-assumption-form" class="data-input-grid">
+      <label><span data-i18n="data.base">Common jet-fuel base</span><input id="data-base" name="baseJetUsdPerT" type="number" min="1" step="1" value="800" required><small>USD/t</small></label>
+      <label><span data-i18n="data.transport">Distance transport coefficient</span><input id="data-transport" name="transportUsdPerTPerKm" type="number" min="0" step="0.001" value="0.015" required><small>USD/t/km</small></label>
+      <label><span data-i18n="data.tax">Fiscal adjustment</span><input id="data-tax" name="taxAdjustmentUsdPerT" type="number" step="1" value="0" required><small>USD/t</small></label>
+      <label><span data-i18n="data.supply">Supply cap per visit</span><input id="data-supply" name="defaultMaxUpliftT" type="number" min="0" step="1" value="120" required><small data-i18n="data.supplyUnit">tonnes per visit</small></label>
+      <button type="submit" class="primary-button" data-i18n="data.apply">Apply to model</button>
+    </form>
+    <p id="data-assumption-status" class="data-status" role="status" aria-live="polite"></p>
+    <p class="data-copy" data-i18n="data.supplyReason">The default supply cap is 120 tonnes per visit. Lower it to test a supply constraint. The reference airports organise the distance calculation, while regional price adjustments remain editable scenario choices.</p>
+    <details class="data-method">
+      <summary data-i18n="data.regionalTitle">Regional supply assumptions</summary>
+      <p data-i18n="data.regionalReason">These starting adjustments create a spread of supply conditions to test the model. The Gulf and Southeast Asia form the lower-cost scenario, while other regions have progressively higher delivery adjustments. Change them to test a different market structure.</p>
+      <form id="data-region-form"><div class="data-table-scroll"><table class="data-table data-region-table"><thead><tr><th data-i18n="data.region">Region</th><th data-i18n="data.reference">Reference airport</th><th data-i18n="data.basis">Supply adjustment · USD/t</th><th data-i18n="data.service">Service adjustment · USD/t</th></tr></thead><tbody id="data-region-rows"></tbody></table></div><button class="primary-button" type="submit" data-i18n="data.applyRegional">Apply regional assumptions</button></form>
+    </details>
+  </section>
+  <section class="data-card" aria-labelledby="data-airport-title">
+    <div class="data-section-head"><div><p class="eyebrow" data-i18n="data.step2">02 / Airport dataset</p><h2 id="data-airport-title" data-i18n="data.airports">See how each price is built</h2></div><div class="data-actions"><button type="button" class="outline-button" id="data-export-json" data-i18n="data.downloadJson">Download data and assumptions</button><button type="button" class="outline-button" id="data-export-csv" data-i18n="data.downloadCsv">Download airport CSV</button></div></div>
+    <div class="data-ledger-controls"><label for="data-airport-search" data-i18n="data.searchLabel">Find an airport</label><input id="data-airport-search" type="search" placeholder="Airport code, name or country"><span id="data-airport-count" aria-live="polite"></span></div>
+    <div class="data-ledger-layout">
+      <div class="data-table-scroll"><table class="data-table"><caption class="sr-only" data-i18n="data.tableCaption">Generated airport prices and supply assumptions</caption><thead><tr><th data-i18n="data.airport">Airport</th><th data-i18n="data.price">Price · USD/t</th><th data-i18n="data.cap">Supply · t/visit</th></tr></thead><tbody id="data-airport-rows"></tbody></table></div>
+      <article class="data-decomposition" id="data-airport-detail" aria-live="polite"></article>
+    </div>
+  </section>
+  <section class="data-card" aria-labelledby="data-flight-title">
+    <div class="data-section-head"><div><p class="eyebrow" data-i18n="data.step3">03 / Your route</p><h2 id="data-flight-title" data-i18n="data.flightTitle">Follow the inputs into the calculation</h2></div><a class="outline-button" href="#calculations" data-i18n="data.chooseRoute">Choose a route</a></div>
+    <p class="data-copy" data-i18n="data.flightReason">Airport coordinates give the great-circle distance. A route multiplier and cruise speed give flight time. Cruise, climb and taxi assumptions then give fuel burn. Reserves and the cost of carrying extra fuel are calculated separately.</p>
+    <div id="data-route-summary"></div>
+    <details class="data-method"><summary data-i18n="data.methodTitle">Calculation and calibration</summary><div id="data-performance-method"></div></details>
+  </section>
+</div>

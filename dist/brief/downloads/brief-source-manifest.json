@@ -1,18 +1,25 @@
 {
   "publicationDate": "2026-11-13",
   "timezone": "UTC+8",
-  "classification": "research_prototype_and_proposed_validation",
-  "sourceFiles": {
-    "dist/brief/brief.html": "44981f936ce663e14efcb3267dbc239dba294c34fb86c109da0b3baec8a85347",
-    "dist/brief/brief.css": "074bf78763ce172fe5d27e3c93ebc9580b4ee80078863eabbd52907acd860b72",
-    "docs/decision-brief.md": "c223ba57e5a725f4a852b54f3409d4f743f02a87bfce7fb35818c20cc44620e4",
-    "scripts/build_brief.py": "31ccb285320aaae1e3bf8ccdd84ae5764a551f2d41188901ea780f21b70c96be"
-  },
-  "externalSources": [
-    "https://skymetrix.com/airtelligent/fuel/",
-    "https://www.openairlines.com/for-fuel-managers-ops-engineers/",
-    "https://iiasa.ac.at/programs/ece",
-    "https://iiasa.ac.at/programs/asa"
+  "languages": [
+    "en",
+    "zh-Hans"
   ],
-  "pdfNote": "PDF is a rendering of print.html. Metadata may differ between Chromium versions; the reviewed source and its hashes define content provenance."
+  "type": "model_guide",
+  "sourceFiles": {
+    "dist/brief/brief.html": "b6ba9e6e6697e9cc90132919e05a5d7852077758cb0ea4e9f34a6c7300600f38",
+    "dist/brief/brief.css": "cf3745b7268753b1f8aaa3e9a57425752b87eb12867651a1147c358a1cc29ff8",
+    "dist/locales/guide.js": "0acd2a8e0225df1f65bb9cbb8fa0ad1aa59305f21826e9ed3ceb5025242a5cb1",
+    "docs/decision-brief.md": "ca39f81d2a79cd3b67abdfc1abd210c0249f10c7784e1ddc729e998262215050",
+    "scripts/build_brief.py": "601617c1c5455122d1406b718c528479ba1d9ef51194000679576c27fee2fb29"
+  },
+  "printViews": [
+    "print.html",
+    "print-zh.html"
+  ],
+  "pdfFiles": [
+    "Fuel_Atlas_Model_Guide_EN.pdf",
+    "Fuel_Atlas_Model_Guide_ZH.pdf"
+  ],
+  "pdfNote": "PDFs render the corresponding print views. Source hashes identify the content."
 }

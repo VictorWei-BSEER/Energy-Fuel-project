@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -8,23 +8,23 @@
       name="description"
       content="Fuel Atlas: global fixed-route fuel optimization, traceable market data and aviation energy-security research."
     />
-    <title>Fuel Atlas — Global fuel model</title>
+    <title>Fuel Atlas — Build your fuel plan</title>
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./dashboard.css?v=20261102-header-2" />
-    <script type="module" src="./workspace.js?v=20261113-unified"></script>
+    <script type="module" src="./i18n.js?v=20261113-bilingual"></script>
+    <script type="module" src="./workspace.js?v=20261113-bilingual"></script>
+    <script type="module" src="./data-view.js?v=20261113-bilingual"></script>
 
-    <script type="module" src="./observed-app.js?v=20261113-unified"></script>
-    <script type="module" src="./public-market.js"></script>
-    <script type="module" src="./workspace-directory.js?v=20261113-unified"></script>
     <link href="./flight.css" rel="stylesheet" />
     <link href="./workspace-flight.css" rel="stylesheet" />
     <link href="./flight-motion.css" rel="stylesheet" />
     <link href="./institutional.css?v=20261113" rel="stylesheet" />
-    <link href="./research/research-embedded.css?v=20261113-unified" rel="stylesheet" />
-    <link href="./brief/brief.css?v=20261113-unified" rel="stylesheet" />
-    <link href="./application.css?v=20261113-unified" rel="stylesheet" />
-    <script defer src="./research/research.js?v=20261113-unified"></script>
-    <script src="./flight-app.js?v=20261113-unified" type="module"></script>
+    <link href="./research/research-embedded.css?v=20261113-bilingual" rel="stylesheet" />
+    <link href="./brief/brief.css?v=20261113-bilingual" rel="stylesheet" />
+    <link href="./data-view.css?v=20261113-bilingual" rel="stylesheet" />
+    <link href="./application.css?v=20261113-bilingual" rel="stylesheet" />
+    <script defer src="./research/research.js?v=20261113-bilingual"></script>
+    <script src="./flight-app.js?v=20261113-bilingual" type="module"></script>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22%3E%3Cpath fill=%22%230057b8%22 d=%22M4 29 17 5h13L17 29z%22/%3E%3C/svg%3E"
@@ -53,26 +53,25 @@
             <circle cx="27" cy="13" r="2" fill="white" /></svg
           ><span class="brand-copy"
             ><span class="brand-titles"
-              >Fuel Atlas
-              <span class="brand-title-zh" lang="zh-Hans">燃油图谱</span></span
-            ><small>Energy data &amp; aviation</small></span
+              >Fuel Atlas</span
+            ><small>Routes, fuel &amp; cost</small></span
           ></a
         >
         <div class="project-caption">
-          Independent energy research <span>/ Fuel Atlas</span>
+          Aviation fuel planning <span>/ Fuel Atlas</span>
         </div>
-        <div class="stream-control">
-          <span class="demo-badge">Research prototype</span
-          ><span class="saved-state">67 sourced airport locations</span>
+        <div class="language-switch" role="group" aria-label="Interface language">
+          <button type="button" id="language-zh" data-language="zh" lang="zh-CN" aria-pressed="true">中文</button>
+          <button type="button" id="language-en" data-language="en" lang="en" aria-pressed="false">English</button>
         </div>
       </header>
       <nav class="workspace-navigation" aria-label="Main workspace">
         <div class="workspace-tabs" role="tablist" aria-label="Fuel Atlas sections">
-          <button type="button" role="tab" id="workspace-tab-calculations" data-workspace="calculations" aria-controls="workspace-calculations" aria-selected="true">Global model <span lang="zh-Hans">全球模型</span></button>
-          <button type="button" role="tab" id="workspace-tab-oil-markets" data-workspace="oil-markets" aria-controls="workspace-oil-markets" aria-selected="false" tabindex="-1">Market data <span lang="zh-Hans">市场数据</span></button>
-          <button type="button" role="tab" id="workspace-tab-research" data-workspace="research" aria-controls="workspace-research" aria-selected="false" tabindex="-1">Research report <span lang="zh-Hans">研究报告</span></button>
-          <button type="button" role="tab" id="workspace-tab-briefing" data-workspace="briefing" aria-controls="workspace-briefing" aria-selected="false" tabindex="-1">Project brief <span lang="zh-Hans">项目简报</span></button>
-          <button type="button" role="tab" id="workspace-tab-sources" data-workspace="sources" aria-controls="workspace-sources" aria-selected="false" tabindex="-1">Sources <span lang="zh-Hans">数据来源</span></button>
+          <button type="button" role="tab" id="workspace-tab-calculations" data-workspace="calculations" aria-controls="workspace-calculations" aria-selected="true">Route model</button>
+          <button type="button" role="tab" id="workspace-tab-oil-markets" data-workspace="oil-markets" aria-controls="workspace-oil-markets" aria-selected="false" tabindex="-1">Fuel data</button>
+          <button type="button" role="tab" id="workspace-tab-research" data-workspace="research" aria-controls="workspace-research" aria-selected="false" tabindex="-1">Research</button>
+          <button type="button" role="tab" id="workspace-tab-briefing" data-workspace="briefing" aria-controls="workspace-briefing" aria-selected="false" tabindex="-1">How it works</button>
+          <button type="button" role="tab" id="workspace-tab-sources" data-workspace="sources" aria-controls="workspace-sources" aria-selected="false" tabindex="-1">Sources</button>
         </div>
       </nav>
       <main id="main">
@@ -89,11 +88,10 @@
                 <span class="red-square"></span> DATA EXPLORER / AVIATION
               </p>
               <h1>
-                Global fuel model
-                <span class="title-zh" lang="zh-Hans">全球航线与燃油优化</span>
+                Build your fuel plan
               </h1>
               <p class="workspace-intro">
-                Choose a fixed airport sequence. Compare local uplift with fuel carried from earlier stops, including carriage burn.
+                Choose your airports in order, generate the route inputs, then compare where to refuel and how much to carry.
               </p>
             </div>
             <div class="overview-actions">
@@ -109,47 +107,168 @@
               <div class="workspace-title">
                 <span class="live-dot"></span><strong>Flight scenario</strong
                 ><span class="divider"></span
-                ><span id="route-caption">SIN → DXB → LHR → JFK → LAX</span>
+                ><span id="route-caption">Choose your first airport</span>
               </div>
               <div class="mode-switch" aria-label="Price data mode" role="group">
                 <button id="mode-demo" class="selected" aria-pressed="true">
-                  Illustrative scenario</button
+                  Generated inputs</button
                 ><button id="mode-quotes" aria-pressed="false">
                   My quotations <span id="quote-count">0</span>
                 </button>
               </div>
             </div>
+            <section class="rotation-card" id="rotation">
+              <div class="section-top">
+                <div>
+                  <p class="eyebrow">BUILD YOUR ROUTE / 01</p>
+                  <h2>Route inputs and constraints</h2>
+                </div>
+                <div class="rotation-actions">
+                  <button class="text-button" id="reset-plan">Clear route</button
+                  ><button class="button subtle small" id="add-leg">
+                    ＋ Add flight leg
+                  </button>
+                </div>
+              </div>
+              <form id="rotation-form">
+                <div class="rotation-settings">
+                  <label
+                    >Aircraft profile<select id="aircraft">
+                      <option value="widebody">Widebody scenario</option>
+                      <option value="narrowbody">Narrowbody scenario</option>
+                    </select></label
+                  ><label
+                    >Planning date<input
+                      id="flight-date"
+                      type="date"
+                      value="2026-11-13"
+                      required /></label
+                  ><label
+                    >Starting fuel <span>t</span
+                    ><input
+                      id="initial-fuel"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value="8"
+                      required
+                  /></label>
+                  <div class="performance-note">
+                    <i></i>Fixed route<br /><span
+                      >Choose airports, then calculate uplift</span
+                    >
+                  </div>
+                </div>
+                <div class="table-scroll">
+                  <table class="leg-table">
+                    <thead>
+                      <tr>
+                        <th>Leg</th>
+                        <th>Origin → destination</th>
+                        <th>Origin fuel price <small>USD/t</small></th>
+                        <th>Base flight burn <small>t</small></th>
+                        <th>Recommended uplift <small>t</small></th>
+                        <th>Landing fuel <small>t</small></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="leg-rows"></tbody>
+                  </table>
+                </div>
+                <details class="advanced">
+                  <summary>Performance & weight constraints <span>Edit assumptions ＋</span></summary>
+                  <p class="micro">
+                    Route distance and aircraft profile generate the starting inputs. Adjust fuel burn, reserves and weight limits here.
+                  </p>
+                  <div class="advanced-aircraft">
+                    <label
+                      >Tank capacity · t<input
+                        id="tank-capacity"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        required /></label
+                    ><label
+                      >Maximum take-off mass · t<input
+                        id="mtow"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        required /></label
+                    ><label
+                      >Maximum landing mass · t<input
+                        id="mlw"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        required
+                    /></label>
+                  </div>
+                  <div class="table-scroll">
+                    <table class="advanced-table">
+                      <thead>
+                        <tr>
+                          <th>Leg</th>
+                          <th>Taxi burn · t</th>
+                          <th>Arrival reserve · t</th>
+                          <th>Carriage burn / extra tonne · %</th>
+                          <th>Zero-fuel mass · t</th>
+                          <th>Uplift limit · t <small>blank = unlimited</small></th>
+                        </tr>
+                      </thead>
+                      <tbody id="performance-rows"></tbody>
+                    </table>
+                  </div>
+                </details>
+                <div class="form-bottom">
+                  <p id="plan-status" role="status">
+                    <span class="live-dot"></span> Ready to build your route
+                  </p>
+                  <button type="submit" class="button primary" id="calculate">
+                    Calculate fuel plan <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg>
+                  </button>
+                </div>
+                <div
+                  class="error-box"
+                  id="model-error"
+                  role="alert"
+                  hidden
+                ></div>
+              </form>
+            </section>
             <div class="workspace-grid">
               <section class="map-card" aria-labelledby="map-heading">
                 <div class="map-top">
                   <div>
-                    <p class="eyebrow">INTERACTIVE MODEL</p>
-                    <h2 id="map-heading">Global flight rotation</h2>
+                    <p class="eyebrow">INTERACTIVE MODEL / 02</p>
+                    <h2 id="map-heading">Your flight route</h2>
                   </div>
-                  <span class="map-tag" id="map-mode">ILLUSTRATIVE PRICES</span>
+                  <span class="map-tag" id="map-mode">ROUTE BUILDER</span>
                 </div>
                 <div class="model-toolbar" aria-label="Map and route settings" role="group">
-                  <label for="scenario-preset">Scenario preset<select id="scenario-preset"><option value="global" selected>Global route · illustrative</option><option value="eastasia">East Asia · illustrative</option></select></label>
+                  <label for="scenario-preset">Example route<select id="scenario-preset"><option value="global" selected>Global route</option><option value="eastasia">East Asia route</option></select></label>
+                  <button type="button" id="load-example" class="map-fit-button">Load example</button>
                   <label for="map-scope">Map view<select id="map-scope"><option value="global" selected>World</option><option value="eastasia">East Asia</option></select></label>
                   <button type="button" id="fit-route" class="map-fit-button">Fit route <span aria-hidden="true">⤢</span></button>
                 </div>
                 <div class="map-stage" id="map-stage">
+                  <p id="route-empty-state" class="route-empty-state">Choose a departure and arrival airport to start your route.</p>
                   <svg
                     id="flight-map"
                     viewBox="0 0 1440 720"
                     role="group"
-                    aria-label="Global airports and simulated routes. Select an airport to inspect its price and source."
+                    aria-label="Select airports to build and inspect your flight route."
                   />
                   <div class="compass" aria-hidden="true">N<br />↑</div>
                   <div class="map-scale">
-                    Global airport sample <small>Scenario routes · not live flight tracks</small>
+                    67 airport locations <small>Great-circle routes · editable inputs</small>
                   </div>
                   <div class="map-tooltip" id="airport-tooltip" hidden></div>
                   <div class="motion-detail" id="motion-detail">
                     <div class="motion-route">
                       <span class="motion-auto-label"
                         ><i aria-hidden="true"></i>AUTOPLAY · SCENARIO</span
-                      ><strong id="motion-current-leg">SIN → DXB</strong
+                      ><strong id="motion-current-leg">— → —</strong
                       ><span id="motion-phase">Ready</span>
                     </div>
                     <div class="motion-readouts">
@@ -167,7 +286,7 @@
                       class="motion-summary"
                       aria-live="polite"
                     >
-                      Illustrative rotation; aircraft positions are simulated.
+                      Build a route to follow fuel and cost through each leg.
                     </p>
                   </div>
                 </div>
@@ -221,7 +340,7 @@
                         >Natural Earth · OurAirports</span
                       >
                     </div>
-                    <span>Scenario playback · not live tracking</span>
+                    <span>Route animation</span>
                   </div>
                 </div>
                 <div
@@ -240,10 +359,10 @@
                 </div>
                 <h2 id="decision-title">Uplift strategy & cost</h2>
                 <p class="decision-sub" id="result-state">
-                  Same rotation · same terminal fuel
+                  Compare the same route and terminal fuel
                 </p>
                 <div class="savings">
-                  <span id="savings-label">Fuel-cost savings · illustrative</span
+                  <span id="savings-label">Fuel-cost savings</span
                   ><strong id="savings">—</strong>
                   <div>
                     <span id="savings-percent" class="saving-percent">—</span
@@ -262,7 +381,7 @@
                 </div>
                 <div class="recommendation" id="recommendation">
                   <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg>
-                  <p>Calculating rotation…</p>
+                  <p>Choose airports to generate your plan.</p>
                 </div>
                 <div class="decision-foot">
                   <span>Additional fuel burned</span><b id="extra-burn">—</b>
@@ -273,135 +392,16 @@
                 <details class="model-diagnostic">
                   <summary>Cost–emissions trade-off</summary>
                   <p>Carbon value that erases this plan’s fuel-cost savings: <strong id="carbon-threshold">—</strong>.</p>
-                  <p id="carbon-note">A comparison of the same two plans after solving; not a carbon-optimized plan or a lifecycle assessment.</p>
+                  <p id="carbon-note">Compares fuel-cost savings with the additional direct CO₂ from carrying fuel.</p>
                 </details>
                 <button id="download-plan" class="button full">
                   Export this scenario <span>↓</span>
                 </button>
                 <p class="micro" id="result-disclosure">
-                  Prices and performance are illustrative assumptions for comparison.
+                  Generated inputs can be edited or replaced with supplier quotations.
                 </p>
               </aside>
             </div>
-            <section class="rotation-card" id="rotation">
-              <div class="section-top">
-                <div>
-                  <p class="eyebrow">BUILD YOUR ROTATION / 02</p>
-                  <h2>Route inputs and constraints</h2>
-                </div>
-                <div class="rotation-actions">
-                  <button class="text-button" id="reset-plan">Reset preset ↺</button
-                  ><button class="button subtle small" id="add-leg">
-                    ＋ Add flight leg
-                  </button>
-                </div>
-              </div>
-              <form id="rotation-form">
-                <div class="rotation-settings">
-                  <label
-                    >Aircraft label / illustrative performance<select id="aircraft">
-                      <option value="b787">Boeing 787-9</option>
-                      <option value="a330">Airbus A330-300</option>
-                    </select></label
-                  ><label
-                    >Planning date<input
-                      id="flight-date"
-                      type="date"
-                      value="2026-11-13"
-                      required /></label
-                  ><label
-                    >Initial fuel on board <span>t</span
-                    ><input
-                      id="initial-fuel"
-                      type="number"
-                      min="0"
-                      step="0.1"
-                      value="8"
-                      required
-                  /></label>
-                  <div class="performance-note">
-                    <i></i>Fixed route<br /><span
-                      >Optimize uplift on this route; no new stops</span
-                    >
-                  </div>
-                </div>
-                <div class="table-scroll">
-                  <table class="leg-table">
-                    <thead>
-                      <tr>
-                        <th>Leg</th>
-                        <th>Origin → destination</th>
-                        <th>Origin fuel price <small>USD/t</small></th>
-                        <th>Base flight burn <small>t</small></th>
-                        <th>Recommended uplift <small>t</small></th>
-                        <th>Landing fuel <small>t</small></th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody id="leg-rows"></tbody>
-                  </table>
-                </div>
-                <details class="advanced">
-                  <summary>Performance & weight constraints <span>Edit assumptions ＋</span></summary>
-                  <p class="micro">
-                    These are illustrative linear-model inputs, not certified aircraft performance. Replace them with airline-approved flight performance and reserve requirements before operational evaluation.
-                  </p>
-                  <div class="advanced-aircraft">
-                    <label
-                      >Tank capacity · t<input
-                        id="tank-capacity"
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        required /></label
-                    ><label
-                      >Maximum take-off mass · t<input
-                        id="mtow"
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        required /></label
-                    ><label
-                      >Maximum landing mass · t<input
-                        id="mlw"
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        required
-                    /></label>
-                  </div>
-                  <div class="table-scroll">
-                    <table class="advanced-table">
-                      <thead>
-                        <tr>
-                          <th>Leg</th>
-                          <th>Taxi burn · t</th>
-                          <th>Arrival reserve · t</th>
-                          <th>Carriage burn / extra tonne · %</th>
-                          <th>Zero-fuel mass · t</th>
-                          <th>Uplift limit · t <small>blank = unlimited</small></th>
-                        </tr>
-                      </thead>
-                      <tbody id="performance-rows"></tbody>
-                    </table>
-                  </div>
-                </details>
-                <div class="form-bottom">
-                  <p id="plan-status" role="status">
-                    <span class="live-dot"></span> Calculated · illustrative prices and performance
-                  </p>
-                  <button type="submit" class="button primary" id="calculate">
-                    Recalculate <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg>
-                  </button>
-                </div>
-                <div
-                  class="error-box"
-                  id="model-error"
-                  role="alert"
-                  hidden
-                ></div>
-              </form>
-            </section>
             <section class="strategy-section">
               <div class="section-top">
                 <div>
@@ -433,185 +433,45 @@
           tabindex="0"
           hidden
         >
-          <section class="overview-head">
-            <div>
-              <p class="eyebrow">
-                <span class="red-square"></span> Market overview
-              </p>
-              <h1>Oil market overview</h1>
-            </div>
-            <div class="overview-note">
-              Follow WTI and Brent at the source.<br />Compare the latest
-              published benchmarks.
-            </div>
-            <button class="outline-button" id="observed-refresh-data">
-              Check for updates <span aria-hidden="true">↻</span>
-            </button>
-          </section>
-          <section
-            class="observed-summary"
-            aria-label="Latest published observations"
-          >
-            <article>
-              <p>JET FUEL · U.S. GULF COAST</p>
-              <strong id="jet-value">—</strong
-              ><span id="jet-date">Awaiting observation</span
-              ><small
-                >USD / US gallon · daily observations, reporting lag</small
-              >
-            </article>
-            <article>
-              <p>BRENT · EUROPE FOB</p>
-              <strong id="brent-value">—</strong
-              ><span id="brent-date">Awaiting observation</span
-              ><small>USD / barrel · daily observations, reporting lag</small>
-            </article>
-            <article>
-              <p>ECB REFERENCE · USD PER EUR</p>
-              <strong id="fx-value">—</strong
-              ><span id="fx-date">Awaiting observation</span
-              ><small>Informational reference · business days</small>
-            </article>
-            <article>
-              <p>JODI · JET KEROSENE</p>
-              <strong id="jodi-value">—</strong
-              ><span id="jodi-date">Awaiting reporting period</span
-              ><small>National balances · monthly publication</small>
-            </article>
-          </section>
-          <section
-            class="public-market-panel"
-            id="public-market"
-            aria-labelledby="public-market-title"
-          >
-            <div class="public-market-heading">
-              <div>
-                <p class="eyebrow">
-                  <span class="red-square"></span> PUBLIC OIL MARKETS
-                </p>
-                <h2 id="public-market-title">Crude oil markets</h2>
-                <p>Public OANDA crude-oil CFD charts · no Fuel Atlas account required</p>
-              </div>
-              <div
-                class="public-market-tabs"
-                role="tablist"
-                aria-label="Select a public crude-oil CFD chart"
-              >
-                <button
-                  id="public-wti"
-                  role="tab"
-                  aria-selected="true"
-                  aria-controls="public-market-chart"
-                  data-market="wti"
-                >
-                  WTI <span>WTICOUSD</span></button
-                ><button
-                  id="public-brent"
-                  role="tab"
-                  aria-selected="false"
-                  aria-controls="public-market-chart"
-                  tabindex="-1"
-                  data-market="brent"
-                >
-                  BRENT <span>BCOUSD</span>
-                </button>
-              </div>
-            </div>
-            <div class="public-market-instrument">
-              <strong id="public-market-symbol">OANDA:WTICOUSD</strong
-              ><span id="public-market-description"
-                >WTI crude-oil CFD · OANDA</span
-              ><span>USD quotations · CFDs, not exchange futures or jet-fuel prices</span>
-            </div>
-            <div class="public-market-disclosure">
-              Check the chart’s quotation time, delay indicator and market status. A 15-minute candle interval is not the data delay.
-            </div>
-            <div
-              id="public-market-chart"
-              class="public-market-chart"
-              role="tabpanel"
-              aria-labelledby="public-wti"
-              aria-busy="true"
-            >
-              <div class="public-chart-placeholder">
-                Loading the public TradingView chart…
-              </div>
-            </div>
-            <div class="public-market-attribution">
-              <a
-                href="https://www.tradingview.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Charts by TradingView</a
-              ><span
-                >Chart: TradingView · Quotations: OANDA · Timing and status are shown by the provider.</span
-              >
-            </div>
-            <div class="public-market-status">
-              <dl>
-                <div>
-                  <dt>Chart status</dt>
-                  <dd id="live-status">LOADING CHART</dd>
-                </div>
-                <div>
-                  <dt>Chart / quotation provider</dt>
-                  <dd id="live-provider">TradingView / OANDA CFDs</dd>
-                </div>
-                <div>
-                  <dt>Quotation time</dt>
-                  <dd id="live-asof">See time inside the chart</dd>
-                </div>
-              </dl>
-              <button class="text-button" id="public-market-retry" disabled>
-                Retry chart ↻
-              </button>
-            </div>
-            <p
-              id="public-market-message"
-              class="public-market-message"
-              role="status"
-            >
-              Loading public chart; check its displayed timing indicators.
-            </p>
-            <div class="public-market-fallback">
-              <span>If the chart is unavailable, open the source:</span
-              ><a
-                href="https://www.tradingview.com/symbols/WTICOUSD/?exchange=OANDA"
-                target="_blank"
-                rel="noopener noreferrer"
-                >WTI · TradingView</a
-              ><a
-                href="https://www.tradingview.com/symbols/BCOUSD/?exchange=OANDA"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Brent · TradingView</a
-              >
-            </div>
-            <div class="airport-api-status">
-              <strong id="airport-api-status">Airport fuel quotation API: not connected</strong
-              ><span
-                >No verified airport fuel, inventory or demand feed is connected. This chart is separate from the collected benchmarks below.</span
-              >
-            </div>
-          </section>
-          <div class="observed-disclosure">
-            <span>COLLECTED BENCHMARKS ARE DELAYED.</span> EIA daily
-            observations, ECB business-day reference rates and JODI monthly
-            balances are not real-time airport quotes. EIA/ECB sources are
-            checked hourly; monthly and geographic sources daily. This page
-            checks stored snapshots every 60 seconds while visible.
-          </div>
-          <p id="refresh-status" class="action-status" role="status">
-            Checking source snapshots…
-          </p>
-          <div class="ticker" aria-label="Source update cadence" role="group">
-            <span class="ticker-title"
-              >SOURCE CLOCK <span>NOT A LIVE TICKER</span></span
-            >
-            <div id="observed-ticker-values">
-              <span class="ticker-item">Loading published observations…</span>
-            </div>
-          </div>
+          <div class="fuel-data-view">
+  <header class="data-page-head">
+    <div><p class="eyebrow" data-i18n="data.eyebrow">Inputs you can inspect</p><h1 data-i18n="data.title">Fuel data</h1></div>
+    <span class="data-badge" data-i18n="data.badge">Scenario data</span>
+    <p data-i18n="data.intro">A complete starting dataset for 67 airports. Prices follow the same formula, and flight inputs follow the route and aircraft you choose. Change the assumptions here to update your model.</p>
+  </header>
+  <section class="data-card" aria-labelledby="data-assumption-title">
+    <div class="data-section-head"><div><p class="eyebrow" data-i18n="data.step1">01 / Shared assumptions</p><h2 id="data-assumption-title" data-i18n="data.assumptions">Build a consistent price picture</h2></div><button type="button" class="outline-button" id="data-reset" data-i18n="data.reset">Restore defaults</button></div>
+    <p class="data-copy" data-i18n="data.priceReason">The starting base of USD 800/t gives every airport a common reference. Regional adjustments create an explicit supply scenario. Distance to a regional reference airport adds a transport proxy, followed by service and tax adjustments.</p>
+    <form id="data-assumption-form" class="data-input-grid">
+      <label><span data-i18n="data.base">Common jet-fuel base</span><input id="data-base" name="baseJetUsdPerT" type="number" min="1" step="1" value="800" required><small>USD/t</small></label>
+      <label><span data-i18n="data.transport">Distance transport coefficient</span><input id="data-transport" name="transportUsdPerTPerKm" type="number" min="0" step="0.001" value="0.015" required><small>USD/t/km</small></label>
+      <label><span data-i18n="data.tax">Fiscal adjustment</span><input id="data-tax" name="taxAdjustmentUsdPerT" type="number" step="1" value="0" required><small>USD/t</small></label>
+      <label><span data-i18n="data.supply">Supply cap per visit</span><input id="data-supply" name="defaultMaxUpliftT" type="number" min="0" step="1" value="120" required><small data-i18n="data.supplyUnit">tonnes per visit</small></label>
+      <button type="submit" class="primary-button" data-i18n="data.apply">Apply to model</button>
+    </form>
+    <p id="data-assumption-status" class="data-status" role="status" aria-live="polite"></p>
+    <p class="data-copy" data-i18n="data.supplyReason">The default supply cap is 120 tonnes per visit. Lower it to test a supply constraint. The reference airports organise the distance calculation, while regional price adjustments remain editable scenario choices.</p>
+    <details class="data-method">
+      <summary data-i18n="data.regionalTitle">Regional supply assumptions</summary>
+      <p data-i18n="data.regionalReason">These starting adjustments create a spread of supply conditions to test the model. The Gulf and Southeast Asia form the lower-cost scenario, while other regions have progressively higher delivery adjustments. Change them to test a different market structure.</p>
+      <form id="data-region-form"><div class="data-table-scroll"><table class="data-table data-region-table"><thead><tr><th data-i18n="data.region">Region</th><th data-i18n="data.reference">Reference airport</th><th data-i18n="data.basis">Supply adjustment · USD/t</th><th data-i18n="data.service">Service adjustment · USD/t</th></tr></thead><tbody id="data-region-rows"></tbody></table></div><button class="primary-button" type="submit" data-i18n="data.applyRegional">Apply regional assumptions</button></form>
+    </details>
+  </section>
+  <section class="data-card" aria-labelledby="data-airport-title">
+    <div class="data-section-head"><div><p class="eyebrow" data-i18n="data.step2">02 / Airport dataset</p><h2 id="data-airport-title" data-i18n="data.airports">See how each price is built</h2></div><div class="data-actions"><button type="button" class="outline-button" id="data-export-json" data-i18n="data.downloadJson">Download data and assumptions</button><button type="button" class="outline-button" id="data-export-csv" data-i18n="data.downloadCsv">Download airport CSV</button></div></div>
+    <div class="data-ledger-controls"><label for="data-airport-search" data-i18n="data.searchLabel">Find an airport</label><input id="data-airport-search" type="search" placeholder="Airport code, name or country"><span id="data-airport-count" aria-live="polite"></span></div>
+    <div class="data-ledger-layout">
+      <div class="data-table-scroll"><table class="data-table"><caption class="sr-only" data-i18n="data.tableCaption">Generated airport prices and supply assumptions</caption><thead><tr><th data-i18n="data.airport">Airport</th><th data-i18n="data.price">Price · USD/t</th><th data-i18n="data.cap">Supply · t/visit</th></tr></thead><tbody id="data-airport-rows"></tbody></table></div>
+      <article class="data-decomposition" id="data-airport-detail" aria-live="polite"></article>
+    </div>
+  </section>
+  <section class="data-card" aria-labelledby="data-flight-title">
+    <div class="data-section-head"><div><p class="eyebrow" data-i18n="data.step3">03 / Your route</p><h2 id="data-flight-title" data-i18n="data.flightTitle">Follow the inputs into the calculation</h2></div><a class="outline-button" href="#calculations" data-i18n="data.chooseRoute">Choose a route</a></div>
+    <p class="data-copy" data-i18n="data.flightReason">Airport coordinates give the great-circle distance. A route multiplier and cruise speed give flight time. Cruise, climb and taxi assumptions then give fuel burn. Reserves and the cost of carrying extra fuel are calculated separately.</p>
+    <div id="data-route-summary"></div>
+    <details class="data-method"><summary data-i18n="data.methodTitle">Calculation and calibration</summary><div id="data-performance-method"></div></details>
+  </section>
+</div>
         </section>
         <section
           id="workspace-sources"
@@ -621,551 +481,31 @@
           tabindex="0"
           hidden
         >
-          <div class="overview-head">
-            <div>
-              <p class="eyebrow">
-                <span class="red-square"></span> Data &amp; methodology
-              </p>
-              <h1>Sources &amp; airport quotes</h1>
-            </div>
-            <div class="overview-note">
-              Airport quotations, sources & timing<br />Separate market context from airport purchase decisions.
-            </div>
-            <button
-              class="outline-button"
-              type="button"
-              data-refresh-observations=""
-            >
-              Check for updates ↻
-            </button>
-          </div>
-          <p class="sources-intro">
-            Market charts, published benchmarks and planning assumptions each
-            have a different role. Review their coverage and freshness here.
-          </p>
-          <p class="action-status" data-source-refresh-status="" role="status">
-            Checking source snapshots…
-          </p>
-          <section id="airports" class="airport-section">
-            <div class="airport-section-inner">
-              <div class="section-top">
-                <div>
-                  <p class="eyebrow">AIRPORT FUEL INTELLIGENCE / 04</p>
-                  <h2>Airport fuel quotations</h2>
-                  <p class="section-copy">
-                    Comparable into-plane quotations require contract terms, delivery basis, taxes, fees and validity dates.
-                  </p>
-                </div>
-                <button class="button subtle" data-import="">
-                  Import supplier quotes <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg>
-                </button>
-              </div>
-              <div class="airport-toolbar">
-                <label class="search"
-                  ><span>⌕</span
-                  ><input
-                    id="airport-search"
-                    type="search"
-                    placeholder="Search city or IATA code"
-                    aria-label="Search city or IATA code"
-                /></label>
-                <div class="airport-filters" aria-label="Filter regions" role="group">
-                  <button class="selected" data-region="all">All</button
-                  ><button data-region="CN">Mainland China</button
-                  ><button data-region="JP">Japan</button
-                  ><button data-region="KR">South Korea</button
-                  ><button data-region="TW">Taipei</button
-                  ><button data-region="HK">Hong Kong</button>
-                </div>
-                <div class="continent-filters" aria-label="Filter airports by continent" role="group">
-                  <button type="button" class="selected" data-continent="all" aria-pressed="true">All regions</button><button type="button" data-continent="AS" aria-pressed="false">Asia</button><button type="button" data-continent="EU" aria-pressed="false">Europe</button><button type="button" data-continent="NA" aria-pressed="false">North America</button><button type="button" data-continent="SA" aria-pressed="false">South America</button><button type="button" data-continent="AF" aria-pressed="false">Africa</button><button type="button" data-continent="OC" aria-pressed="false">Oceania</button>
-                </div>
-                <span class="airport-count" id="airport-count">Loading airports…</span>
-              </div>
-              <div class="table-scroll">
-                <table class="airport-table">
-                  <thead>
-                    <tr>
-                      <th>Airport / city</th>
-                      <th>Supplier price <small>USD/t</small></th>
-                      <th>Data classification</th>
-                      <th>Supplier / delivery basis</th>
-                      <th>Validity / source</th>
-                    </tr>
-                  </thead>
-                  <tbody id="airport-rows"></tbody>
-                </table>
-              </div>
-              <div class="airport-note">
-                <span>◈</span>
-                <p>
-                  No airport contract feed is connected. Import a CSV and select My quotations to evaluate your prices. CPC’s public listing has separate fee terms; see the<a
-                    href="https://vipmbr.cpc.com.tw/mbwebs/showlistprice_d1510_en.aspx"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >official price listing</a
-                  >。
-                </p>
-              </div>
-            </div>
-          </section>
-          <section id="sources" class="sources-section">
-            <div class="section-top">
-              <div>
-                <p class="eyebrow">TRACEABLE BY DESIGN / 05</p>
-                <h2>Sources and methodology</h2>
-              </div>
-              <span class="source-date">Source review · 4 November 2026</span>
-            </div>
-            <div class="source-intro">
-              <p>
-                A proposed pilot starts with one airline and contract notices plus settlement records for 6–8 airports.<br /><span
-                  >Market benchmarks provide context; applicable supplier quotations drive uplift decisions.</span
-                >
-              </p>
-              <a href="./network.html#calculations" class="inline-link"
-                >Open the supply-chain model</a
-              >
-            </div>
-            <div class="source-cards" id="source-cards"></div>
-            <details class="methodology">
-              <summary>Methods & scope <span>＋</span></summary>
-              <div class="method-grid">
-                <div>
-                  <h3>Account for the fuel burned to carry fuel.</h3>
-                  <p>
-                    Minimize purchased fuel cost on a fixed rotation. Arrival fuel + uplift − taxi burn = take-off fuel. Extra fuel carried increases flight burn at the stated per-leg rate. Each leg respects tank, take-off mass, landing mass, reserve and uplift limits.
-                  </p>
-                  <p>
-                    The local-uplift baseline uses the same initial and terminal fuel. When a supply cap makes that baseline infeasible, the app reports a feasibility difference rather than a savings percentage.
-                  </p>
-                </div>
-                <div>
-                  <h3>Model boundary</h3>
-                  <p>
-                    Two to five fixed legs; mass in metric tonnes and prices in USD/t. Quotations must include applicable into-plane fees and match the planning date. Convert other currencies and volume units before import.
-                  </p>
-                  <p>
-                    Linear carriage coefficients and illustrative burn do not replace flight-performance calculations. This version does not optimize route choice, forecast prices or execute fuel orders.
-                  </p>
-                </div>
-              </div>
-            </details>
-          </section>
-          <section
-            class="data-section"
-            id="observed-data-sources"
-            aria-labelledby="observed-sources-title"
-          >
-            <div class="market-heading">
-              <div>
-                <p class="eyebrow">OBSERVED WHEN? COLLECTED WHEN?</p>
-                <h2 id="observed-sources-title">
-                  Source health <span>Sources & freshness</span>
-                </h2>
-              </div>
-              <span id="last-check" class="last-check">No check completed</span>
-            </div>
-            <div class="feed-grid" id="observed-source-cards"></div>
-            <p class="table-note">
-              Page refresh time is separate from source observation and
-              collection time. Stored updates are checked while this page is
-              visible. Failed or stale collection remains labeled.
-            </p>
-          </section>
-          <details class="source-detail airport-directory-sources">
-            <summary>
-              <span>Planning airport directory · 50 airports</span
-              ><span>Selection, traffic &amp; coordinates</span>
-            </summary>
-            <p id="directory-method" class="directory-method"></p>
-            <p class="directory-note">
-              Passenger counts determine airport selection only. Airport fuel
-              prices, demand and inventory require their own data.
-            </p>
-            <div class="table-scroll directory-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>RANK</th>
-                    <th>AIRPORT</th>
-                    <th>NAME</th>
-                    <th>CITY</th>
-                    <th>2024 PASSENGERS</th>
-                    <th>COUNTRY / ECONOMY</th>
-                  </tr>
-                </thead>
-                <tbody id="directory-rows"></tbody>
-              </table>
-            </div>
-            <div id="directory-sources" class="directory-sources"></div>
-          </details>
-          <details class="source-detail">
-            <summary>
-              <span>Published observations</span
-              ><span>Browse &amp; export the source records</span>
-            </summary>
-            <section
-              class="market-panel observed-records"
-              id="observations"
-              aria-labelledby="observations-title"
-            >
-              <div class="market-heading">
-                <div>
-                  <p class="eyebrow">THE RECORD. AS PUBLISHED.</p>
-                  <h2 id="observations-title">
-                    Source observations <span>Source observations</span>
-                  </h2>
-                </div>
-                <div class="observed-export">
-                  <button class="text-button" id="export-csv" disabled>
-                    Export current table CSV</button
-                  ><button
-                    class="text-button"
-                    id="observed-export-json"
-                    disabled
-                  >
-                    Collected datasets JSON
-                  </button>
-                </div>
-              </div>
-              <div
-                class="result-tabs"
-                role="tablist"
-                aria-label="Observed data tables"
-              >
-                <button
-                  role="tab"
-                  id="tab-jet"
-                  aria-controls="view-jet"
-                  aria-selected="true"
-                  data-tab="jet"
-                >
-                  01 / Jet fuel</button
-                ><button
-                  role="tab"
-                  id="tab-brent"
-                  aria-controls="view-brent"
-                  aria-selected="false"
-                  tabindex="-1"
-                  data-tab="brent"
-                >
-                  02 / Brent</button
-                ><button
-                  role="tab"
-                  id="tab-fx"
-                  aria-controls="view-fx"
-                  aria-selected="false"
-                  tabindex="-1"
-                  data-tab="fx"
-                >
-                  03 / FX</button
-                ><button
-                  role="tab"
-                  id="tab-jodi"
-                  aria-controls="view-jodi"
-                  aria-selected="false"
-                  tabindex="-1"
-                  data-tab="jodi"
-                >
-                  04 / JODI</button
-                ><button
-                  role="tab"
-                  id="tab-airports"
-                  aria-controls="view-airports"
-                  aria-selected="false"
-                  tabindex="-1"
-                  data-tab="airports"
-                >
-                  05 / Geography
-                </button>
-              </div>
-              <div id="view-jet" role="tabpanel" aria-labelledby="tab-jet">
-                <div class="observation-heading">
-                  <h3>U.S. Gulf Coast jet fuel spot price FOB</h3>
-                  <span
-                    >USD / US GALLON · DAILY OBSERVATIONS, REPORTING LAG</span
-                  >
-                </div>
-                <p class="source-scope">
-                  Published U.S. wholesale benchmark. No density conversion or
-                  Asian airport-price estimate is applied.
-                </p>
-                <svg
-                  id="jet-chart"
-                  class="observation-chart"
-                  viewBox="0 0 900 200"
-                  role="img"
-                  aria-label="Published U.S. Gulf Coast jet fuel observations in dollars per US gallon"
-                />
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>OBSERVATION DATE</th>
-                        <th>PUBLISHED VALUE</th>
-                        <th>ORIGINAL UNIT</th>
-                        <th>SOURCE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="jet-rows"></tbody>
-                  </table>
-                </div>
-              </div>
-              <div
-                id="view-brent"
-                role="tabpanel"
-                aria-labelledby="tab-brent"
-                hidden
-              >
-                <div class="observation-heading">
-                  <h3>Europe Brent spot price FOB</h3>
-                  <span>USD / BARREL · DAILY OBSERVATIONS, REPORTING LAG</span>
-                </div>
-                <p class="source-scope">
-                  A separate crude-oil benchmark. It is not a jet-fuel quote or
-                  an executable arbitrage opportunity.
-                </p>
-                <svg
-                  id="brent-chart"
-                  class="observation-chart"
-                  viewBox="0 0 900 200"
-                  role="img"
-                  aria-label="Published Brent observations in dollars per barrel"
-                />
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>OBSERVATION DATE</th>
-                        <th>PUBLISHED VALUE</th>
-                        <th>ORIGINAL UNIT</th>
-                        <th>SOURCE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="brent-rows"></tbody>
-                  </table>
-                </div>
-              </div>
-              <div id="view-fx" role="tabpanel" aria-labelledby="tab-fx" hidden>
-                <div class="observation-heading">
-                  <h3>ECB euro foreign exchange reference rates</h3>
-                  <span>REFERENCE RATES · NOT TRANSACTION QUOTES</span>
-                </div>
-                <p id="fx-table-date" class="source-scope">
-                  Awaiting source observation.
-                </p>
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>BASE CURRENCY</th>
-                        <th>QUOTE CURRENCY</th>
-                        <th>UNITS PER 1 EUR</th>
-                        <th>OBSERVATION DATE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="fx-rows"></tbody>
-                  </table>
-                </div>
-              </div>
-              <div
-                id="view-jodi"
-                role="tabpanel"
-                aria-labelledby="tab-jodi"
-                hidden
-              >
-                <div class="observation-heading">
-                  <h3>National jet kerosene balances</h3>
-                  <span>THOUSAND METRIC TONNES · MONTHLY, DELAYED</span>
-                </div>
-                <p class="source-scope">
-                  JETKERO / KTONS records retain the source assessment code.
-                  National totals are not airport stock or available supplier
-                  capacity. A missing record is not zero.
-                </p>
-                <div class="jodi-filters">
-                  <label for="jodi-period"
-                    >REPORTING MONTH<select id="jodi-period"></select></label
-                  ><label for="jodi-country"
-                    >COUNTRY / ECONOMY<select id="jodi-country">
-                      <option value="all">All reported</option>
-                      <option value="CN">China · CN</option>
-                      <option value="HK">Hong Kong · HK</option>
-                      <option value="JP">Japan · JP</option>
-                      <option value="KR">South Korea · KR</option>
-                      <option value="SG">Singapore · SG</option>
-                      <option value="TW">Taiwan · TW</option>
-                    </select></label
-                  >
-                </div>
-                <p id="jodi-coverage" class="coverage-note"></p>
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>MONTH</th>
-                        <th>COUNTRY</th>
-                        <th>FLOW</th>
-                        <th>REPORTED VALUE</th>
-                        <th>UNIT</th>
-                        <th>ASSESSMENT CODE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="jodi-rows"></tbody>
-                  </table>
-                </div>
-                <p class="table-note">
-                  Assessment codes are source metadata. Code 3 is retained as
-                  unassessed; a reported zero with this code does not establish
-                  absence of supply capability.
-                </p>
-              </div>
-              <div
-                id="view-airports"
-                role="tabpanel"
-                aria-labelledby="tab-airports"
-                hidden
-              >
-                <div class="observation-heading">
-                  <h3>Airport coordinate registry</h3>
-                  <span>GEOGRAPHY ONLY · WGS84</span>
-                </div>
-                <p class="source-scope">
-                  These coordinates are the only airport-level observations
-                  connected to the default monitor.
-                </p>
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>IATA / ICAO</th>
-                        <th>AIRPORT</th>
-                        <th>COUNTRY</th>
-                        <th>LATITUDE</th>
-                        <th>LONGITUDE</th>
-                        <th>FUEL QUOTE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="observed-airport-rows"></tbody>
-                  </table>
-                </div>
-              </div>
-            </section>
-          </details>
-          <details class="source-detail">
-            <summary>
-              <span>Airport reference map</span
-              ><span>Locations &amp; coordinate coverage</span>
-            </summary>
-            <div class="atlas-grid observed-atlas">
-              <section class="map-panel" aria-labelledby="observed-map-title">
-                <div class="panel-heading">
-                  <h2 id="observed-map-title">
-                    Airport geography <span>Airport geography</span>
-                  </h2>
-                  <span class="geography-only">COORDINATES ONLY</span>
-                </div>
-                <div class="map-stage">
-                  <svg
-                    id="observed-atlas-map"
-                    viewBox="0 0 900 680"
-                    role="group"
-                    aria-label="Verified airport coordinates in East and Southeast Asia; no quoted fuel prices or inventory values"
-                  />
-                  <div class="map-corner">
-                    <span class="map-index">01—</span
-                    ><span id="map-count"
-                      >GEOGRAPHIC REFERENCE<br />NO INFERRED MARKET VALUES</span
-                    >
-                  </div>
-                  <div class="north-marker" aria-hidden="true">
-                    <span>N</span
-                    ><svg viewBox="0 0 16 34">
-                      <path d="M8 1 15 28 8 23 1 28Z" />
-                    </svg>
-                  </div>
-                  <div class="map-key">
-                    <span
-                      ><i class="key-node"></i> Sourced airport
-                      coordinates</span
-                    ><span>No verified airport price or inventory feed</span>
-                  </div>
-                  <div class="map-attribution">
-                    Natural Earth + OurAirports · reference geography
-                  </div>
-                </div>
-                <div class="map-footer">
-                  <span
-                    ><i class="status-square"></i
-                    ><span id="observed-map-status"
-                      >Awaiting coordinate source</span
-                    ></span
-                  ><span>Click an airport to inspect</span>
-                </div>
-              </section>
-              <aside
-                class="inspector observed-inspector"
-                aria-labelledby="airport-title"
-              >
-                <div class="inspector-heading">
-                  <span class="eyebrow">VERIFIED LOCATION / OPEN DATA</span
-                  ><span class="issue-no">02</span>
-                </div>
-                <h2 id="airport-title">Select a<br />location.</h2>
-                <p class="inspector-intro">
-                  Coordinates identify an airport. They do not establish fuel
-                  prices, demand, stock or available capacity.
-                </p>
-                <label class="field-label" for="airport-select">AIRPORT</label
-                ><select
-                  id="airport-select"
-                  aria-label="Select airport"
-                ></select>
-                <dl class="airport-facts">
-                  <div>
-                    <dt>NAME</dt>
-                    <dd id="airport-name">—</dd>
-                  </div>
-                  <div>
-                    <dt>WGS84 COORDINATES</dt>
-                    <dd id="airport-coordinates">—</dd>
-                  </div>
-                  <div>
-                    <dt>FUEL PRICE</dt>
-                    <dd class="missing-observation">No verified quote</dd>
-                  </div>
-                  <div>
-                    <dt>AVAILABLE INVENTORY</dt>
-                    <dd class="missing-observation">No verified observation</dd>
-                  </div>
-                  <div>
-                    <dt>FUEL DEMAND</dt>
-                    <dd class="missing-observation">No verified observation</dd>
-                  </div>
-                </dl>
-                <p class="model-footnote">
-                  U.S. Gulf Coast jet fuel is a regional benchmark. It is not
-                  assigned to any airport on this map.
-                </p>
-                <a
-                  class="method-button"
-                  href="https://ourairports.com/data/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Coordinate source <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg></a
-                >
-              </aside>
-            </div>
-          </details>
+          <div class="sources-view fuel-data-view">
+  <header class="data-page-head"><div><p class="eyebrow" data-i18n="sources.eyebrow">From scenario to evidence</p><h1 data-i18n="sources.title">Connect the right data</h1></div><p data-i18n="sources.intro">Each input has a clear replacement path. Start with a route and a set of assumptions, then bring in dated supplier prices, flight performance and confirmed supply limits as they become available.</p></header>
+  <section class="data-card" aria-labelledby="sources-plan-title"><div class="data-section-head"><h2 id="sources-plan-title" data-i18n="sources.planTitle">What to collect and where to get it</h2><button class="primary-button" type="button" data-import data-i18n="sources.import">Import fuel quotations</button></div>
+    <div class="data-table-scroll"><table class="data-table data-source-table"><thead><tr><th data-i18n="sources.input">Model input</th><th data-i18n="sources.current">Available now</th><th data-i18n="sources.next">Replacement data</th></tr></thead><tbody>
+      <tr><th data-i18n="sources.geo">Airport geography</th><td data-i18n="sources.geoNow">Coordinates for 67 airports, sourced from OurAirports. The map uses Natural Earth boundaries.</td><td><a href="https://ourairports.com/data/" target="_blank" rel="noopener noreferrer">OurAirports</a><span data-i18n="sources.geoNext"> provides a public starting point. Confirm the airport and operational routing against the flight plan.</span></td></tr>
+      <tr><th data-i18n="sources.price">Delivered jet-fuel price</th><td data-i18n="sources.priceNow">A common jet-fuel base plus regional, distance, service and tax adjustments.</td><td data-i18n="sources.priceNext">Request dated into-plane offers from airport fuel suppliers, airlines or fuel brokers. Record airport, currency, unit, fees, tax treatment, validity and supplier. Import comparable prices in USD/t.</td></tr>
+      <tr><th data-i18n="sources.flight">Flight performance</th><td data-i18n="sources.flightNow">Two generic aircraft profiles derive fuel use from distance and time.</td><td><span data-i18n="sources.flightNext">Use operator flight-planning outputs for the chosen aircraft, payload, weather and routing. </span><a href="https://openap.dev/" target="_blank" rel="noopener noreferrer">OpenAP</a><span data-i18n="sources.openap"> can support an initial research calibration.</span></td></tr>
+      <tr><th data-i18n="sources.reserve">Fuel reserve and weight limits</th><td data-i18n="sources.reserveNow">Explicit reserve, tank, takeoff and landing assumptions.</td><td data-i18n="sources.reserveNext">Use the operator's approved reserve policy, aircraft limits, payload plan and airport-specific performance restrictions.</td></tr>
+      <tr><th data-i18n="sources.supply">Available uplift</th><td data-i18n="sources.supplyNow">An adjustable supply cap for each visit, with individual leg overrides.</td><td data-i18n="sources.supplyNext">Confirm allocated tonnes and the uplift window with each supplier. Add delivery-rate, slot or storage constraints when the operation requires them.</td></tr>
+      <tr><th data-i18n="sources.benchmark">Jet-fuel market context</th><td data-i18n="sources.benchmarkNow">The common scenario base is transparent and editable.</td><td><a href="https://www.eia.gov/dnav/pet/hist/EER_EPJK_PF4_RGC_DPGD.htm" target="_blank" rel="noopener noreferrer" data-i18n="sources.eia">EIA's US Gulf Coast jet-fuel series</a><span data-i18n="sources.benchmarkNext"> gives public wholesale context with its own reporting lag. Regional assessments from Platts or Argus require the relevant access. Airport prices still need local delivery terms.</span></td></tr>
+    </tbody></table></div>
+  </section>
+  <section class="data-source-grid">
+    <article class="data-card"><p class="eyebrow" data-i18n="sources.modelEyebrow">The decision</p><h2 data-i18n="sources.modelTitle">Where should this rotation buy fuel?</h2><p data-i18n="sources.modelText">You choose the airports and their order. The model chooses how much fuel to buy at each stop while meeting fuel balance, reserve, tank, weight and supply constraints. It compares that plan with buying the minimum needed on each leg, using the same final fuel target.</p><p data-i18n="sources.modelNext">A single leg checks feasibility and cost. Several legs reveal whether a lower price at an earlier stop justifies carrying extra fuel.</p></article>
+    <article class="data-card"><p class="eyebrow" data-i18n="sources.packageEyebrow">Reproducible inputs</p><h2 data-i18n="sources.packageTitle">Keep the assumptions with the result</h2><p data-i18n="sources.packageText">The dataset download includes all 67 airport records, price components, aircraft profiles, formulas and replacement sources. The model export records the route, inputs and calculated fuel plan so the result can be rerun.</p><div class="data-actions"><a class="outline-button" href="#oil-markets" data-i18n="sources.inspect">Inspect the dataset</a><a class="outline-button" href="#briefing" data-i18n="sources.guide">Read the model guide</a></div></article>
+  </section>
+</div>
         </section>
-        <section id="workspace-research" class="workspace-panel research-workspace research-exhibit" role="tabpanel" aria-labelledby="workspace-tab-research" tabindex="0" lang="en" hidden>
+        <section id="workspace-research" class="workspace-panel research-workspace research-exhibit" role="tabpanel" aria-labelledby="workspace-tab-research" tabindex="0" hidden>
           <div class="research-content"><nav class="section-nav" aria-label="Research sections"><span>In this analysis</span><a href="#research/question">Overview</a><a href="#research/experiment">Interactive model</a><a href="#research/geography">Geography</a><a href="#research/security">Security</a><a href="#research/essay">Reflection</a><a href="#research/methods">Method</a><a href="#research/downloads">Downloads</a></nav>
 <section class="hero section-shell" id="question" aria-labelledby="research-title">
   <div class="hero-copy"><p class="eyebrow">Analysis / Aviation fuel</p><h1 id="research-title">Fuel tankering and East Asian aviation security</h1><p class="hero-deck">Carrying extra fuel can shift refuelling away from a disrupted airport. The aircraft burns part of that fuel on the way.</p><p class="research-question"><strong>Research question</strong>When can fuel tankering reduce dependence on fuel at the next airport, and what price premium, fuel use and emissions does that protection entail?</p></div>
-  <aside class="finding-cover" aria-label="Central analytical result"><p class="eyebrow">Four-hour scenario</p><p class="cover-number"><span id="cover-premium">16.3</span><span class="percent">%</span></p><h2>Destination price premium at fuel-cost break-even</h2><p>Linear approximation; extra-weight burn coefficient 3.5% per hour; no carbon charge or additional fee.</p><p class="finding-conclusion">Conditional threshold.<br><strong>Not an observed airport price spread.</strong></p></aside>
+  <aside class="finding-cover" aria-label="Central analytical result"><p class="eyebrow">Four-hour scenario</p><p class="cover-number"><span id="cover-premium">16.3</span><span class="percent">%</span></p><h2>Destination price premium at fuel-cost break-even</h2><p>Linear approximation; extra-weight burn coefficient 3.5% per hour; no carbon charge or additional fee.</p><p class="finding-conclusion">Calculated from these inputs.<br><strong>Compare with dated airport offers.</strong></p></aside>
 </section>
-<section class="evidence-strip section-shell" aria-label="What is observed and what is assumed"><div><span class="evidence-tag observed">OBSERVED REFERENCE</span><h2>Airport coordinates</h2><p>Singapore, Hong Kong and Narita locate the study. Coordinates do not establish fuel availability.</p></div><div><span class="evidence-tag literature">LITERATURE INPUTS</span><h2>Fuel carriage and CO₂</h2><p>ICAO reports an aircraft-dependent 2.5–4.5% extra-weight fuel penalty per flight hour. Direct Jet A-1 CO₂ uses 3.16 tonnes per tonne burned.</p></div><div><span class="evidence-tag scenario">SCENARIO CHOICES</span><h2>Duration and constraints</h2><p>Duration, speed, routing, carbon charges and extra-uplift headroom are transparent test inputs, not measured operating conditions.</p></div></section>
+<section class="evidence-strip section-shell" aria-label="What is observed and what is assumed"><div><span class="evidence-tag observed">OBSERVED REFERENCE</span><h2>Airport coordinates</h2><p>Singapore, Hong Kong and Narita locate the study. Coordinates do not establish fuel availability.</p></div><div><span class="evidence-tag literature">LITERATURE INPUTS</span><h2>Fuel carriage and CO₂</h2><p>ICAO reports an aircraft-dependent 2.5–4.5% extra-weight fuel penalty per flight hour. Direct Jet A-1 CO₂ uses 3.16 tonnes per tonne burned.</p></div><div><span class="evidence-tag scenario">SCENARIO CHOICES</span><h2>Duration and constraints</h2><p>Adjust duration, speed, routing, carbon charges and extra-uplift headroom to explore the result.</p></div></section>
 
 <section class="section-shell experiment-section" id="experiment" aria-labelledby="experiment-title">
   <div class="section-heading"><div><p class="eyebrow">02 / THE MARGINAL FUEL DECISION</p><h2 id="experiment-title">Test the break-even premium.</h2></div><p>Compare the same useful fuel at the next airport, holding the mission, payload, reserves and terminal fuel requirement unchanged.</p></div>
@@ -1173,10 +513,10 @@
     <form id="scenario-form" class="scenario-controls" aria-label="Tankering sensitivity assumptions">
       <div class="control-heading"><span class="evidence-tag scenario">EDITABLE SCENARIO</span><button type="button" class="text-button" id="reset-scenario">Reset</button></div>
       <div class="slider-field"><label for="duration">Fuel carriage duration <output id="duration-value" for="duration">4.0 hours</output></label><input id="duration" name="durationH" type="range" min="1" max="8" value="4" step="0.1"><div class="range-extents"><span>1 hour</span><span>8 hours</span></div></div>
-      <div class="slider-field"><label for="carry-rate">Extra-weight burn coefficient <output id="carry-rate-value" for="carry-rate">3.5% / hour</output></label><input id="carry-rate" name="kPerHour" type="range" min="2.5" max="4.5" value="3.5" step="0.1"><div class="range-extents"><span>2.5% / hour</span><span>4.5% / hour</span></div><p class="control-note">Literature range; the midpoint is a scenario choice. It is not calibrated to a named aircraft.</p></div>
+      <div class="slider-field"><label for="carry-rate">Extra-weight burn coefficient <output id="carry-rate-value" for="carry-rate">3.5% / hour</output></label><input id="carry-rate" name="kPerHour" type="range" min="2.5" max="4.5" value="3.5" step="0.1"><div class="range-extents"><span>2.5% / hour</span><span>4.5% / hour</span></div><p class="control-note">The range comes from the literature. Use aircraft-specific data for a particular flight.</p></div>
       <fieldset class="formulation-field"><legend>Fuel-carriage approximation</legend><label><input type="radio" name="model" value="linear" checked><span>Linear <small>α = 1 − kt</small></span></label><label><input type="radio" name="model" value="exponential"><span>Exponential <small>α = e<sup>−kt</sup></small></span></label></fieldset>
-      <details class="economic-inputs"><summary>Carbon and additional-cost sensitivity</summary><p class="control-note">Illustrative values only. No airport quote is inferred from these inputs.</p><label for="origin-price">Origin fuel price <span>USD / tonne, assumed</span><input id="origin-price" name="originPriceUsdPerT" type="number" min="1" max="10000" step="1" value="1000" required></label><label for="carbon-price">Carbon charge <span>USD / tonne CO₂, assumed</span><input id="carbon-price" name="carbonUsdPerTCo2" type="number" min="0" max="1000" step="10" value="0" required></label><label for="extra-cost">Additional cost <span>USD / useful tonne delivered, assumed</span><input id="extra-cost" name="extraCostUsdPerDeliveredT" type="number" min="0" max="10000" step="1" value="0" required></label></details>
-      <p class="control-note">The default comparison delivers one useful tonne at the next airport. These controls cannot establish tank, weight, payload or reserve feasibility.</p>
+      <details class="economic-inputs"><summary>Carbon and additional-cost sensitivity</summary><p class="control-note">Set the fuel price, carbon charge and additional costs for this scenario.</p><label for="origin-price">Origin fuel price <span>USD / tonne, assumed</span><input id="origin-price" name="originPriceUsdPerT" type="number" min="1" max="10000" step="1" value="1000" required></label><label for="carbon-price">Carbon charge <span>USD / tonne CO₂, assumed</span><input id="carbon-price" name="carbonUsdPerTCo2" type="number" min="0" max="1000" step="10" value="0" required></label><label for="extra-cost">Additional cost <span>USD / useful tonne delivered, assumed</span><input id="extra-cost" name="extraCostUsdPerDeliveredT" type="number" min="0" max="10000" step="1" value="0" required></label></details>
+      <p class="control-note">The comparison delivers one useful tonne at the next airport. The route model adds tank, weight and reserve limits.</p>
       <button type="button" class="outline-button" id="export-scenario">Download this scenario <span aria-hidden="true">↓</span></button>
     </form>
     <div class="scenario-output" aria-live="polite" aria-atomic="false"><p id="scenario-error" class="error-message" role="alert" hidden></p><div id="scenario-results">
@@ -1185,7 +525,7 @@
       <div class="mass-balance"><div class="mini-heading"><h3>Where the extra fuel goes</h3><span>TONNES / NORMALIZED DELIVERY</span></div><svg id="balance-chart" viewBox="0 0 720 105" role="img" aria-label="Extra fuel splits into one tonne delivered and additional fuel burned" /><div class="chart-legend"><span><i class="legend-box delivered"></i>Useful fuel delivered</span><span><i class="legend-box burned"></i>Additional fuel burned</span></div></div>
       <div class="local-balance"><p class="quantity-basis">Basis B · 1 tonne gross extra uplift at origin</p><p><strong><span id="displacement-value">0.860</span> t</strong> replaces destination uplift; <span id="local-burn-value">0.140</span> t is burned, adding <span id="local-co2-value">0.442</span> t direct CO₂. This measures local fuel displacement under limited origin headroom.</p></div>
       <p id="alternative-result" class="alternative-result">Exponential sensitivity: 15.0% premium. The difference is model-form uncertainty, not a measured confidence interval.</p>
-      <p class="result-boundary">The price comparison assumes both purchase options are available. In a shortage, displaced fuel is a physical quantity, not a valuation of flights saved. No observed airport prices or aircraft limits establish an executable dispatch decision here.</p>
+      <p class="result-boundary">This comparison assumes fuel is available at both airports. In a shortage, read the displaced tonnes alongside supply and aircraft limits.</p>
     </div></div>
   </div>
 </section>
@@ -1489,9 +829,9 @@
 <path class="land" fill-rule="evenodd" d="M829.20,87.98L828.80,88.04L828.12,87.98L827.91,87.92L828.06,87.82L828.46,87.66L828.81,87.71L829.06,87.75Z" />
 <path class="land" fill-rule="evenodd" d="M824.42,90.56L824.22,90.58L824.16,90.42L824.48,90.27L825.08,90.08L825.27,90.19L825.05,90.32L824.80,90.41Z" />
 <path class="land" fill-rule="evenodd" d="M597.54,572.32L597.20,572.37L596.97,572.33L597.00,572.16L597.23,571.99L597.54,571.91L597.78,571.97L597.76,572.13Z" />
-<path class="land" fill-rule="evenodd" d="M499.49,155.32L499.66,155.45L499.63,155.62L499.42,155.72L499.07,155.89L498.76,156.04L498.14,155.99L497.68,155.74L497.84,155.32L498.22,155.40L499.07,155.22Z" /></g><g id="study-routes" /><g id="study-airports" /></svg><p class="map-attribution">Natural Earth + OurAirports · geographic reference<br>Lines show study connections, not observed flight tracks.</p></div><div class="route-analysis"><div class="mini-heading"><h3>Required price premium</h3><span>ZERO CARBON CHARGE / LINEAR MODEL</span></div><svg id="route-chart" viewBox="0 0 650 300" role="img" aria-label="Conditional break-even premium and scenario range for three study connections" /><div class="chart-legend"><span><i class="legend-dot"></i>Central scenario</span><span><i class="legend-range"></i>Input range</span></div><p class="chart-note">The range varies the carriage coefficient, routing factor and assumed ground speed. It is a scenario envelope, not a statistical confidence interval.</p><div class="table-scroll"><table class="route-table"><caption>Reference distance and central scenario timing</caption><thead><tr><th scope="col">Connection</th><th scope="col">Distance</th><th scope="col">Time proxy</th><th scope="col">Premium</th></tr></thead><tbody id="route-table-rows"></tbody></table></div><p class="chart-note">Central: 800 km/h, path factor 1.05, coefficient 3.5%/hour. Range: 750–900 km/h, path factor 1.00–1.15, coefficient 2.5–4.5%/hour. These are not observed flight durations or quoted airport spreads.</p><p id="coordinate-provenance" class="source-note"></p></div></div></section>
+<path class="land" fill-rule="evenodd" d="M499.49,155.32L499.66,155.45L499.63,155.62L499.42,155.72L499.07,155.89L498.76,156.04L498.14,155.99L497.68,155.74L497.84,155.32L498.22,155.40L499.07,155.22Z" /></g><g id="study-routes" /><g id="study-airports" /></svg><p class="map-attribution">Natural Earth + OurAirports · geographic reference<br>Lines connect the study airports.</p></div><div class="route-analysis"><div class="mini-heading"><h3>Required price premium</h3><span>ZERO CARBON CHARGE / LINEAR MODEL</span></div><svg id="route-chart" viewBox="0 0 650 300" role="img" aria-label="Conditional break-even premium and scenario range for three study connections" /><div class="chart-legend"><span><i class="legend-dot"></i>Central scenario</span><span><i class="legend-range"></i>Input range</span></div><p class="chart-note">The scenario range combines changes in the carriage coefficient, routing factor and ground speed.</p><div class="table-scroll"><table class="route-table"><caption>Reference distance and central scenario timing</caption><thead><tr><th scope="col">Connection</th><th scope="col">Distance</th><th scope="col">Time proxy</th><th scope="col">Premium</th></tr></thead><tbody id="route-table-rows"></tbody></table></div><p class="chart-note">Central settings: 800 km/h, path factor 1.05 and coefficient 3.5%/hour. Tested range: 750–900 km/h, path factor 1.00–1.15 and coefficient 2.5–4.5%/hour.</p><p id="coordinate-provenance" class="source-note"></p></div></div></section>
 
-<section class="section-shell security-section" id="security" aria-labelledby="security-title"><div class="section-heading"><div><p class="eyebrow">04 / FROM PRIVATE SAVINGS TO SECURITY</p><h2 id="security-title">The location of the shortage matters.</h2></div><p>Operational fuel availability at an airport and energy security across a region are different outcomes.</p></div><div class="security-cards"><article><span class="case-number">A</span><p class="eyebrow">LOCAL INTERRUPTION</p><h3>Shift part of the next uplift.</h3><p>If extra fuel is available at origin and the aircraft can carry it, tankering reduces the fuel required at the next airport. The test measures tonnes displaced, not departures saved.</p><div class="case-test"><span>Normalized test</span><strong>1 tonne extra at origin</strong><p><span id="local-case-delivery">0.860</span> tonnes displace destination uplift under the selected scenario; the remainder is burned.</p></div></article><article><span class="case-number">B</span><p class="eyebrow">SHARED REGIONAL SHORTAGE</p><h3>Account for the common fuel pool.</h3><p>Under a fixed regional fuel quantity, moving fuel by aircraft uses more fuel than purchasing the same useful quantity at destination. Tankering does not create new regional supply.</p><div class="case-test"><span>Conservation test</span><strong>Delivered fuel + carriage burn</strong><p>A local benefit can coexist with a larger claim on scarce fuel elsewhere. System effects require network and allocation evidence.</p></div></article><article><span class="case-number">C</span><p class="eyebrow">OPERATING LIMIT</p><h3>Check what can actually be carried.</h3><p>Tank capacity, take-off and landing weight, payload, reserves and the next flight's requirements can restrict or eliminate the extra uplift. These limits must come from operational data.</p><div class="case-test"><span>Decision boundary</span><strong>Threshold ≠ dispatch clearance</strong><p>Capacity and supplier access remain separate conditions even when the calculated price premium looks attractive.</p></div></article></div><div id="policy-insights"><!-- POLICY_START --><p class="policy-statement">Hong Kong — delivery infrastructure. AFSC describes 12 on-airport tanks with 220,000 m³ of installed capacity, an apron hydrant network and the Sha Chau marine facility as emergency backup to the permanent aviation fuel facility. These arrangements show layers of delivery capability and an institutional operator. They do not reveal tank contents, usable jet fuel, replenishment lead time or days of cover. A resilience assessment should test the whole delivery chain and backup activation, rather than label a facility a single point of failure without evidence. [<a href="#research/ref-6" aria-label="Reference 6">6</a>]</p><p class="policy-statement">Singapore — coordinated procurement. CAAS's November 2026 SAF announcement specifies price, supply-chain resilience, delivery certainty and sustainability documentation as procurement criteria, with future tender and delivery arrangements. This provides an example of pooling procurement and defining non-price requirements. It is not evidence that those prospective volumes have already been delivered or that SAF is immune to supply concentration. SAF remains a fuel with tailpipe CO₂; lifecycle claims require separate evidence. [<a href="#research/ref-7" aria-label="Reference 7">7</a>]</p><p class="policy-statement">Japan — national emergency capacity. The IEA's 19 March 2026 announcement lists Japan's 79.8-million-barrel contribution to an emergency stock action. It records a commitment and initial market releases at that date, not a measured November stock position or a Narita jet fuel allocation. IEA stockholding obligations for relevant net-importing members concern at least 90 days of net oil imports, potentially spanning crude and products; they do not guarantee 90 days of airport jet fuel. [<a href="#research/ref-8" aria-label="Reference 8">8</a>, <a href="#research/ref-9" aria-label="Reference 9">9</a>]</p><!-- POLICY_END --></div></section>
+<section class="section-shell security-section" id="security" aria-labelledby="security-title"><div class="section-heading"><div><p class="eyebrow">04 / FROM PRIVATE SAVINGS TO SECURITY</p><h2 id="security-title">The location of the shortage matters.</h2></div><p>Operational fuel availability at an airport and energy security across a region are different outcomes.</p></div><div class="security-cards"><article><span class="case-number">A</span><p class="eyebrow">LOCAL INTERRUPTION</p><h3>Shift part of the next uplift.</h3><p>If extra fuel is available at origin and the aircraft can carry it, tankering reduces the fuel required at the next airport. The test measures tonnes displaced, not departures saved.</p><div class="case-test"><span>Normalized test</span><strong>1 tonne extra at origin</strong><p><span id="local-case-delivery">0.860</span> tonnes displace destination uplift under the selected scenario; the remainder is burned.</p></div></article><article><span class="case-number">B</span><p class="eyebrow">SHARED REGIONAL SHORTAGE</p><h3>Account for the common fuel pool.</h3><p>Under a fixed regional fuel quantity, moving fuel by aircraft uses more fuel than purchasing the same useful quantity at destination. Tankering does not create new regional supply.</p><div class="case-test"><span>Conservation test</span><strong>Delivered fuel + carriage burn</strong><p>A local benefit can coexist with a larger claim on scarce fuel elsewhere. System effects require network and allocation evidence.</p></div></article><article><span class="case-number">C</span><p class="eyebrow">OPERATING LIMIT</p><h3>Check what can actually be carried.</h3><p>Tank capacity, take-off and landing weight, payload, reserves and the next flight's requirements can restrict or eliminate the extra uplift. These limits must come from operational data.</p><div class="case-test"><span>Next check</span><strong>Aircraft and supply limits</strong><p>Capacity and supplier access remain separate conditions even when the calculated price premium looks attractive.</p></div></article></div><div id="policy-insights"><!-- POLICY_START --><p class="policy-statement">Hong Kong — delivery infrastructure. AFSC describes 12 on-airport tanks with 220,000 m³ of installed capacity, an apron hydrant network and the Sha Chau marine facility as emergency backup to the permanent aviation fuel facility. These arrangements show layers of delivery capability and an institutional operator. They do not reveal tank contents, usable jet fuel, replenishment lead time or days of cover. A resilience assessment should test the whole delivery chain and backup activation, rather than label a facility a single point of failure without evidence. [<a href="#research/ref-6" aria-label="Reference 6">6</a>]</p><p class="policy-statement">Singapore — coordinated procurement. CAAS's November 2026 SAF announcement specifies price, supply-chain resilience, delivery certainty and sustainability documentation as procurement criteria, with future tender and delivery arrangements. This provides an example of pooling procurement and defining non-price requirements. It is not evidence that those prospective volumes have already been delivered or that SAF is immune to supply concentration. SAF remains a fuel with tailpipe CO₂; lifecycle claims require separate evidence. [<a href="#research/ref-7" aria-label="Reference 7">7</a>]</p><p class="policy-statement">Japan — national emergency capacity. The IEA's 19 March 2026 announcement lists Japan's 79.8-million-barrel contribution to an emergency stock action. It records a commitment and initial market releases at that date, not a measured November stock position or a Narita jet fuel allocation. IEA stockholding obligations for relevant net-importing members concern at least 90 days of net oil imports, potentially spanning crude and products; they do not guarantee 90 days of airport jet fuel. [<a href="#research/ref-8" aria-label="Reference 8">8</a>, <a href="#research/ref-9" aria-label="Reference 9">9</a>]</p><!-- POLICY_END --></div></section>
 
 <section class="section-shell essay-section" id="essay" aria-labelledby="essay-title"><div class="section-heading"><div><p class="eyebrow">05 / ANALYTICAL REFLECTION</p><h2 id="essay-title">Research question, method and findings.</h2></div><p class="essay-meta" id="essay-word-count">919 words · Excludes title and references</p></div><article class="essay-prose" id="essay-content"><!-- ESSAY_START --><p>Can an airline improve energy security by buying fuel somewhere else? Fuel tankering means carrying additional fuel from an origin airport to reduce purchases later. The same action can respond to price differences or an interruption in supply. This project asks what destination price premium compensates the additional fuel consumed in transport, and how much destination refuelling demand a given extra uplift can displace. Its contribution is a reproducible threshold model linked to an East Asian policy comparison. It evaluates conditional trade-offs rather than claiming to identify profitable trades from unavailable airport prices.</p><p>The question matters because Asian aviation connects globally traded oil to infrastructure that must deliver a specific product at a specific time. EIA estimates that Asia received 89% of crude oil and condensate passing through Hormuz in the first half of 2025; this is not a measurement of jet fuel deliveries. The IEA's 2026 Southeast Asia outlook also identifies dependence on Middle Eastern crude and constraints on substituting refinery feedstocks. These sources establish exposure, not the probability that Changi, Hong Kong or Narita will run short. A national oil inventory cannot automatically become certified jet fuel at an airport hydrant. [<a href="#research/ref-4" aria-label="Reference 4">4</a>, <a href="#research/ref-5" aria-label="Reference 5">5</a>]</p><p>The model compares buying one tonne at the destination with loading enough additional fuel at the origin to deliver that same tonne. Route, payload, reserves, onward requirements and terminal fuel position are held constant. ICAO reports an aircraft-dependent additional fuel penalty of 2.5–4.5% of added weight per flight hour. I use that range as a sensitivity parameter, with 3.5% as an illustrative midpoint. A linear retention rule is the main approximation; an exponential rule tests structural sensitivity. Neither is an ICAO-prescribed equation or an aircraft performance calibration. Combustion emissions use ICAO's factor of 3.16 tonnes of CO₂ per tonne of Jet A fuel. [<a href="#research/ref-1" aria-label="Reference 1">1</a>, <a href="#research/ref-2" aria-label="Reference 2">2</a>]</p><p>At four hours, the central linear case retains 86% of extra origin fuel. Delivering one useful tonne therefore requires 1.163 tonnes of extra uplift, burns 0.163 tonnes and emits 0.514 tonnes of additional direct CO₂. With both purchase options available, and no additional fees or carbon charge, the destination price must exceed the origin price by 16.3% to break even. An illustrative USD 100 per tonne CO₂ shadow price raises that threshold to 21.4% when origin fuel is assumed to cost USD 1,000 per tonne. These currency values are scenarios, not observed prices. The exponential alternative reduces the no-carbon threshold to 15.0%, showing that model structure matters.</p><p>Three routes connect the mechanism to regional geography: Singapore–Hong Kong, Hong Kong–Narita and Singapore–Narita. Public airport coordinates determine great-circle distance; assumed routing and groundspeed convert distance into an airborne-time proxy, not a timetable. Central no-carbon thresholds are 13.4%, 15.8% and 32.6%, respectively. Varying burn coefficients, routing and speed produces linear-model envelopes of 7.7–21.5%, 9.0–25.7% and 17.5–58.7%. These are finite scenario ranges, not confidence intervals. The comparison suggests that transporting an extra tonne becomes more costly over longer missions under these assumptions; it does not establish any route's actual profitability. [<a href="#research/ref-3" aria-label="Reference 3">3</a>]</p><p>A shortage changes the decision problem. With one tonne of extra origin headroom, the four-hour case displaces only 0.86 tonnes of destination uplift, burning 0.14 tonnes and emitting 0.442 tonnes of CO₂. This uses a different denominator from delivering one full tonne. The result measures physical substitution, not flights saved. Its value depends on usable origin supply, aircraft weight limits, payload trade-offs and the destination's remaining requirements. Under a shared fuel quota, carrying fuel consumes more total fuel than supplying the same useful quantity locally. Nevertheless, moving fuel toward a bottleneck could preserve service; the model cannot estimate that benefit without allocation and operational data.</p><p>Institutional differences help explain why flexibility at one airline does not equal security for a region. Hong Kong's fuel operator documents airport storage, hydrants and an emergency marine backup: installed capacity is evidence of infrastructure, not actual stock or days of cover. Singapore's announced SAF procurement criteria include supply-chain resilience and delivery certainty, illustrating a coordination mechanism rather than proving current supply adequacy. Japan's participation in the IEA's March 2026 stock-release action illustrates national emergency capacity, but those commitments were not airport-specific jet fuel inventories. The relevant policy chain therefore runs from crude and refining through product logistics to aircraft access. [<a href="#research/ref-6" aria-label="Reference 6">6</a>, <a href="#research/ref-7" aria-label="Reference 7">7</a>, <a href="#research/ref-9" aria-label="Reference 9">9</a>]</p><p>Policy should distinguish economic tankering from documented operational necessity. Europe's ReFuelEU rule provides a comparator: the 90% uplift requirement applies annually by operator and Union airport, with provisions for justified shortages; it is not an Asian rule or a per-flight restriction. If Asian authorities adopt anti-tankering or emergency-allocation rules, they should document justified operational exceptions without imposing new prior dispatch approval or compromising flight safety. Improving stock visibility, supplier coordination and delivery redundancy remains essential. Airlines should compare verified into-plane quotes only after engineering feasibility checks. Authorities should assess distributional effects too: shifting demand toward an origin may help one carrier while tightening supply for others. This project does not quantify that externality. [<a href="#research/ref-10" aria-label="Reference 10">10</a>, <a href="#research/ref-11" aria-label="Reference 11">11</a>]</p><p>The principal limitation is missing transaction and operational evidence. Wholesale benchmarks cannot identify airport contract prices, taxes, credit terms or handling charges. Public observations are separated from literature parameters and analyst scenarios throughout the exhibit; no missing quote is silently imputed. A stronger study would combine dated supplier quotes, aircraft performance and weight data, airport inventories and disruption records, then test predictions against actual uplift decisions. For now, the defensible finding is narrower: tankering offers conditional spatial flexibility at a measurable fuel and emissions cost. Making that boundary visible is part of rigorous analysis, not a reason to disguise uncertainty. [<a href="#research/ref-12" aria-label="Reference 12">12</a>]</p><!-- ESSAY_END --></article></section>
 
@@ -1499,69 +839,37 @@
 
 <section class="section-shell references-section" id="references" aria-labelledby="references-title"><div class="section-heading"><div><p class="eyebrow">EVIDENCE REGISTER</p><h2 id="references-title">Sources and traceability.</h2></div><p>Source dates, statistical periods and the role each source plays are retained in the submission appendix.</p></div><div id="reference-content"><!-- REFERENCES_START --><ol><li id="ref-1"><strong>ICAO (2022).</strong> <a href="https://www.icao.int/sites/default/files/environmental-protection/Documents/EnvironmentalReports/2022/ENVReport2022_Art38.pdf">Economic Fuel Tankering: A Threat to Aviation Decarbonisation</a>. Environmental Report 2022, pp. 149–152; coefficient on p. 150, quoting Doc 10013 §4.1.2.</li><li id="ref-2"><strong>ICAO (undated).</strong> <a href="https://www.icao.int/sites/default/files/environmental-protection/CORSIA/CORSIA-FAQ.html">CORSIA frequently asked questions</a>. §3.59, Jet A / Jet A-1 combustion conversion factor; accessed 12 November 2026.</li><li id="ref-3"><strong>OurAirports (2026 snapshot).</strong> <a href="https://ourairports.com/data/">Open airport data</a>. Public-domain airport coordinates; project snapshot fetched 12 November 2026 at 03:25:48 UTC. Upstream: github.com/davidmegginson/ourairports-data.</li><li id="ref-4"><strong>US Energy Information Administration (2026).</strong> <a href="https://www.eia.gov/international/content/analysis/special_topics/World_Oil_Transit_Chokepoints/">World Oil Transit Chokepoints</a>. Updated 3 March 2026; historical flow observations refer to first-half 2025, including Hormuz and Malacca.</li><li id="ref-5"><strong>International Energy Agency (2026).</strong> <a href="https://www.iea.org/reports/southeast-asia-energy-outlook-2026/executive-summary">Southeast Asia Energy Outlook 2026: Executive summary</a>. Published 16 June 2026; pre-crisis import exposure and refinery substitution constraints; projections are scenarios.</li><li id="ref-6"><strong>Aviation Fuel Supply Company (undated).</strong> <a href="https://www.afsc.com.hk/en/facility.html">AFSC facilities</a>. HKIA storage, hydrant system and Sha Chau emergency backup; accessed 12 November 2026.</li><li id="ref-7"><strong>Civil Aviation Authority of Singapore (2026).</strong> <a href="https://www.caas.gov.sg/resources/media-and-publication/newsroom/caas-sets-out-criteria-for-sustainable-aviation-fuel-to-be-procured-and-uplifted-on-flights-from-singapore/">CAAS sets out criteria for sustainable aviation fuel to be procured and uplifted on flights from Singapore</a>. Published 5 November 2026; prospective tender and delivery arrangements. Accessed 12 November 2026; the site's 10 November footer update is not treated as an article revision.</li><li id="ref-8"><strong>International Energy Agency (undated).</strong> <a href="https://www.iea.org/about/oil-security-and-emergency-response">Oil security and emergency response</a>. Net-importing member stockholding obligations; accessed 12 November 2026.</li><li id="ref-9"><strong>International Energy Agency (2026).</strong> <a href="https://www.iea.org/news/iea-confirms-member-country-contributions-to-collective-action-to-release-oil-stocks-in-response-to-middle-east-disruptions">IEA confirms member country contributions to collective action to release oil stocks in response to Middle East disruptions</a>. 19 March 2026; commitments and initial volumes at that date, not a November airport inventory assessment.</li><li id="ref-10"><strong>European Parliament and Council (2023).</strong> <a href="https://eur-lex.europa.eu/eli/reg/2023/2405/oj/eng">Regulation (EU) 2023/2405: ReFuelEU Aviation</a>. Article 5; annual operator-by-Union-airport uplift obligation and exemptions.</li><li id="ref-11"><strong>European Commission (2026).</strong> <a href="https://eur-lex.europa.eu/eli/C/2026/2669/oj/eng">Commission Notice C/2026/2669</a>. 12 May 2026, §3(b); documented shortages and the Article 5 obligation; higher price alone is insufficient.</li><li id="ref-12"><strong>US Energy Information Administration (undated).</strong> <a href="https://www.eia.gov/dnav/pet/tbldefs/pet_pri_spt_tbldef2.asp">Spot prices: definitions, sources and explanatory notes</a>. Location- and quantity-specific wholesale spot transactions; accessed 12 November 2026.</li><li id="ref-13"><strong>EUROCONTROL (2019).</strong> <a href="https://www.eurocontrol.int/sites/default/files/2020-01/eurocontrol-think-paper-1-fuel-tankering.pdf">Fuel tankering: economic benefits and environmental impact</a>. Think Paper 1, 21 June 2019; June 2018 ECAC traffic sample and model-based annual extrapolation.</li><li id="ref-14"><strong>Hubert, T., Guo, C., Mouton, C. A. and Powers, J. D. (2015).</strong> <a href="https://www.rand.org/content/dam/rand/pubs/research_reports/RR800/RR837/RAND_RR837.pdf">Tankering Fuel on U.S. Air Force Transport Aircraft: An Assessment of Cost Savings</a>. RAND Corporation, report RR-837; transport/burn-factor accounting on pp. 12–14; military context, not Asian commercial calibration.</li></ol><!-- REFERENCES_END --></div></section>
 
-<section class="section-shell downloads-section" id="downloads" aria-labelledby="downloads-title"><div><p class="eyebrow">THE SUBMISSION PACKAGE</p><h2 id="downloads-title">Read. Reproduce. Challenge.</h2><p>The written reflection, technical evidence and offline exhibit travel together. The interactive model runs locally without a market-data account.</p></div><div class="download-links"><!-- DOWNLOADS_START --><a href="./research/downloads/submission-package.zip" class="download-primary">Complete offline submission package <span>ZIP ↓</span></a><a href="./research/downloads/Final_Project.pdf">Full report, analysis and review record <span>PDF ↓</span></a><a href="./research/downloads/Analytical_Reflection.pdf">919-word analytical reflection <span>PDF ↓</span></a><a href="./research/downloads/Analytical_Reflection.docx">Editable analytical reflection <span>DOCX ↓</span></a><a href="./research/downloads/results.csv">Central cases: 36 rows <span>CSV ↓</span></a><a href="./research/downloads/sensitivity.csv">Sensitivity cases: 486 rows <span>CSV ↓</span></a><a href="./research/downloads/inputs.json">Classified model inputs <span>JSON ↓</span></a><a href="./research/downloads/results.json">Full computed results <span>JSON ↓</span></a><!-- DOWNLOADS_END --></div></section>
+<section class="section-shell downloads-section" id="downloads" aria-labelledby="downloads-title"><div><p class="eyebrow">THE SUBMISSION PACKAGE</p><h2 id="downloads-title">Research files</h2><p>The written reflection, technical evidence and offline exhibit travel together. The interactive model runs locally without a market-data account.</p></div><div class="download-links"><!-- DOWNLOADS_START --><a href="./research/downloads/submission-package.zip" class="download-primary">English offline research package <span>ZIP ↓</span></a><a href="./research/downloads/Final_Project.pdf">English full report <span>PDF ↓</span></a><a href="./research/downloads/Analytical_Reflection.pdf">919-word English reflection <span>PDF ↓</span></a><a href="./research/downloads/Analytical_Reflection.docx">English editable reflection <span>DOCX ↓</span></a><a href="./research/downloads/results.csv">Central cases: 36 rows <span>CSV ↓</span></a><a href="./research/downloads/sensitivity.csv">Sensitivity cases: 486 rows <span>CSV ↓</span></a><a href="./research/downloads/inputs.json">Classified model inputs <span>JSON ↓</span></a><a href="./research/downloads/results.json">Full computed results <span>JSON ↓</span></a><!-- DOWNLOADS_END --></div></section>
 <script type="application/json" id="research-data">{"inputs":{"schemaVersion":1,"researchDate":"2026-11-12","question":"Under stated marginal-burn assumptions, what destination price premium offsets tankering costs, and how much destination uplift can be displaced during a local supply interruption?","counterfactual":{"comparison":"Buy q at destination versus carry enough extra origin fuel to deliver the same q at destination.","heldConstant":["mission and route","payload","operational reserves","fuel required after destination refuelling","terminal fuel state"],"notEstablished":["aircraft-specific performance","tank headroom","takeoff or landing weight feasibility","actual airport prices or available stocks","flight continuation or cancellations avoided"],"quantityBasis":"One tonne useful fuel delivered at destination; local-interruption headroom is separately one tonne loaded at origin."},"airportSnapshot":{"classification":"observed","sourceName":"OurAirports","sourceUrl":"https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv","referenceUrl":"https://ourairports.com/data/","license":"Public Domain","originalFetchedAt":"2026-11-12T03:25:48.696882Z","recordObservationTime":null,"originalRepositoryPath":"dist/data/airports.json","snapshotSha256":"27cac6c8ac5c0fdd658c5eac47800805a01f87711cef170ad0ebffc167a7c7e9","upstreamCsvSha256":"11e7a1edf9e5bef91aa4492e3ab42bb5b38b5f2df81358a235ed5a393a571e54","scope":"Coordinates only; no airport fuel prices, fuel capacity, stock or flight schedules."},"airports":[{"iata":"SIN","icao":"WSSS","name":"Singapore Changi Airport","country":"SG","lat":1.35019,"lon":103.994003},{"iata":"HKG","icao":"VHHH","name":"Hong Kong International Airport","country":"HK","lat":22.31184,"lon":113.914862},{"iata":"NRT","icao":"RJAA","name":"Narita International Airport","country":"JP","lat":35.76858,"lon":140.388714}],"routes":[{"id":"SIN-HKG","origin":"SIN","destination":"HKG"},{"id":"HKG-NRT","origin":"HKG","destination":"NRT"},{"id":"SIN-NRT","origin":"SIN","destination":"NRT"}],"parameters":{"earthRadiusKm":{"value":6371.0088,"classification":"scenario","note":"Fixed spherical mean-Earth radius used for reproducible great-circle geometry; not an aircraft flight path."},"burnCoefficientPerHour":{"values":[0.025,0.035,0.045],"central":0.035,"rangeClassification":"literature","centralClassification":"scenario","source":"ICAO Environmental Report 2022, Economic Fuel Tankering: A Threat to Aviation Decarbonisation, p.150, quoting ICAO Doc 10013 section 4.1.2.","sourceUrl":"https://www.icao.int/sites/default/files/environmental-protection/Documents/EnvironmentalReports/2022/ENVReport2022_Art38.pdf","limitation":"Aircraft-dependent range of extra burn per additional weight per flight-hour, used as sensitivity bounds; no route or aircraft calibration."},"co2TonnesPerTonneFuel":{"value":3.16,"classification":"literature","source":"ICAO CORSIA FAQ section 3.59, Jet-A and Jet-A1 conversion factor.","sourceUrl":"https://www.icao.int/sites/default/files/environmental-protection/CORSIA/CORSIA-FAQ.html","scope":"Direct combustion CO2 only; excludes fuel lifecycle and non-CO2 climate effects."},"speedKph":{"values":[750,800,900],"central":800,"classification":"scenario","note":"Groundspeed proxy, not observed flight performance."},"pathFactor":{"values":[1.0,1.05,1.15],"central":1.05,"classification":"scenario","note":"Ratio of modelled airborne path to great-circle distance; no taxi, winds, climb or actual routing model."},"controlledDurationH":{"values":[2,4,6],"classification":"scenario","note":"Controlled time comparisons independent of the route-time proxy."},"originPriceScenarioUsdPerT":{"value":1000,"classification":"scenario","note":"Illustrative normalization for carbon-cost sensitivity, not an observed airport price. Zero-carbon, zero-fee ratio results do not depend on this reference level."},"carbonUsdPerTCo2":{"values":[0,100,200],"classification":"scenario","note":"Additional carbon charge or shadow value; not an observed carbon market price. Do not double count carbon already included in fuel prices."},"extraCostUsdPerDeliveredT":{"value":0,"classification":"scenario","note":"Additional handling/payload opportunity cost per delivered tonne. Zero is a transparent lower-cost case, not evidence such costs vanish."},"requiredDeliveryT":{"value":1,"classification":"scenario","note":"Normalization per useful tonne; no observation of an aircraft fuel requirement."},"extraOriginHeadroomT":{"value":1,"classification":"scenario","note":"Separate local-interruption normalization; actual aircraft and supplier headroom remains unobserved."},"models":{"values":["linear","exponential"],"primary":"linear","classification":"scenario","note":"Linear retention 1-k*t holds the initial marginal uplift weight as a burn reference; exponential retention exp(-k*t) allows marginal mass to decay. Neither is an aircraft-calibrated law. Linear is more fuel-intensive only relative to this exponential comparator."}},"actualAirportPrices":{"status":"unavailable","values":null},"actualAirportInventories":{"status":"unavailable","values":null},"outputInterpretation":{"localDisruption":"Destination uplift displaced if origin has the extra supply/headroom. This does not infer flight continuation.","sharedQuota":"For the same q delivered, tankering consumes q/a rather than q units from a shared regional fuel quota; the difference is burned. This resource identity is not a cancellation model and does not rule out benefits from reallocating scarce fuel geographically.","uncertainty":"Finite sensitivity envelopes, not probabilistic confidence intervals or forecasts."}},"results":{"meta":{"schemaVersion":1,"modelVersion":"1.0.0","researchDate":"2026-11-12","inputsSha256":"606e8588488a1423afe63a8c9994a7ccc116e96bde8c735c5d3a1c2174f86e8c","sourceSnapshotSha256":"27cac6c8ac5c0fdd658c5eac47800805a01f87711cef170ad0ebffc167a7c7e9","classificationNotes":{"localDisruption":"Destination uplift displaced if origin has the extra supply/headroom. This does not infer flight continuation.","sharedQuota":"For the same q delivered, tankering consumes q/a rather than q units from a shared regional fuel quota; the difference is burned. This resource identity is not a cancellation model and does not rule out benefits from reallocating scarce fuel geographically.","uncertainty":"Finite sensitivity envelopes, not probabilistic confidence intervals or forecasts."},"counterfactual":{"comparison":"Buy q at destination versus carry enough extra origin fuel to deliver the same q at destination.","heldConstant":["mission and route","payload","operational reserves","fuel required after destination refuelling","terminal fuel state"],"notEstablished":["aircraft-specific performance","tank headroom","takeoff or landing weight feasibility","actual airport prices or available stocks","flight continuation or cancellations avoided"],"quantityBasis":"One tonne useful fuel delivered at destination; local-interruption headroom is separately one tonne loaded at origin."},"units":{"fuel":"metric tonnes","duration":"hours","distance":"km","additionalCo2":"tonnes direct combustion CO2","money":"USD","priceRatio":"destination/origin, dimensionless","premium":"percent above origin price"},"formula":{"linearRetention":"a = 1 - k*t","exponentialRetention":"a = exp(-k*t)","requiredOriginUplift":"X = q/a","additionalBurn":"X-q","directCO2":"3.16*(X-q)","breakEvenPriceRatio":"1/a + (3.16*c/pA)*(1-a)/a + f/pA","boundedUpliftDisplacement":"a * min(Xmax, qNeed/a)"}},"headline":{"id":"duration-4h-linear-c0","resultClassification":"conditional_scenario","durationH":4,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.86,"extraOriginUpliftT":1.1627906976744187,"additionalBurnT":0.16279069767441867,"additionalCo2T":0.5144186046511631,"breakEvenPriceRatio":1.1627906976744187,"breakEvenPremiumPct":16.279069767441868,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.86,"gapRemainingT":0.14,"additionalBurnT":0.14,"additionalCo2T":0.44240000000000007},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1627906976744187,"additionalRegionalUseT":0.16279069767441867},"durationClassification":"controlled_scenario"},"durationCases":[{"id":"duration-2h-linear-c0","resultClassification":"conditional_scenario","durationH":2,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.9299999999999999,"extraOriginUpliftT":1.0752688172043012,"additionalBurnT":0.07526881720430123,"additionalCo2T":0.2378494623655919,"breakEvenPriceRatio":1.0752688172043012,"breakEvenPremiumPct":7.526881720430123,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.9299999999999999,"gapRemainingT":0.07000000000000006,"additionalBurnT":0.07000000000000006,"additionalCo2T":0.2212000000000002},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.0752688172043012,"additionalRegionalUseT":0.07526881720430123},"durationClassification":"controlled_scenario"},{"id":"duration-2h-linear-c100","resultClassification":"conditional_scenario","durationH":2,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.9299999999999999,"extraOriginUpliftT":1.0752688172043012,"additionalBurnT":0.07526881720430123,"additionalCo2T":0.2378494623655919,"breakEvenPriceRatio":1.0990537634408604,"breakEvenPremiumPct":9.905376344086037,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.9299999999999999,"gapRemainingT":0.07000000000000006,"additionalBurnT":0.07000000000000006,"additionalCo2T":0.2212000000000002},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.0752688172043012,"additionalRegionalUseT":0.07526881720430123},"durationClassification":"controlled_scenario"},{"id":"duration-2h-linear-c200","resultClassification":"conditional_scenario","durationH":2,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.9299999999999999,"extraOriginUpliftT":1.0752688172043012,"additionalBurnT":0.07526881720430123,"additionalCo2T":0.2378494623655919,"breakEvenPriceRatio":1.1228387096774195,"breakEvenPremiumPct":12.28387096774195,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.9299999999999999,"gapRemainingT":0.07000000000000006,"additionalBurnT":0.07000000000000006,"additionalCo2T":0.2212000000000002},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.0752688172043012,"additionalRegionalUseT":0.07526881720430123},"durationClassification":"controlled_scenario"},{"id":"duration-2h-exponential-c0","resultClassification":"conditional_scenario","durationH":2,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.9323938199059483,"extraOriginUpliftT":1.0725081812542163,"additionalBurnT":0.07250818125421632,"additionalCo2T":0.2291258527633236,"breakEvenPriceRatio":1.0725081812542163,"breakEvenPremiumPct":7.250818125421632,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.9323938199059483,"gapRemainingT":0.06760618009405173,"additionalBurnT":0.06760618009405173,"additionalCo2T":0.21363552909720346},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.0725081812542163,"additionalRegionalUseT":0.07250818125421632},"durationClassification":"controlled_scenario"},{"id":"duration-2h-exponential-c100","resultClassification":"conditional_scenario","durationH":2,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.9323938199059483,"extraOriginUpliftT":1.0725081812542163,"additionalBurnT":0.07250818125421632,"additionalCo2T":0.2291258527633236,"breakEvenPriceRatio":1.0954207665305487,"breakEvenPremiumPct":9.542076653054865,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.9323938199059483,"gapRemainingT":0.06760618009405173,"additionalBurnT":0.06760618009405173,"additionalCo2T":0.21363552909720346},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.0725081812542163,"additionalRegionalUseT":0.07250818125421632},"durationClassification":"controlled_scenario"},{"id":"duration-2h-exponential-c200","resultClassification":"conditional_scenario","durationH":2,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.9323938199059483,"extraOriginUpliftT":1.0725081812542163,"additionalBurnT":0.07250818125421632,"additionalCo2T":0.2291258527633236,"breakEvenPriceRatio":1.1183333518068812,"breakEvenPremiumPct":11.83333518068812,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.9323938199059483,"gapRemainingT":0.06760618009405173,"additionalBurnT":0.06760618009405173,"additionalCo2T":0.21363552909720346},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.0725081812542163,"additionalRegionalUseT":0.07250818125421632},"durationClassification":"controlled_scenario"},{"id":"duration-4h-linear-c0","resultClassification":"conditional_scenario","durationH":4,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.86,"extraOriginUpliftT":1.1627906976744187,"additionalBurnT":0.16279069767441867,"additionalCo2T":0.5144186046511631,"breakEvenPriceRatio":1.1627906976744187,"breakEvenPremiumPct":16.279069767441868,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.86,"gapRemainingT":0.14,"additionalBurnT":0.14,"additionalCo2T":0.44240000000000007},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1627906976744187,"additionalRegionalUseT":0.16279069767441867},"durationClassification":"controlled_scenario"},{"id":"duration-4h-linear-c100","resultClassification":"conditional_scenario","durationH":4,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.86,"extraOriginUpliftT":1.1627906976744187,"additionalBurnT":0.16279069767441867,"additionalCo2T":0.5144186046511631,"breakEvenPriceRatio":1.214232558139535,"breakEvenPremiumPct":21.423255813953503,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.86,"gapRemainingT":0.14,"additionalBurnT":0.14,"additionalCo2T":0.44240000000000007},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1627906976744187,"additionalRegionalUseT":0.16279069767441867},"durationClassification":"controlled_scenario"},{"id":"duration-4h-linear-c200","resultClassification":"conditional_scenario","durationH":4,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.86,"extraOriginUpliftT":1.1627906976744187,"additionalBurnT":0.16279069767441867,"additionalCo2T":0.5144186046511631,"breakEvenPriceRatio":1.2656744186046511,"breakEvenPremiumPct":26.567441860465113,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.86,"gapRemainingT":0.14,"additionalBurnT":0.14,"additionalCo2T":0.44240000000000007},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1627906976744187,"additionalRegionalUseT":0.16279069767441867},"durationClassification":"controlled_scenario"},{"id":"duration-4h-exponential-c0","resultClassification":"conditional_scenario","durationH":4,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8693582353988059,"extraOriginUpliftT":1.1502737988572271,"additionalBurnT":0.15027379885722714,"additionalCo2T":0.4748652043888378,"breakEvenPriceRatio":1.1502737988572271,"breakEvenPremiumPct":15.027379885722713,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8693582353988059,"gapRemainingT":0.13064176460119414,"additionalBurnT":0.13064176460119414,"additionalCo2T":0.4128279761397735},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1502737988572271,"additionalRegionalUseT":0.15027379885722714},"durationClassification":"controlled_scenario"},{"id":"duration-4h-exponential-c100","resultClassification":"conditional_scenario","durationH":4,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8693582353988059,"extraOriginUpliftT":1.1502737988572271,"additionalBurnT":0.15027379885722714,"additionalCo2T":0.4748652043888378,"breakEvenPriceRatio":1.197760319296111,"breakEvenPremiumPct":19.776031929611104,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8693582353988059,"gapRemainingT":0.13064176460119414,"additionalBurnT":0.13064176460119414,"additionalCo2T":0.4128279761397735},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1502737988572271,"additionalRegionalUseT":0.15027379885722714},"durationClassification":"controlled_scenario"},{"id":"duration-4h-exponential-c200","resultClassification":"conditional_scenario","durationH":4,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8693582353988059,"extraOriginUpliftT":1.1502737988572271,"additionalBurnT":0.15027379885722714,"additionalCo2T":0.4748652043888378,"breakEvenPriceRatio":1.2452468397349947,"breakEvenPremiumPct":24.52468397349947,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8693582353988059,"gapRemainingT":0.13064176460119414,"additionalBurnT":0.13064176460119414,"additionalCo2T":0.4128279761397735},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1502737988572271,"additionalRegionalUseT":0.15027379885722714},"durationClassification":"controlled_scenario"},{"id":"duration-6h-linear-c0","resultClassification":"conditional_scenario","durationH":6,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.79,"extraOriginUpliftT":1.2658227848101264,"additionalBurnT":0.26582278481012644,"additionalCo2T":0.8399999999999996,"breakEvenPriceRatio":1.2658227848101264,"breakEvenPremiumPct":26.582278481012644,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.79,"gapRemainingT":0.20999999999999996,"additionalBurnT":0.20999999999999996,"additionalCo2T":0.6636},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.2658227848101264,"additionalRegionalUseT":0.26582278481012644},"durationClassification":"controlled_scenario"},{"id":"duration-6h-linear-c100","resultClassification":"conditional_scenario","durationH":6,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.79,"extraOriginUpliftT":1.2658227848101264,"additionalBurnT":0.26582278481012644,"additionalCo2T":0.8399999999999996,"breakEvenPriceRatio":1.3498227848101265,"breakEvenPremiumPct":34.98227848101265,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.79,"gapRemainingT":0.20999999999999996,"additionalBurnT":0.20999999999999996,"additionalCo2T":0.6636},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.2658227848101264,"additionalRegionalUseT":0.26582278481012644},"durationClassification":"controlled_scenario"},{"id":"duration-6h-linear-c200","resultClassification":"conditional_scenario","durationH":6,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.79,"extraOriginUpliftT":1.2658227848101264,"additionalBurnT":0.26582278481012644,"additionalCo2T":0.8399999999999996,"breakEvenPriceRatio":1.4338227848101264,"breakEvenPremiumPct":43.382278481012634,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.79,"gapRemainingT":0.20999999999999996,"additionalBurnT":0.20999999999999996,"additionalCo2T":0.6636},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.2658227848101264,"additionalRegionalUseT":0.26582278481012644},"durationClassification":"controlled_scenario"},{"id":"duration-6h-exponential-c0","resultClassification":"conditional_scenario","durationH":6,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8105842459701871,"extraOriginUpliftT":1.2336780599567432,"additionalBurnT":0.23367805995674318,"additionalCo2T":0.7384226694633085,"breakEvenPriceRatio":1.2336780599567432,"breakEvenPremiumPct":23.367805995674317,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8105842459701871,"gapRemainingT":0.18941575402981292,"additionalBurnT":0.18941575402981292,"additionalCo2T":0.5985537827342089},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.2336780599567432,"additionalRegionalUseT":0.23367805995674318},"durationClassification":"controlled_scenario"},{"id":"duration-6h-exponential-c100","resultClassification":"conditional_scenario","durationH":6,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8105842459701871,"extraOriginUpliftT":1.2336780599567432,"additionalBurnT":0.23367805995674318,"additionalCo2T":0.7384226694633085,"breakEvenPriceRatio":1.307520326903074,"breakEvenPremiumPct":30.752032690307395,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8105842459701871,"gapRemainingT":0.18941575402981292,"additionalBurnT":0.18941575402981292,"additionalCo2T":0.5985537827342089},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.2336780599567432,"additionalRegionalUseT":0.23367805995674318},"durationClassification":"controlled_scenario"},{"id":"duration-6h-exponential-c200","resultClassification":"conditional_scenario","durationH":6,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8105842459701871,"extraOriginUpliftT":1.2336780599567432,"additionalBurnT":0.23367805995674318,"additionalCo2T":0.7384226694633085,"breakEvenPriceRatio":1.381362593849405,"breakEvenPremiumPct":38.136259384940494,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8105842459701871,"gapRemainingT":0.18941575402981292,"additionalBurnT":0.18941575402981292,"additionalCo2T":0.5985537827342089},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.2336780599567432,"additionalRegionalUseT":0.23367805995674318},"durationClassification":"controlled_scenario"}],"routeCases":[{"id":"SIN-HKG-linear-c0","resultClassification":"conditional_scenario","durationH":3.3676998982541955,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8821305035611031,"extraOriginUpliftT":1.1336191141368148,"additionalBurnT":0.13361911413681482,"additionalCo2T":0.42223640067233487,"breakEvenPriceRatio":1.1336191141368148,"breakEvenPremiumPct":13.361911413681483,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8821305035611031,"gapRemainingT":0.11786949643889688,"additionalBurnT":0.11786949643889688,"additionalCo2T":0.37246760874691415},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1336191141368148,"additionalRegionalUseT":0.13361911413681482},"routeId":"SIN-HKG","origin":"SIN","destination":"HKG","distanceKm":2565.8665891460537,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-HKG-linear-c100","resultClassification":"conditional_scenario","durationH":3.3676998982541955,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8821305035611031,"extraOriginUpliftT":1.1336191141368148,"additionalBurnT":0.13361911413681482,"additionalCo2T":0.42223640067233487,"breakEvenPriceRatio":1.1758427542040484,"breakEvenPremiumPct":17.584275420404836,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8821305035611031,"gapRemainingT":0.11786949643889688,"additionalBurnT":0.11786949643889688,"additionalCo2T":0.37246760874691415},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1336191141368148,"additionalRegionalUseT":0.13361911413681482},"routeId":"SIN-HKG","origin":"SIN","destination":"HKG","distanceKm":2565.8665891460537,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-HKG-linear-c200","resultClassification":"conditional_scenario","durationH":3.3676998982541955,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8821305035611031,"extraOriginUpliftT":1.1336191141368148,"additionalBurnT":0.13361911413681482,"additionalCo2T":0.42223640067233487,"breakEvenPriceRatio":1.2180663942712817,"breakEvenPremiumPct":21.80663942712817,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8821305035611031,"gapRemainingT":0.11786949643889688,"additionalBurnT":0.11786949643889688,"additionalCo2T":0.37246760874691415},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.1336191141368148,"additionalRegionalUseT":0.13361911413681482},"routeId":"SIN-HKG","origin":"SIN","destination":"HKG","distanceKm":2565.8665891460537,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-HKG-exponential-c0","resultClassification":"conditional_scenario","durationH":3.3676998982541955,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8888120381823221,"extraOriginUpliftT":1.125097272585399,"additionalBurnT":0.12509727258539893,"additionalCo2T":0.39530738136986066,"breakEvenPriceRatio":1.125097272585399,"breakEvenPremiumPct":12.509727258539893,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8888120381823221,"gapRemainingT":0.11118796181767787,"additionalBurnT":0.11118796181767787,"additionalCo2T":0.3513539593438621},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.125097272585399,"additionalRegionalUseT":0.12509727258539893},"routeId":"SIN-HKG","origin":"SIN","destination":"HKG","distanceKm":2565.8665891460537,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-HKG-exponential-c100","resultClassification":"conditional_scenario","durationH":3.3676998982541955,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8888120381823221,"extraOriginUpliftT":1.125097272585399,"additionalBurnT":0.12509727258539893,"additionalCo2T":0.39530738136986066,"breakEvenPriceRatio":1.164628010722385,"breakEvenPremiumPct":16.4628010722385,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8888120381823221,"gapRemainingT":0.11118796181767787,"additionalBurnT":0.11118796181767787,"additionalCo2T":0.3513539593438621},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.125097272585399,"additionalRegionalUseT":0.12509727258539893},"routeId":"SIN-HKG","origin":"SIN","destination":"HKG","distanceKm":2565.8665891460537,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-HKG-exponential-c200","resultClassification":"conditional_scenario","durationH":3.3676998982541955,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8888120381823221,"extraOriginUpliftT":1.125097272585399,"additionalBurnT":0.12509727258539893,"additionalCo2T":0.39530738136986066,"breakEvenPriceRatio":1.204158748859371,"breakEvenPremiumPct":20.4158748859371,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8888120381823221,"gapRemainingT":0.11118796181767787,"additionalBurnT":0.11118796181767787,"additionalCo2T":0.3513539593438621},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.125097272585399,"additionalRegionalUseT":0.12509727258539893},"routeId":"SIN-HKG","origin":"SIN","destination":"HKG","distanceKm":2565.8665891460537,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"HKG-NRT-linear-c0","resultClassification":"conditional_scenario","durationH":3.8881021943546243,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8639164231975881,"extraOriginUpliftT":1.157519377046601,"additionalBurnT":0.15751937704660102,"additionalCo2T":0.49776123146725926,"breakEvenPriceRatio":1.157519377046601,"breakEvenPremiumPct":15.7519377046601,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8639164231975881,"gapRemainingT":0.1360835768024119,"additionalBurnT":0.1360835768024119,"additionalCo2T":0.43002410269562164},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.157519377046601,"additionalRegionalUseT":0.15751937704660102},"routeId":"HKG-NRT","origin":"HKG","destination":"NRT","distanceKm":2962.3635766511425,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"HKG-NRT-linear-c100","resultClassification":"conditional_scenario","durationH":3.8881021943546243,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8639164231975881,"extraOriginUpliftT":1.157519377046601,"additionalBurnT":0.15751937704660102,"additionalCo2T":0.49776123146725926,"breakEvenPriceRatio":1.207295500193327,"breakEvenPremiumPct":20.7295500193327,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8639164231975881,"gapRemainingT":0.1360835768024119,"additionalBurnT":0.1360835768024119,"additionalCo2T":0.43002410269562164},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.157519377046601,"additionalRegionalUseT":0.15751937704660102},"routeId":"HKG-NRT","origin":"HKG","destination":"NRT","distanceKm":2962.3635766511425,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"HKG-NRT-linear-c200","resultClassification":"conditional_scenario","durationH":3.8881021943546243,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8639164231975881,"extraOriginUpliftT":1.157519377046601,"additionalBurnT":0.15751937704660102,"additionalCo2T":0.49776123146725926,"breakEvenPriceRatio":1.257071623340053,"breakEvenPremiumPct":25.707162334005297,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8639164231975881,"gapRemainingT":0.1360835768024119,"additionalBurnT":0.1360835768024119,"additionalCo2T":0.43002410269562164},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.157519377046601,"additionalRegionalUseT":0.15751937704660102},"routeId":"HKG-NRT","origin":"HKG","destination":"NRT","distanceKm":2962.3635766511425,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"HKG-NRT-exponential-c0","resultClassification":"conditional_scenario","durationH":3.8881021943546243,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8727696861408408,"extraOriginUpliftT":1.145777650025562,"additionalBurnT":0.1457776500255621,"additionalCo2T":0.4606573740807762,"breakEvenPriceRatio":1.145777650025562,"breakEvenPremiumPct":14.577765002556209,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8727696861408408,"gapRemainingT":0.12723031385915917,"additionalBurnT":0.12723031385915917,"additionalCo2T":0.402047791794943},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.145777650025562,"additionalRegionalUseT":0.1457776500255621},"routeId":"HKG-NRT","origin":"HKG","destination":"NRT","distanceKm":2962.3635766511425,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"HKG-NRT-exponential-c100","resultClassification":"conditional_scenario","durationH":3.8881021943546243,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8727696861408408,"extraOriginUpliftT":1.145777650025562,"additionalBurnT":0.1457776500255621,"additionalCo2T":0.4606573740807762,"breakEvenPriceRatio":1.1918433874336398,"breakEvenPremiumPct":19.18433874336398,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8727696861408408,"gapRemainingT":0.12723031385915917,"additionalBurnT":0.12723031385915917,"additionalCo2T":0.402047791794943},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.145777650025562,"additionalRegionalUseT":0.1457776500255621},"routeId":"HKG-NRT","origin":"HKG","destination":"NRT","distanceKm":2962.3635766511425,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"HKG-NRT-exponential-c200","resultClassification":"conditional_scenario","durationH":3.8881021943546243,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.8727696861408408,"extraOriginUpliftT":1.145777650025562,"additionalBurnT":0.1457776500255621,"additionalCo2T":0.4606573740807762,"breakEvenPriceRatio":1.2379091248417173,"breakEvenPremiumPct":23.790912484171734,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.8727696861408408,"gapRemainingT":0.12723031385915917,"additionalBurnT":0.12723031385915917,"additionalCo2T":0.402047791794943},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.145777650025562,"additionalRegionalUseT":0.1457776500255621},"routeId":"HKG-NRT","origin":"HKG","destination":"NRT","distanceKm":2962.3635766511425,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-NRT-linear-c0","resultClassification":"conditional_scenario","durationH":7.032438283910453,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.7538646600631341,"extraOriginUpliftT":1.3264980479602966,"additionalBurnT":0.3264980479602966,"additionalCo2T":1.0317338315545372,"breakEvenPriceRatio":1.3264980479602966,"breakEvenPremiumPct":32.649804796029656,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.7538646600631341,"gapRemainingT":0.24613533993686587,"additionalBurnT":0.24613533993686587,"additionalCo2T":0.7777876742004962},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.3264980479602966,"additionalRegionalUseT":0.3264980479602966},"routeId":"SIN-NRT","origin":"SIN","destination":"NRT","distanceKm":5358.048216312726,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-NRT-linear-c100","resultClassification":"conditional_scenario","durationH":7.032438283910453,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.7538646600631341,"extraOriginUpliftT":1.3264980479602966,"additionalBurnT":0.3264980479602966,"additionalCo2T":1.0317338315545372,"breakEvenPriceRatio":1.4296714311157503,"breakEvenPremiumPct":42.967143111575034,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.7538646600631341,"gapRemainingT":0.24613533993686587,"additionalBurnT":0.24613533993686587,"additionalCo2T":0.7777876742004962},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.3264980479602966,"additionalRegionalUseT":0.3264980479602966},"routeId":"SIN-NRT","origin":"SIN","destination":"NRT","distanceKm":5358.048216312726,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-NRT-linear-c200","resultClassification":"conditional_scenario","durationH":7.032438283910453,"model":"linear","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.7538646600631341,"extraOriginUpliftT":1.3264980479602966,"additionalBurnT":0.3264980479602966,"additionalCo2T":1.0317338315545372,"breakEvenPriceRatio":1.5328448142712041,"breakEvenPremiumPct":53.28448142712041,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.7538646600631341,"gapRemainingT":0.24613533993686587,"additionalBurnT":0.24613533993686587,"additionalCo2T":0.7777876742004962},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.3264980479602966,"additionalRegionalUseT":0.3264980479602966},"routeId":"SIN-NRT","origin":"SIN","destination":"NRT","distanceKm":5358.048216312726,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-NRT-exponential-c0","resultClassification":"conditional_scenario","durationH":7.032438283910453,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":0,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.7818164067817938,"extraOriginUpliftT":1.2790726714425444,"additionalBurnT":0.27907267144254444,"additionalCo2T":0.8818696417584405,"breakEvenPriceRatio":1.2790726714425444,"breakEvenPremiumPct":27.907267144254444,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.7818164067817938,"gapRemainingT":0.21818359321820624,"additionalBurnT":0.21818359321820624,"additionalCo2T":0.6894601545695318},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.2790726714425444,"additionalRegionalUseT":0.27907267144254444},"routeId":"SIN-NRT","origin":"SIN","destination":"NRT","distanceKm":5358.048216312726,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-NRT-exponential-c100","resultClassification":"conditional_scenario","durationH":7.032438283910453,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":100,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.7818164067817938,"extraOriginUpliftT":1.2790726714425444,"additionalBurnT":0.27907267144254444,"additionalCo2T":0.8818696417584405,"breakEvenPriceRatio":1.3672596356183886,"breakEvenPremiumPct":36.72596356183886,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.7818164067817938,"gapRemainingT":0.21818359321820624,"additionalBurnT":0.21818359321820624,"additionalCo2T":0.6894601545695318},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.2790726714425444,"additionalRegionalUseT":0.27907267144254444},"routeId":"SIN-NRT","origin":"SIN","destination":"NRT","distanceKm":5358.048216312726,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"},{"id":"SIN-NRT-exponential-c200","resultClassification":"conditional_scenario","durationH":7.032438283910453,"model":"exponential","kPerHour":0.035,"originPriceScenarioUsdPerT":1000,"carbonUsdPerTCo2":200,"extraCostUsdPerDeliveredT":0,"requiredDeliveryT":1.0,"retentionFraction":0.7818164067817938,"extraOriginUpliftT":1.2790726714425444,"additionalBurnT":0.27907267144254444,"additionalCo2T":0.8818696417584405,"breakEvenPriceRatio":1.4554465997942325,"breakEvenPremiumPct":45.54465997942325,"localInterruption":{"requiredGapT":1.0,"extraOriginHeadroomT":1.0,"extraOriginUsedT":1.0,"destinationUpliftDisplacedT":0.7818164067817938,"gapRemainingT":0.21818359321820624,"additionalBurnT":0.21818359321820624,"additionalCo2T":0.6894601545695318},"sharedQuota":{"baselineRegionalUseT":1,"tankeringRegionalUseT":1.2790726714425444,"additionalRegionalUseT":0.27907267144254444},"routeId":"SIN-NRT","origin":"SIN","destination":"NRT","distanceKm":5358.048216312726,"speedKph":800,"pathFactor":1.05,"durationClassification":"derived_from_scenario_speed_and_path"}],"routeRanges":[{"routeId":"SIN-HKG","distanceKm":2565.8665891460537,"rangeClassification":"finite_scenario_envelope_not_confidence_interval","linear":{"premiumPctMin":7.67439238701213,"premiumPctMax":21.513296653371672,"durationHMin":2.8509628768289486,"durationHMax":3.934328770023949,"additionalCo2TMin":0.2425107994295833,"additionalCo2TMax":0.6798201742465448,"caseCount":27,"carbonUsdPerTCo2":0},"exponential":{"premiumPctMin":7.387550466191906,"premiumPctMax":19.368456261303546,"durationHMin":2.8509628768289486,"durationHMax":3.934328770023949,"additionalCo2TMin":0.23344659473166424,"additionalCo2TMax":0.6120432178571921,"caseCount":27,"carbonUsdPerTCo2":0}},{"routeId":"HKG-NRT","distanceKm":2962.3635766511425,"rangeClassification":"finite_scenario_envelope_not_confidence_interval","linear":{"premiumPctMin":8.966632899191108,"premiumPctMax":25.69178982406395,"durationHMin":3.2915150851679362,"durationHMax":4.542290817531752,"additionalCo2TMin":0.283345599614439,"additionalCo2TMax":0.8118605584404208,"caseCount":27,"carbonUsdPerTCo2":0},"exponential":{"premiumPctMin":8.576833271389162,"premiumPctMax":22.679255767836757,"durationHMin":3.2915150851679362,"durationHMax":4.542290817531752,"additionalCo2TMin":0.27102793137589754,"additionalCo2TMax":0.7166644822636417,"caseCount":27,"carbonUsdPerTCo2":0}},{"routeId":"SIN-NRT","distanceKm":5358.048216312726,"rangeClassification":"finite_scenario_envelope_not_confidence_interval","linear":{"premiumPctMin":17.485988667227037,"premiumPctMax":58.655949783336546,"durationHMin":5.95338690701414,"durationHMax":8.215673931679513,"additionalCo2TMin":0.5525572418843744,"additionalCo2TMax":1.853528013153435,"caseCount":27,"carbonUsdPerTCo2":0},"exponential":{"premiumPctMin":16.048111411052556,"premiumPctMax":44.730806910230704,"durationHMin":5.95338690701414,"durationHMax":8.215673931679513,"additionalCo2TMin":0.5071203205892608,"additionalCo2TMax":1.4134934983632903,"caseCount":27,"carbonUsdPerTCo2":0}}],"sensitivitySummary":{"caseCount":486,"routeCount":3,"dimensions":{"kPerHour":[0.025,0.035,0.045],"speedKph":[750,800,900],"pathFactor":[1.0,1.05,1.15],"carbonUsdPerTCo2":[0,100,200],"models":["linear","exponential"]},"csvFile":"sensitivity.csv","interpretation":"Exhaustive finite factorial grid, not a probability distribution."}}}</script></div>
         </section>
-        <section id="workspace-briefing" class="workspace-panel briefing-workspace" role="tabpanel" aria-labelledby="workspace-tab-briefing" tabindex="0" lang="en" hidden>
-          <div class="project-brief-content">
-  <header class="brief-heading">
-    <div><p class="brief-eyebrow">Project brief · 13 November 2026</p><h1>From fuel prices to defensible decisions</h1><p class="brief-deck">A testable case for aviation fuel planning and Asian supply resilience.</p></div>
-    <div class="brief-status"><span>Current maturity</span><strong>Research prototype</strong><small>Demonstrated calculations.<br>Commercial value not yet validated.</small></div>
-  </header>
-  <nav class="brief-actions" aria-label="Project brief downloads"><a href="./brief/downloads/Fuel_Atlas_Decision_Brief.pdf" download>Download brief <span>PDF ↓</span></a><a href="./brief/downloads/Fuel_Atlas_Decision_Brief.md" download>Methods and evidence <span>Markdown ↓</span></a><a href="./brief/print.html">Print view <span aria-hidden="true">→</span></a></nav>
-
-  <section class="brief-thesis" aria-labelledby="brief-thesis-title">
-    <p class="brief-eyebrow">The decision</p><h2 id="brief-thesis-title">When does cheaper fuel justify carrying more of it?</h2>
-    <p>Fuel Atlas connects a fixed flight rotation, comparable fuel offers and aircraft constraints to explain where to buy fuel and how much to carry. The research asks a second question: when a local supply interruption occurs, does that flexibility protect connectivity or shift scarcity and emissions elsewhere?</p>
-    <p class="brief-callout"><strong>Next milestone:</strong> an airline-supervised shadow pilot using dated contracts and approved performance data. The present system supports a diligence conversation; it does not establish dispatch readiness, customer traction or investment returns.</p>
-  </section>
-
-  <section class="brief-section" aria-labelledby="brief-evidence-title">
-    <div class="brief-section-heading"><span>01</span><h2 id="brief-evidence-title">What the evidence supports</h2></div>
-    <div class="brief-table-wrap"><table><caption>Implemented capability and the next validation step</caption><thead><tr><th scope="col">Available today</th><th scope="col">Still to establish</th></tr></thead><tbody>
-      <tr><th scope="row">Fixed-rotation optimization</th><td>2–5 legs; explicit fuel, weight and supply constraints; matched terminal fuel. Requires aircraft-specific calibration and operational validation.</td></tr>
-      <tr><th scope="row">Global geographic sample</th><td>67 sourced airports across six continents. Coordinates do not establish prices, supplier availability or global market coverage.</td></tr>
-      <tr><th scope="row">Traceable data and research</th><td>Public benchmarks, quotation import and reproducible conditional analysis. No verified airline contract dataset, realized savings or prospective operational trial is included.</td></tr>
-    </tbody></table></div>
-    <p class="brief-note">The flight optimizer, marginal tankering study and separate supply-chain planner answer different questions; they are not one calibrated global energy model.</p>
-  </section>
-
-  <section class="brief-section" aria-labelledby="brief-commercial-title">
-    <div class="brief-section-heading"><span>02</span><h2 id="brief-commercial-title">A focused commercial hypothesis</h2></div>
-    <div class="brief-columns"><div><h3>Buyer and workflow</h3><p><strong>Hypothesis:</strong> airline fuel procurement teams, with flight-operations approval, may pay for faster, auditable comparisons of uplift choices. Start with one fleet type and a small airport network: reconcile offers, replay a rotation, explain binding constraints, then export the decision record.</p><p>A paid pilot followed by a subscription is a pricing hypothesis. Interview buyers and measure procurement, integration and support costs before estimating a market or setting a price.</p></div><div><h3>Positioning against existing tools</h3><p><a href="https://skymetrix.com/airtelligent/fuel/">Skymetrix</a> describes fuel procurement, flight-event integration and tankering support. <a href="https://www.openairlines.com/for-fuel-managers-ops-engineers/">OpenAirlines</a> offers operational fuel analytics and reporting. These vendor descriptions establish an existing competitive category, not comparative performance.</p><p>Fuel Atlas must test whether transparent resilience scenarios and decision provenance solve an unmet workflow. A map and optimizer alone are not a defensible advantage; data rights, validated performance and integration would have to be earned.</p></div></div>
-  </section>
-
-  <section class="brief-value" aria-labelledby="brief-value-title">
-    <p class="brief-eyebrow">Economic test</p><h2 id="brief-value-title">Measure net value, not a headline saving</h2>
-    <p class="brief-equation">Net value = matched baseline purchase cost − feasible alternative purchase cost − additional non-fuel costs</p>
-    <p>Purchase-cost comparisons already include modeled carriage fuel; do not subtract that burn twice. Separately reconcile carbon charges, handling, displaced payload, contract penalties and implementation costs. Hold mission, payload, reserves, quote availability, initial fuel and terminal fuel constant. Report gross and net differences, rejected cases and analyst time saved. No annual saving or market-size estimate is asserted here.</p>
-  </section>
-
-  <section class="brief-section" aria-labelledby="brief-pilot-title">
-    <div class="brief-section-heading"><span>03</span><h2 id="brief-pilot-title">A 90-day validation proposal</h2></div>
-    <p>Illustrative schedule from an agreed pilot start; milestones depend on data access. These are proposed acceptance gates, not completed results.</p>
-    <div class="brief-pilot-grid">
-      <article><p class="brief-day">Days 1–30</p><h3>Establish comparability</h3><p>Obtain authorized offers, invoices, uplift records and approved performance data. Record units, fees, validity, supply rights and exclusions.</p><p><strong>Gate:</strong> every admitted record has complete provenance; missing inputs block recommendations. Agree tolerances and a holdout period before analysis.</p></article>
-      <article><p class="brief-day">Days 31–60</p><h3>Replay without hindsight</h3><p>Use only information available at each historical decision. Compare against recorded practice and the same-constraint baseline; independently check fuel and weight balances.</p><p><strong>Gate:</strong> no unresolved hard-constraint violations; report coverage, burn error, reconciliation error and net value against pre-agreed tolerances.</p></article>
-      <article><p class="brief-day">Days 61–90</p><h3>Test prospective usefulness</h3><p>Run in shadow mode. Operations retains authority; log disagreements, overrides, analyst effort and data failures.</p><p><strong>Gate:</strong> evidence of repeatable user value, affordable integration and explicit operational sign-off. Stop or redesign if benefit disappears after costs or data remain inaccessible.</p></article>
-    </div>
-  </section>
-
-  <section class="brief-section" aria-labelledby="brief-research-title">
-    <div class="brief-section-heading"><span>04</span><h2 id="brief-research-title">A systems-research agenda</h2></div>
-    <p>Compare local delivery failure, refinery disruption and a correlated import shock. Test tankering alongside ground stocks, alternate suppliers and coordinated allocation. Stocks, restoration times and service priorities must come from documented evidence or labeled scenario ranges.</p>
-    <p>Report unmet fuel and service separately, additional burn and direct CO₂, cost, recovery time and who receives scarce supply. Vary performance, logistics and policy jointly; publish model-form disagreement and scenario regret instead of invented outage probabilities. Any service valuation or equity weighting must be explicit and tested.</p>
-    <p>This agenda relates to <a href="https://iiasa.ac.at/programs/ece">IIASA’s work on energy, services and inequalities</a> and <a href="https://iiasa.ac.at/programs/asa">systems methods, resilience and open science</a>. It is a proposed research direction, with no IIASA affiliation or endorsement. Release code, input classifications and reproducible results; protect contract confidentiality with permissioned access and publishable aggregates.</p>
-    <div class="brief-next"><strong>The next decision:</strong><span>Secure a data partner and an independent methods review before expanding product scope. Treat empirical validation—not more screens—as the route from prototype to credible planning tool.</span></div>
-  </section>
-  <footer class="brief-footer"><p>Prepared for critical discussion · External product and programme pages checked 13 November 2026 · Vendor descriptions are not independent validation.</p><p><a href="#calculations">Explore the model</a><a href="#research">Read the research</a><a href="#sources">Inspect data sources</a><a href="./brief/downloads/Fuel_Atlas_Decision_Brief.pdf" download>Download PDF</a></p></footer>
+        <section id="workspace-briefing" class="workspace-panel briefing-workspace" role="tabpanel" aria-labelledby="workspace-tab-briefing" tabindex="0" hidden>
+          <div class="project-brief-content model-guide-content">
+<header class="brief-heading"><div><p data-i18n="guide.eyebrow" class="brief-eyebrow">Model guide</p><h1 data-i18n="guide.title">How it works</h1><p data-i18n="guide.deck" class="brief-deck">Choose a route, generate a scenario and compare the fuel plan at each stop.</p></div></header>
+<nav class="brief-actions" aria-label="Model guide downloads"><a href="./brief/downloads/Fuel_Atlas_Model_Guide_EN.pdf" download><span data-i18n="guide.pdf.en">English PDF</span></a><a href="./brief/downloads/Fuel_Atlas_Model_Guide_ZH.pdf" download><span data-i18n="guide.pdf.zh">Chinese PDF</span></a><a href="./brief/downloads/Fuel_Atlas_Model_Guide.md" download><span data-i18n="guide.notes">Guide and data plan</span></a><a href="./brief/print.html" data-i18n-href="guide.print.href"><span data-i18n="guide.print">Print view</span></a></nav>
+<section class="brief-thesis guide-scenario" aria-labelledby="guide-scenario-title"><h2 data-i18n="guide.scenario.title" id="guide-scenario-title">Scenario data</h2><p data-i18n="guide.scenario.text">Airport coordinates come from public geographic data. Prices, supply limits and aircraft parameters are generated assumptions for exploring the model. The same settings produce the same inputs. Replace them with your own data when available.</p></section>
+<ol class="guide-steps">
+<li><div class="guide-step-number" aria-hidden="true">1</div><div><h2 data-i18n="guide.step1.title">Choose the route</h2><p data-i18n="guide.step1.text">Choose the departure and destination, then add stops to build a continuous route of 1–5 legs. The map follows your choices. The model keeps this route fixed and chooses how much fuel to buy at each stop. An example route is available separately.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">2</div><div><h2 data-i18n="guide.step2.title">Generate the inputs</h2><p data-i18n="guide.step2.text">Generate a complete scenario for the route. Airport prices and supply limits come from the scenario rules. Distance and the selected aircraft profile give flight time, fuel burn and reserves. You can then edit the values you want to test.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">3</div><div><h2 data-i18n="guide.step3.title">Run the calculation</h2><p data-i18n="guide.step3.text">Run the optimizer after editing. It checks fuel balance, tank capacity, takeoff weight, landing weight, reserves and each airport’s uplift limit. If the route cannot be served with those inputs, the result shows which limits need attention.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">4</div><div><h2 data-i18n="guide.step4.title">Compare both plans</h2><p data-i18n="guide.step4.text">Compare buying as needed at every stop with buying extra fuel earlier. Both plans start and finish with the same fuel. Read the purchase cost alongside extra burn, uplift by airport and remaining fuel. Playback shows how those values change along the route.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">5</div><div><h2 data-i18n="guide.step5.title">Bring in your own data</h2><p data-i18n="guide.step5.text">Import dated airport quotes, choose the flight date and update the aircraft and supply inputs. Prices use USD per metric tonne with into-plane fees included. Missing or overlapping quotes are shown for correction. Export the inputs and results to keep a copy of the comparison.</p></div></li>
+</ol>
+<section class="brief-value" aria-labelledby="guide-read-title"><h2 data-i18n="guide.read.title" id="guide-read-title">How to read a lower cost</h2><p data-i18n="guide.read.text">A lower purchase cost can come with more fuel burned in flight. That extra fuel is already included in the purchase calculation. Add any separate carbon charges, handling costs or payload effects when assessing the final benefit.</p></section>
+<section class="brief-section" aria-labelledby="guide-data-title"><h2 data-i18n="guide.data.title" id="guide-data-title">Data to connect next</h2><div class="brief-table-wrap"><table><caption data-i18n="guide.data.caption">Where each input comes from and what it changes</caption><thead><tr><th data-i18n="guide.data.input" scope="col">Input</th><th data-i18n="guide.data.source" scope="col">Source</th><th data-i18n="guide.data.use" scope="col">Use in the model</th></tr></thead><tbody>
+<tr><th data-i18n="guide.data.quote" scope="row">Airport fuel prices</th><td data-i18n="guide.data.quote.source">Supplier quotes, airline contracts and invoices</td><td data-i18n="guide.data.quote.use">Replace generated prices. Keep validity, currency, units, fees and buyer terms together.</td></tr>
+<tr><th data-i18n="guide.data.performance" scope="row">Aircraft performance</th><td data-i18n="guide.data.performance.source">Airline-approved performance and flight-planning data</td><td data-i18n="guide.data.performance.use">Replace burn rates, weight limits, reserves and the extra-weight fuel penalty.</td></tr>
+<tr><th data-i18n="guide.data.supply" scope="row">Fuel availability</th><td data-i18n="guide.data.supply.source">Suppliers, airport fuel operators and contracted delivery rights</td><td data-i18n="guide.data.supply.use">Set usable uplift limits for each visit and test a supply interruption.</td></tr>
+<tr><th data-i18n="guide.data.benchmark" scope="row">Market benchmarks</th><td data-i18n="guide.data.benchmark.source">Public energy prices, exchange rates and national fuel balances</td><td data-i18n="guide.data.benchmark.use">Track the market background and set scenarios. Airport contract prices remain separate inputs.</td></tr>
+</tbody></table></div></section>
+<section class="brief-section" aria-labelledby="guide-next-title"><h2 data-i18n="guide.next.title" id="guide-next-title">Try one change at a time</h2><p data-i18n="guide.next.text">Change one airport price or supply limit, recalculate and compare. Then vary the aircraft or route. This makes it easier to see what is driving the result. The research tab explains the fuel-carriage trade-off in more detail.</p></section>
+<footer class="brief-footer"><p data-i18n="guide.updated">Updated 13 November 2026</p><p><a href="#calculations"><span data-i18n="guide.model">Open the model</span></a><a href="#research"><span data-i18n="guide.research">Read the research</span></a><a href="#sources"><span data-i18n="guide.sources">View data sources</span></a></p></footer>
 </div>
         </section>
         <footer class="site-footer">
           <span
             >FUEL ATLAS <span class="footer-slash">/</span> ENERGY
             PLANNING</span
-          ><span>Research workspace · Victor / Gastón / Sandy</span
+          ><span>Fuel Atlas · Victor / Gastón / Sandy</span
           ><button type="button" data-open-workspace="sources">
             Source transparency
           </button>
@@ -1582,7 +890,7 @@
       </div>
       <h2 id="import-title">Import applicable airport quotations</h2>
       <p>
-        Import fee-inclusive into-plane quotations in USD/t. Files are processed in this browser session only and are not uploaded.
+        Import fee-inclusive into-plane quotations in USD/t. The file stays in this browser session.
       </p>
       <button class="button subtle" id="download-template">
         Download CSV template ↓</button
@@ -1593,7 +901,7 @@
       /></label>
       <div id="import-feedback" role="status"></div>
       <p class="micro">
-        Imported records are labelled user quotations. Verify contract applicability yourself. Missing or expired quotations never fall back to illustrative prices.
+        Quotations are matched to each airport and the planning date. Fill any missing airport prices before calculating.
       </p>
       <div class="dialog-footer">
         <button id="clear-quotes" class="text-button">Clear quotations</button

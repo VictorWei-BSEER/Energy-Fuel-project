@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -8,23 +8,23 @@
       name="description"
       content="Fuel Atlas: global fixed-route fuel optimization, traceable market data and aviation energy-security research."
     />
-    <title>Fuel Atlas — Global fuel model</title>
+    <title>Fuel Atlas — Build your fuel plan</title>
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./dashboard.css?v=20261102-header-2" />
-    <script type="module" src="./workspace.js?v=20261113-unified"></script>
+    <script type="module" src="./i18n.js?v=20261113-bilingual"></script>
+    <script type="module" src="./workspace.js?v=20261113-bilingual"></script>
+    <script type="module" src="./data-view.js?v=20261113-bilingual"></script>
 
-    <script type="module" src="./observed-app.js?v=20261113-unified"></script>
-    <script type="module" src="./public-market.js"></script>
-    <script type="module" src="./workspace-directory.js?v=20261113-unified"></script>
     <link href="./flight.css" rel="stylesheet" />
     <link href="./workspace-flight.css" rel="stylesheet" />
     <link href="./flight-motion.css" rel="stylesheet" />
     <link href="./institutional.css?v=20261113" rel="stylesheet" />
-    <link href="./research/research-embedded.css?v=20261113-unified" rel="stylesheet" />
-    <link href="./brief/brief.css?v=20261113-unified" rel="stylesheet" />
-    <link href="./application.css?v=20261113-unified" rel="stylesheet" />
-    <script defer src="./research/research.js?v=20261113-unified"></script>
-    <script src="./flight-app.js?v=20261113-unified" type="module"></script>
+    <link href="./research/research-embedded.css?v=20261113-bilingual" rel="stylesheet" />
+    <link href="./brief/brief.css?v=20261113-bilingual" rel="stylesheet" />
+    <link href="./data-view.css?v=20261113-bilingual" rel="stylesheet" />
+    <link href="./application.css?v=20261113-bilingual" rel="stylesheet" />
+    <script defer src="./research/research.js?v=20261113-bilingual"></script>
+    <script src="./flight-app.js?v=20261113-bilingual" type="module"></script>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22%3E%3Cpath fill=%22%230057b8%22 d=%22M4 29 17 5h13L17 29z%22/%3E%3C/svg%3E"
@@ -53,26 +53,25 @@
             <circle cx="27" cy="13" r="2" fill="white" /></svg
           ><span class="brand-copy"
             ><span class="brand-titles"
-              >Fuel Atlas
-              <span class="brand-title-zh" lang="zh-Hans">燃油图谱</span></span
-            ><small>Energy data &amp; aviation</small></span
+              >Fuel Atlas</span
+            ><small>Routes, fuel &amp; cost</small></span
           ></a
         >
         <div class="project-caption">
-          Independent energy research <span>/ Fuel Atlas</span>
+          Aviation fuel planning <span>/ Fuel Atlas</span>
         </div>
-        <div class="stream-control">
-          <span class="demo-badge">Research prototype</span
-          ><span class="saved-state">67 sourced airport locations</span>
+        <div class="language-switch" role="group" aria-label="Interface language">
+          <button type="button" id="language-zh" data-language="zh" lang="zh-CN" aria-pressed="true">中文</button>
+          <button type="button" id="language-en" data-language="en" lang="en" aria-pressed="false">English</button>
         </div>
       </header>
       <nav class="workspace-navigation" aria-label="Main workspace">
         <div class="workspace-tabs" role="tablist" aria-label="Fuel Atlas sections">
-          <button type="button" role="tab" id="workspace-tab-calculations" data-workspace="calculations" aria-controls="workspace-calculations" aria-selected="true">Global model <span lang="zh-Hans">全球模型</span></button>
-          <button type="button" role="tab" id="workspace-tab-oil-markets" data-workspace="oil-markets" aria-controls="workspace-oil-markets" aria-selected="false" tabindex="-1">Market data <span lang="zh-Hans">市场数据</span></button>
-          <button type="button" role="tab" id="workspace-tab-research" data-workspace="research" aria-controls="workspace-research" aria-selected="false" tabindex="-1">Research report <span lang="zh-Hans">研究报告</span></button>
-          <button type="button" role="tab" id="workspace-tab-briefing" data-workspace="briefing" aria-controls="workspace-briefing" aria-selected="false" tabindex="-1">Project brief <span lang="zh-Hans">项目简报</span></button>
-          <button type="button" role="tab" id="workspace-tab-sources" data-workspace="sources" aria-controls="workspace-sources" aria-selected="false" tabindex="-1">Sources <span lang="zh-Hans">数据来源</span></button>
+          <button type="button" role="tab" id="workspace-tab-calculations" data-workspace="calculations" aria-controls="workspace-calculations" aria-selected="true">Route model</button>
+          <button type="button" role="tab" id="workspace-tab-oil-markets" data-workspace="oil-markets" aria-controls="workspace-oil-markets" aria-selected="false" tabindex="-1">Fuel data</button>
+          <button type="button" role="tab" id="workspace-tab-research" data-workspace="research" aria-controls="workspace-research" aria-selected="false" tabindex="-1">Research</button>
+          <button type="button" role="tab" id="workspace-tab-briefing" data-workspace="briefing" aria-controls="workspace-briefing" aria-selected="false" tabindex="-1">How it works</button>
+          <button type="button" role="tab" id="workspace-tab-sources" data-workspace="sources" aria-controls="workspace-sources" aria-selected="false" tabindex="-1">Sources</button>
         </div>
       </nav>
       <main id="main">
@@ -89,11 +88,10 @@
                 <span class="red-square"></span> DATA EXPLORER / AVIATION
               </p>
               <h1>
-                Global fuel model
-                <span class="title-zh" lang="zh-Hans">全球航线与燃油优化</span>
+                Build your fuel plan
               </h1>
               <p class="workspace-intro">
-                Choose a fixed airport sequence. Compare local uplift with fuel carried from earlier stops, including carriage burn.
+                Choose your airports in order, generate the route inputs, then compare where to refuel and how much to carry.
               </p>
             </div>
             <div class="overview-actions">
@@ -109,47 +107,168 @@
               <div class="workspace-title">
                 <span class="live-dot"></span><strong>Flight scenario</strong
                 ><span class="divider"></span
-                ><span id="route-caption">SIN → DXB → LHR → JFK → LAX</span>
+                ><span id="route-caption">Choose your first airport</span>
               </div>
               <div class="mode-switch" aria-label="Price data mode" role="group">
                 <button id="mode-demo" class="selected" aria-pressed="true">
-                  Illustrative scenario</button
+                  Generated inputs</button
                 ><button id="mode-quotes" aria-pressed="false">
                   My quotations <span id="quote-count">0</span>
                 </button>
               </div>
             </div>
+            <section class="rotation-card" id="rotation">
+              <div class="section-top">
+                <div>
+                  <p class="eyebrow">BUILD YOUR ROUTE / 01</p>
+                  <h2>Route inputs and constraints</h2>
+                </div>
+                <div class="rotation-actions">
+                  <button class="text-button" id="reset-plan">Clear route</button
+                  ><button class="button subtle small" id="add-leg">
+                    ＋ Add flight leg
+                  </button>
+                </div>
+              </div>
+              <form id="rotation-form">
+                <div class="rotation-settings">
+                  <label
+                    >Aircraft profile<select id="aircraft">
+                      <option value="widebody">Widebody scenario</option>
+                      <option value="narrowbody">Narrowbody scenario</option>
+                    </select></label
+                  ><label
+                    >Planning date<input
+                      id="flight-date"
+                      type="date"
+                      value="2026-11-13"
+                      required /></label
+                  ><label
+                    >Starting fuel <span>t</span
+                    ><input
+                      id="initial-fuel"
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value="8"
+                      required
+                  /></label>
+                  <div class="performance-note">
+                    <i></i>Fixed route<br /><span
+                      >Choose airports, then calculate uplift</span
+                    >
+                  </div>
+                </div>
+                <div class="table-scroll">
+                  <table class="leg-table">
+                    <thead>
+                      <tr>
+                        <th>Leg</th>
+                        <th>Origin → destination</th>
+                        <th>Origin fuel price <small>USD/t</small></th>
+                        <th>Base flight burn <small>t</small></th>
+                        <th>Recommended uplift <small>t</small></th>
+                        <th>Landing fuel <small>t</small></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="leg-rows"></tbody>
+                  </table>
+                </div>
+                <details class="advanced">
+                  <summary>Performance & weight constraints <span>Edit assumptions ＋</span></summary>
+                  <p class="micro">
+                    Route distance and aircraft profile generate the starting inputs. Adjust fuel burn, reserves and weight limits here.
+                  </p>
+                  <div class="advanced-aircraft">
+                    <label
+                      >Tank capacity · t<input
+                        id="tank-capacity"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        required /></label
+                    ><label
+                      >Maximum take-off mass · t<input
+                        id="mtow"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        required /></label
+                    ><label
+                      >Maximum landing mass · t<input
+                        id="mlw"
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        required
+                    /></label>
+                  </div>
+                  <div class="table-scroll">
+                    <table class="advanced-table">
+                      <thead>
+                        <tr>
+                          <th>Leg</th>
+                          <th>Taxi burn · t</th>
+                          <th>Arrival reserve · t</th>
+                          <th>Carriage burn / extra tonne · %</th>
+                          <th>Zero-fuel mass · t</th>
+                          <th>Uplift limit · t <small>blank = unlimited</small></th>
+                        </tr>
+                      </thead>
+                      <tbody id="performance-rows"></tbody>
+                    </table>
+                  </div>
+                </details>
+                <div class="form-bottom">
+                  <p id="plan-status" role="status">
+                    <span class="live-dot"></span> Ready to build your route
+                  </p>
+                  <button type="submit" class="button primary" id="calculate">
+                    Calculate fuel plan <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg>
+                  </button>
+                </div>
+                <div
+                  class="error-box"
+                  id="model-error"
+                  role="alert"
+                  hidden
+                ></div>
+              </form>
+            </section>
             <div class="workspace-grid">
               <section class="map-card" aria-labelledby="map-heading">
                 <div class="map-top">
                   <div>
-                    <p class="eyebrow">INTERACTIVE MODEL</p>
-                    <h2 id="map-heading">Global flight rotation</h2>
+                    <p class="eyebrow">INTERACTIVE MODEL / 02</p>
+                    <h2 id="map-heading">Your flight route</h2>
                   </div>
-                  <span class="map-tag" id="map-mode">ILLUSTRATIVE PRICES</span>
+                  <span class="map-tag" id="map-mode">ROUTE BUILDER</span>
                 </div>
                 <div class="model-toolbar" aria-label="Map and route settings" role="group">
-                  <label for="scenario-preset">Scenario preset<select id="scenario-preset"><option value="global" selected>Global route · illustrative</option><option value="eastasia">East Asia · illustrative</option></select></label>
+                  <label for="scenario-preset">Example route<select id="scenario-preset"><option value="global" selected>Global route</option><option value="eastasia">East Asia route</option></select></label>
+                  <button type="button" id="load-example" class="map-fit-button">Load example</button>
                   <label for="map-scope">Map view<select id="map-scope"><option value="global" selected>World</option><option value="eastasia">East Asia</option></select></label>
                   <button type="button" id="fit-route" class="map-fit-button">Fit route <span aria-hidden="true">⤢</span></button>
                 </div>
                 <div class="map-stage" id="map-stage">
+                  <p id="route-empty-state" class="route-empty-state">Choose a departure and arrival airport to start your route.</p>
                   <svg
                     id="flight-map"
                     viewBox="0 0 1440 720"
                     role="group"
-                    aria-label="Global airports and simulated routes. Select an airport to inspect its price and source."
+                    aria-label="Select airports to build and inspect your flight route."
                   />
                   <div class="compass" aria-hidden="true">N<br />↑</div>
                   <div class="map-scale">
-                    Global airport sample <small>Scenario routes · not live flight tracks</small>
+                    67 airport locations <small>Great-circle routes · editable inputs</small>
                   </div>
                   <div class="map-tooltip" id="airport-tooltip" hidden></div>
                   <div class="motion-detail" id="motion-detail">
                     <div class="motion-route">
                       <span class="motion-auto-label"
                         ><i aria-hidden="true"></i>AUTOPLAY · SCENARIO</span
-                      ><strong id="motion-current-leg">SIN → DXB</strong
+                      ><strong id="motion-current-leg">— → —</strong
                       ><span id="motion-phase">Ready</span>
                     </div>
                     <div class="motion-readouts">
@@ -167,7 +286,7 @@
                       class="motion-summary"
                       aria-live="polite"
                     >
-                      Illustrative rotation; aircraft positions are simulated.
+                      Build a route to follow fuel and cost through each leg.
                     </p>
                   </div>
                 </div>
@@ -221,7 +340,7 @@
                         >Natural Earth · OurAirports</span
                       >
                     </div>
-                    <span>Scenario playback · not live tracking</span>
+                    <span>Route animation</span>
                   </div>
                 </div>
                 <div
@@ -240,10 +359,10 @@
                 </div>
                 <h2 id="decision-title">Uplift strategy & cost</h2>
                 <p class="decision-sub" id="result-state">
-                  Same rotation · same terminal fuel
+                  Compare the same route and terminal fuel
                 </p>
                 <div class="savings">
-                  <span id="savings-label">Fuel-cost savings · illustrative</span
+                  <span id="savings-label">Fuel-cost savings</span
                   ><strong id="savings">—</strong>
                   <div>
                     <span id="savings-percent" class="saving-percent">—</span
@@ -262,7 +381,7 @@
                 </div>
                 <div class="recommendation" id="recommendation">
                   <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg>
-                  <p>Calculating rotation…</p>
+                  <p>Choose airports to generate your plan.</p>
                 </div>
                 <div class="decision-foot">
                   <span>Additional fuel burned</span><b id="extra-burn">—</b>
@@ -273,135 +392,16 @@
                 <details class="model-diagnostic">
                   <summary>Cost–emissions trade-off</summary>
                   <p>Carbon value that erases this plan’s fuel-cost savings: <strong id="carbon-threshold">—</strong>.</p>
-                  <p id="carbon-note">A comparison of the same two plans after solving; not a carbon-optimized plan or a lifecycle assessment.</p>
+                  <p id="carbon-note">Compares fuel-cost savings with the additional direct CO₂ from carrying fuel.</p>
                 </details>
                 <button id="download-plan" class="button full">
                   Export this scenario <span>↓</span>
                 </button>
                 <p class="micro" id="result-disclosure">
-                  Prices and performance are illustrative assumptions for comparison.
+                  Generated inputs can be edited or replaced with supplier quotations.
                 </p>
               </aside>
             </div>
-            <section class="rotation-card" id="rotation">
-              <div class="section-top">
-                <div>
-                  <p class="eyebrow">BUILD YOUR ROTATION / 02</p>
-                  <h2>Route inputs and constraints</h2>
-                </div>
-                <div class="rotation-actions">
-                  <button class="text-button" id="reset-plan">Reset preset ↺</button
-                  ><button class="button subtle small" id="add-leg">
-                    ＋ Add flight leg
-                  </button>
-                </div>
-              </div>
-              <form id="rotation-form">
-                <div class="rotation-settings">
-                  <label
-                    >Aircraft label / illustrative performance<select id="aircraft">
-                      <option value="b787">Boeing 787-9</option>
-                      <option value="a330">Airbus A330-300</option>
-                    </select></label
-                  ><label
-                    >Planning date<input
-                      id="flight-date"
-                      type="date"
-                      value="2026-11-13"
-                      required /></label
-                  ><label
-                    >Initial fuel on board <span>t</span
-                    ><input
-                      id="initial-fuel"
-                      type="number"
-                      min="0"
-                      step="0.1"
-                      value="8"
-                      required
-                  /></label>
-                  <div class="performance-note">
-                    <i></i>Fixed route<br /><span
-                      >Optimize uplift on this route; no new stops</span
-                    >
-                  </div>
-                </div>
-                <div class="table-scroll">
-                  <table class="leg-table">
-                    <thead>
-                      <tr>
-                        <th>Leg</th>
-                        <th>Origin → destination</th>
-                        <th>Origin fuel price <small>USD/t</small></th>
-                        <th>Base flight burn <small>t</small></th>
-                        <th>Recommended uplift <small>t</small></th>
-                        <th>Landing fuel <small>t</small></th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody id="leg-rows"></tbody>
-                  </table>
-                </div>
-                <details class="advanced">
-                  <summary>Performance & weight constraints <span>Edit assumptions ＋</span></summary>
-                  <p class="micro">
-                    These are illustrative linear-model inputs, not certified aircraft performance. Replace them with airline-approved flight performance and reserve requirements before operational evaluation.
-                  </p>
-                  <div class="advanced-aircraft">
-                    <label
-                      >Tank capacity · t<input
-                        id="tank-capacity"
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        required /></label
-                    ><label
-                      >Maximum take-off mass · t<input
-                        id="mtow"
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        required /></label
-                    ><label
-                      >Maximum landing mass · t<input
-                        id="mlw"
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        required
-                    /></label>
-                  </div>
-                  <div class="table-scroll">
-                    <table class="advanced-table">
-                      <thead>
-                        <tr>
-                          <th>Leg</th>
-                          <th>Taxi burn · t</th>
-                          <th>Arrival reserve · t</th>
-                          <th>Carriage burn / extra tonne · %</th>
-                          <th>Zero-fuel mass · t</th>
-                          <th>Uplift limit · t <small>blank = unlimited</small></th>
-                        </tr>
-                      </thead>
-                      <tbody id="performance-rows"></tbody>
-                    </table>
-                  </div>
-                </details>
-                <div class="form-bottom">
-                  <p id="plan-status" role="status">
-                    <span class="live-dot"></span> Calculated · illustrative prices and performance
-                  </p>
-                  <button type="submit" class="button primary" id="calculate">
-                    Recalculate <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg>
-                  </button>
-                </div>
-                <div
-                  class="error-box"
-                  id="model-error"
-                  role="alert"
-                  hidden
-                ></div>
-              </form>
-            </section>
             <section class="strategy-section">
               <div class="section-top">
                 <div>
@@ -433,185 +433,7 @@
           tabindex="0"
           hidden
         >
-          <section class="overview-head">
-            <div>
-              <p class="eyebrow">
-                <span class="red-square"></span> Market overview
-              </p>
-              <h1>Oil market overview</h1>
-            </div>
-            <div class="overview-note">
-              Follow WTI and Brent at the source.<br />Compare the latest
-              published benchmarks.
-            </div>
-            <button class="outline-button" id="observed-refresh-data">
-              Check for updates <span aria-hidden="true">↻</span>
-            </button>
-          </section>
-          <section
-            class="observed-summary"
-            aria-label="Latest published observations"
-          >
-            <article>
-              <p>JET FUEL · U.S. GULF COAST</p>
-              <strong id="jet-value">—</strong
-              ><span id="jet-date">Awaiting observation</span
-              ><small
-                >USD / US gallon · daily observations, reporting lag</small
-              >
-            </article>
-            <article>
-              <p>BRENT · EUROPE FOB</p>
-              <strong id="brent-value">—</strong
-              ><span id="brent-date">Awaiting observation</span
-              ><small>USD / barrel · daily observations, reporting lag</small>
-            </article>
-            <article>
-              <p>ECB REFERENCE · USD PER EUR</p>
-              <strong id="fx-value">—</strong
-              ><span id="fx-date">Awaiting observation</span
-              ><small>Informational reference · business days</small>
-            </article>
-            <article>
-              <p>JODI · JET KEROSENE</p>
-              <strong id="jodi-value">—</strong
-              ><span id="jodi-date">Awaiting reporting period</span
-              ><small>National balances · monthly publication</small>
-            </article>
-          </section>
-          <section
-            class="public-market-panel"
-            id="public-market"
-            aria-labelledby="public-market-title"
-          >
-            <div class="public-market-heading">
-              <div>
-                <p class="eyebrow">
-                  <span class="red-square"></span> PUBLIC OIL MARKETS
-                </p>
-                <h2 id="public-market-title">Crude oil markets</h2>
-                <p>Public OANDA crude-oil CFD charts · no Fuel Atlas account required</p>
-              </div>
-              <div
-                class="public-market-tabs"
-                role="tablist"
-                aria-label="Select a public crude-oil CFD chart"
-              >
-                <button
-                  id="public-wti"
-                  role="tab"
-                  aria-selected="true"
-                  aria-controls="public-market-chart"
-                  data-market="wti"
-                >
-                  WTI <span>WTICOUSD</span></button
-                ><button
-                  id="public-brent"
-                  role="tab"
-                  aria-selected="false"
-                  aria-controls="public-market-chart"
-                  tabindex="-1"
-                  data-market="brent"
-                >
-                  BRENT <span>BCOUSD</span>
-                </button>
-              </div>
-            </div>
-            <div class="public-market-instrument">
-              <strong id="public-market-symbol">OANDA:WTICOUSD</strong
-              ><span id="public-market-description"
-                >WTI crude-oil CFD · OANDA</span
-              ><span>USD quotations · CFDs, not exchange futures or jet-fuel prices</span>
-            </div>
-            <div class="public-market-disclosure">
-              Check the chart’s quotation time, delay indicator and market status. A 15-minute candle interval is not the data delay.
-            </div>
-            <div
-              id="public-market-chart"
-              class="public-market-chart"
-              role="tabpanel"
-              aria-labelledby="public-wti"
-              aria-busy="true"
-            >
-              <div class="public-chart-placeholder">
-                Loading the public TradingView chart…
-              </div>
-            </div>
-            <div class="public-market-attribution">
-              <a
-                href="https://www.tradingview.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Charts by TradingView</a
-              ><span
-                >Chart: TradingView · Quotations: OANDA · Timing and status are shown by the provider.</span
-              >
-            </div>
-            <div class="public-market-status">
-              <dl>
-                <div>
-                  <dt>Chart status</dt>
-                  <dd id="live-status">LOADING CHART</dd>
-                </div>
-                <div>
-                  <dt>Chart / quotation provider</dt>
-                  <dd id="live-provider">TradingView / OANDA CFDs</dd>
-                </div>
-                <div>
-                  <dt>Quotation time</dt>
-                  <dd id="live-asof">See time inside the chart</dd>
-                </div>
-              </dl>
-              <button class="text-button" id="public-market-retry" disabled>
-                Retry chart ↻
-              </button>
-            </div>
-            <p
-              id="public-market-message"
-              class="public-market-message"
-              role="status"
-            >
-              Loading public chart; check its displayed timing indicators.
-            </p>
-            <div class="public-market-fallback">
-              <span>If the chart is unavailable, open the source:</span
-              ><a
-                href="https://www.tradingview.com/symbols/WTICOUSD/?exchange=OANDA"
-                target="_blank"
-                rel="noopener noreferrer"
-                >WTI · TradingView</a
-              ><a
-                href="https://www.tradingview.com/symbols/BCOUSD/?exchange=OANDA"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Brent · TradingView</a
-              >
-            </div>
-            <div class="airport-api-status">
-              <strong id="airport-api-status">Airport fuel quotation API: not connected</strong
-              ><span
-                >No verified airport fuel, inventory or demand feed is connected. This chart is separate from the collected benchmarks below.</span
-              >
-            </div>
-          </section>
-          <div class="observed-disclosure">
-            <span>COLLECTED BENCHMARKS ARE DELAYED.</span> EIA daily
-            observations, ECB business-day reference rates and JODI monthly
-            balances are not real-time airport quotes. EIA/ECB sources are
-            checked hourly; monthly and geographic sources daily. This page
-            checks stored snapshots every 60 seconds while visible.
-          </div>
-          <p id="refresh-status" class="action-status" role="status">
-            Checking source snapshots…
-          </p>
-          <div class="ticker" aria-label="Source update cadence" role="group">
-            <span class="ticker-title"
-              >SOURCE CLOCK <span>NOT A LIVE TICKER</span></span
-            >
-            <div id="observed-ticker-values">
-              <span class="ticker-item">Loading published observations…</span>
-            </div>
-          </div>
+          <!-- WORKSPACE:DATA -->
         </section>
         <section
           id="workspace-sources"
@@ -621,555 +443,19 @@
           tabindex="0"
           hidden
         >
-          <div class="overview-head">
-            <div>
-              <p class="eyebrow">
-                <span class="red-square"></span> Data &amp; methodology
-              </p>
-              <h1>Sources &amp; airport quotes</h1>
-            </div>
-            <div class="overview-note">
-              Airport quotations, sources & timing<br />Separate market context from airport purchase decisions.
-            </div>
-            <button
-              class="outline-button"
-              type="button"
-              data-refresh-observations=""
-            >
-              Check for updates ↻
-            </button>
-          </div>
-          <p class="sources-intro">
-            Market charts, published benchmarks and planning assumptions each
-            have a different role. Review their coverage and freshness here.
-          </p>
-          <p class="action-status" data-source-refresh-status="" role="status">
-            Checking source snapshots…
-          </p>
-          <section id="airports" class="airport-section">
-            <div class="airport-section-inner">
-              <div class="section-top">
-                <div>
-                  <p class="eyebrow">AIRPORT FUEL INTELLIGENCE / 04</p>
-                  <h2>Airport fuel quotations</h2>
-                  <p class="section-copy">
-                    Comparable into-plane quotations require contract terms, delivery basis, taxes, fees and validity dates.
-                  </p>
-                </div>
-                <button class="button subtle" data-import="">
-                  Import supplier quotes <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg>
-                </button>
-              </div>
-              <div class="airport-toolbar">
-                <label class="search"
-                  ><span>⌕</span
-                  ><input
-                    id="airport-search"
-                    type="search"
-                    placeholder="Search city or IATA code"
-                    aria-label="Search city or IATA code"
-                /></label>
-                <div class="airport-filters" aria-label="Filter regions" role="group">
-                  <button class="selected" data-region="all">All</button
-                  ><button data-region="CN">Mainland China</button
-                  ><button data-region="JP">Japan</button
-                  ><button data-region="KR">South Korea</button
-                  ><button data-region="TW">Taipei</button
-                  ><button data-region="HK">Hong Kong</button>
-                </div>
-                <div class="continent-filters" aria-label="Filter airports by continent" role="group">
-                  <button type="button" class="selected" data-continent="all" aria-pressed="true">All regions</button><button type="button" data-continent="AS" aria-pressed="false">Asia</button><button type="button" data-continent="EU" aria-pressed="false">Europe</button><button type="button" data-continent="NA" aria-pressed="false">North America</button><button type="button" data-continent="SA" aria-pressed="false">South America</button><button type="button" data-continent="AF" aria-pressed="false">Africa</button><button type="button" data-continent="OC" aria-pressed="false">Oceania</button>
-                </div>
-                <span class="airport-count" id="airport-count">Loading airports…</span>
-              </div>
-              <div class="table-scroll">
-                <table class="airport-table">
-                  <thead>
-                    <tr>
-                      <th>Airport / city</th>
-                      <th>Supplier price <small>USD/t</small></th>
-                      <th>Data classification</th>
-                      <th>Supplier / delivery basis</th>
-                      <th>Validity / source</th>
-                    </tr>
-                  </thead>
-                  <tbody id="airport-rows"></tbody>
-                </table>
-              </div>
-              <div class="airport-note">
-                <span>◈</span>
-                <p>
-                  No airport contract feed is connected. Import a CSV and select My quotations to evaluate your prices. CPC’s public listing has separate fee terms; see the<a
-                    href="https://vipmbr.cpc.com.tw/mbwebs/showlistprice_d1510_en.aspx"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >official price listing</a
-                  >。
-                </p>
-              </div>
-            </div>
-          </section>
-          <section id="sources" class="sources-section">
-            <div class="section-top">
-              <div>
-                <p class="eyebrow">TRACEABLE BY DESIGN / 05</p>
-                <h2>Sources and methodology</h2>
-              </div>
-              <span class="source-date">Source review · 4 November 2026</span>
-            </div>
-            <div class="source-intro">
-              <p>
-                A proposed pilot starts with one airline and contract notices plus settlement records for 6–8 airports.<br /><span
-                  >Market benchmarks provide context; applicable supplier quotations drive uplift decisions.</span
-                >
-              </p>
-              <a href="./network.html#calculations" class="inline-link"
-                >Open the supply-chain model</a
-              >
-            </div>
-            <div class="source-cards" id="source-cards"></div>
-            <details class="methodology">
-              <summary>Methods & scope <span>＋</span></summary>
-              <div class="method-grid">
-                <div>
-                  <h3>Account for the fuel burned to carry fuel.</h3>
-                  <p>
-                    Minimize purchased fuel cost on a fixed rotation. Arrival fuel + uplift − taxi burn = take-off fuel. Extra fuel carried increases flight burn at the stated per-leg rate. Each leg respects tank, take-off mass, landing mass, reserve and uplift limits.
-                  </p>
-                  <p>
-                    The local-uplift baseline uses the same initial and terminal fuel. When a supply cap makes that baseline infeasible, the app reports a feasibility difference rather than a savings percentage.
-                  </p>
-                </div>
-                <div>
-                  <h3>Model boundary</h3>
-                  <p>
-                    Two to five fixed legs; mass in metric tonnes and prices in USD/t. Quotations must include applicable into-plane fees and match the planning date. Convert other currencies and volume units before import.
-                  </p>
-                  <p>
-                    Linear carriage coefficients and illustrative burn do not replace flight-performance calculations. This version does not optimize route choice, forecast prices or execute fuel orders.
-                  </p>
-                </div>
-              </div>
-            </details>
-          </section>
-          <section
-            class="data-section"
-            id="observed-data-sources"
-            aria-labelledby="observed-sources-title"
-          >
-            <div class="market-heading">
-              <div>
-                <p class="eyebrow">OBSERVED WHEN? COLLECTED WHEN?</p>
-                <h2 id="observed-sources-title">
-                  Source health <span>Sources & freshness</span>
-                </h2>
-              </div>
-              <span id="last-check" class="last-check">No check completed</span>
-            </div>
-            <div class="feed-grid" id="observed-source-cards"></div>
-            <p class="table-note">
-              Page refresh time is separate from source observation and
-              collection time. Stored updates are checked while this page is
-              visible. Failed or stale collection remains labeled.
-            </p>
-          </section>
-          <details class="source-detail airport-directory-sources">
-            <summary>
-              <span>Planning airport directory · 50 airports</span
-              ><span>Selection, traffic &amp; coordinates</span>
-            </summary>
-            <p id="directory-method" class="directory-method"></p>
-            <p class="directory-note">
-              Passenger counts determine airport selection only. Airport fuel
-              prices, demand and inventory require their own data.
-            </p>
-            <div class="table-scroll directory-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>RANK</th>
-                    <th>AIRPORT</th>
-                    <th>NAME</th>
-                    <th>CITY</th>
-                    <th>2024 PASSENGERS</th>
-                    <th>COUNTRY / ECONOMY</th>
-                  </tr>
-                </thead>
-                <tbody id="directory-rows"></tbody>
-              </table>
-            </div>
-            <div id="directory-sources" class="directory-sources"></div>
-          </details>
-          <details class="source-detail">
-            <summary>
-              <span>Published observations</span
-              ><span>Browse &amp; export the source records</span>
-            </summary>
-            <section
-              class="market-panel observed-records"
-              id="observations"
-              aria-labelledby="observations-title"
-            >
-              <div class="market-heading">
-                <div>
-                  <p class="eyebrow">THE RECORD. AS PUBLISHED.</p>
-                  <h2 id="observations-title">
-                    Source observations <span>Source observations</span>
-                  </h2>
-                </div>
-                <div class="observed-export">
-                  <button class="text-button" id="export-csv" disabled>
-                    Export current table CSV</button
-                  ><button
-                    class="text-button"
-                    id="observed-export-json"
-                    disabled
-                  >
-                    Collected datasets JSON
-                  </button>
-                </div>
-              </div>
-              <div
-                class="result-tabs"
-                role="tablist"
-                aria-label="Observed data tables"
-              >
-                <button
-                  role="tab"
-                  id="tab-jet"
-                  aria-controls="view-jet"
-                  aria-selected="true"
-                  data-tab="jet"
-                >
-                  01 / Jet fuel</button
-                ><button
-                  role="tab"
-                  id="tab-brent"
-                  aria-controls="view-brent"
-                  aria-selected="false"
-                  tabindex="-1"
-                  data-tab="brent"
-                >
-                  02 / Brent</button
-                ><button
-                  role="tab"
-                  id="tab-fx"
-                  aria-controls="view-fx"
-                  aria-selected="false"
-                  tabindex="-1"
-                  data-tab="fx"
-                >
-                  03 / FX</button
-                ><button
-                  role="tab"
-                  id="tab-jodi"
-                  aria-controls="view-jodi"
-                  aria-selected="false"
-                  tabindex="-1"
-                  data-tab="jodi"
-                >
-                  04 / JODI</button
-                ><button
-                  role="tab"
-                  id="tab-airports"
-                  aria-controls="view-airports"
-                  aria-selected="false"
-                  tabindex="-1"
-                  data-tab="airports"
-                >
-                  05 / Geography
-                </button>
-              </div>
-              <div id="view-jet" role="tabpanel" aria-labelledby="tab-jet">
-                <div class="observation-heading">
-                  <h3>U.S. Gulf Coast jet fuel spot price FOB</h3>
-                  <span
-                    >USD / US GALLON · DAILY OBSERVATIONS, REPORTING LAG</span
-                  >
-                </div>
-                <p class="source-scope">
-                  Published U.S. wholesale benchmark. No density conversion or
-                  Asian airport-price estimate is applied.
-                </p>
-                <svg
-                  id="jet-chart"
-                  class="observation-chart"
-                  viewBox="0 0 900 200"
-                  role="img"
-                  aria-label="Published U.S. Gulf Coast jet fuel observations in dollars per US gallon"
-                />
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>OBSERVATION DATE</th>
-                        <th>PUBLISHED VALUE</th>
-                        <th>ORIGINAL UNIT</th>
-                        <th>SOURCE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="jet-rows"></tbody>
-                  </table>
-                </div>
-              </div>
-              <div
-                id="view-brent"
-                role="tabpanel"
-                aria-labelledby="tab-brent"
-                hidden
-              >
-                <div class="observation-heading">
-                  <h3>Europe Brent spot price FOB</h3>
-                  <span>USD / BARREL · DAILY OBSERVATIONS, REPORTING LAG</span>
-                </div>
-                <p class="source-scope">
-                  A separate crude-oil benchmark. It is not a jet-fuel quote or
-                  an executable arbitrage opportunity.
-                </p>
-                <svg
-                  id="brent-chart"
-                  class="observation-chart"
-                  viewBox="0 0 900 200"
-                  role="img"
-                  aria-label="Published Brent observations in dollars per barrel"
-                />
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>OBSERVATION DATE</th>
-                        <th>PUBLISHED VALUE</th>
-                        <th>ORIGINAL UNIT</th>
-                        <th>SOURCE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="brent-rows"></tbody>
-                  </table>
-                </div>
-              </div>
-              <div id="view-fx" role="tabpanel" aria-labelledby="tab-fx" hidden>
-                <div class="observation-heading">
-                  <h3>ECB euro foreign exchange reference rates</h3>
-                  <span>REFERENCE RATES · NOT TRANSACTION QUOTES</span>
-                </div>
-                <p id="fx-table-date" class="source-scope">
-                  Awaiting source observation.
-                </p>
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>BASE CURRENCY</th>
-                        <th>QUOTE CURRENCY</th>
-                        <th>UNITS PER 1 EUR</th>
-                        <th>OBSERVATION DATE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="fx-rows"></tbody>
-                  </table>
-                </div>
-              </div>
-              <div
-                id="view-jodi"
-                role="tabpanel"
-                aria-labelledby="tab-jodi"
-                hidden
-              >
-                <div class="observation-heading">
-                  <h3>National jet kerosene balances</h3>
-                  <span>THOUSAND METRIC TONNES · MONTHLY, DELAYED</span>
-                </div>
-                <p class="source-scope">
-                  JETKERO / KTONS records retain the source assessment code.
-                  National totals are not airport stock or available supplier
-                  capacity. A missing record is not zero.
-                </p>
-                <div class="jodi-filters">
-                  <label for="jodi-period"
-                    >REPORTING MONTH<select id="jodi-period"></select></label
-                  ><label for="jodi-country"
-                    >COUNTRY / ECONOMY<select id="jodi-country">
-                      <option value="all">All reported</option>
-                      <option value="CN">China · CN</option>
-                      <option value="HK">Hong Kong · HK</option>
-                      <option value="JP">Japan · JP</option>
-                      <option value="KR">South Korea · KR</option>
-                      <option value="SG">Singapore · SG</option>
-                      <option value="TW">Taiwan · TW</option>
-                    </select></label
-                  >
-                </div>
-                <p id="jodi-coverage" class="coverage-note"></p>
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>MONTH</th>
-                        <th>COUNTRY</th>
-                        <th>FLOW</th>
-                        <th>REPORTED VALUE</th>
-                        <th>UNIT</th>
-                        <th>ASSESSMENT CODE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="jodi-rows"></tbody>
-                  </table>
-                </div>
-                <p class="table-note">
-                  Assessment codes are source metadata. Code 3 is retained as
-                  unassessed; a reported zero with this code does not establish
-                  absence of supply capability.
-                </p>
-              </div>
-              <div
-                id="view-airports"
-                role="tabpanel"
-                aria-labelledby="tab-airports"
-                hidden
-              >
-                <div class="observation-heading">
-                  <h3>Airport coordinate registry</h3>
-                  <span>GEOGRAPHY ONLY · WGS84</span>
-                </div>
-                <p class="source-scope">
-                  These coordinates are the only airport-level observations
-                  connected to the default monitor.
-                </p>
-                <div class="table-scroll">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>IATA / ICAO</th>
-                        <th>AIRPORT</th>
-                        <th>COUNTRY</th>
-                        <th>LATITUDE</th>
-                        <th>LONGITUDE</th>
-                        <th>FUEL QUOTE</th>
-                      </tr>
-                    </thead>
-                    <tbody id="observed-airport-rows"></tbody>
-                  </table>
-                </div>
-              </div>
-            </section>
-          </details>
-          <details class="source-detail">
-            <summary>
-              <span>Airport reference map</span
-              ><span>Locations &amp; coordinate coverage</span>
-            </summary>
-            <div class="atlas-grid observed-atlas">
-              <section class="map-panel" aria-labelledby="observed-map-title">
-                <div class="panel-heading">
-                  <h2 id="observed-map-title">
-                    Airport geography <span>Airport geography</span>
-                  </h2>
-                  <span class="geography-only">COORDINATES ONLY</span>
-                </div>
-                <div class="map-stage">
-                  <svg
-                    id="observed-atlas-map"
-                    viewBox="0 0 900 680"
-                    role="group"
-                    aria-label="Verified airport coordinates in East and Southeast Asia; no quoted fuel prices or inventory values"
-                  />
-                  <div class="map-corner">
-                    <span class="map-index">01—</span
-                    ><span id="map-count"
-                      >GEOGRAPHIC REFERENCE<br />NO INFERRED MARKET VALUES</span
-                    >
-                  </div>
-                  <div class="north-marker" aria-hidden="true">
-                    <span>N</span
-                    ><svg viewBox="0 0 16 34">
-                      <path d="M8 1 15 28 8 23 1 28Z" />
-                    </svg>
-                  </div>
-                  <div class="map-key">
-                    <span
-                      ><i class="key-node"></i> Sourced airport
-                      coordinates</span
-                    ><span>No verified airport price or inventory feed</span>
-                  </div>
-                  <div class="map-attribution">
-                    Natural Earth + OurAirports · reference geography
-                  </div>
-                </div>
-                <div class="map-footer">
-                  <span
-                    ><i class="status-square"></i
-                    ><span id="observed-map-status"
-                      >Awaiting coordinate source</span
-                    ></span
-                  ><span>Click an airport to inspect</span>
-                </div>
-              </section>
-              <aside
-                class="inspector observed-inspector"
-                aria-labelledby="airport-title"
-              >
-                <div class="inspector-heading">
-                  <span class="eyebrow">VERIFIED LOCATION / OPEN DATA</span
-                  ><span class="issue-no">02</span>
-                </div>
-                <h2 id="airport-title">Select a<br />location.</h2>
-                <p class="inspector-intro">
-                  Coordinates identify an airport. They do not establish fuel
-                  prices, demand, stock or available capacity.
-                </p>
-                <label class="field-label" for="airport-select">AIRPORT</label
-                ><select
-                  id="airport-select"
-                  aria-label="Select airport"
-                ></select>
-                <dl class="airport-facts">
-                  <div>
-                    <dt>NAME</dt>
-                    <dd id="airport-name">—</dd>
-                  </div>
-                  <div>
-                    <dt>WGS84 COORDINATES</dt>
-                    <dd id="airport-coordinates">—</dd>
-                  </div>
-                  <div>
-                    <dt>FUEL PRICE</dt>
-                    <dd class="missing-observation">No verified quote</dd>
-                  </div>
-                  <div>
-                    <dt>AVAILABLE INVENTORY</dt>
-                    <dd class="missing-observation">No verified observation</dd>
-                  </div>
-                  <div>
-                    <dt>FUEL DEMAND</dt>
-                    <dd class="missing-observation">No verified observation</dd>
-                  </div>
-                </dl>
-                <p class="model-footnote">
-                  U.S. Gulf Coast jet fuel is a regional benchmark. It is not
-                  assigned to any airport on this map.
-                </p>
-                <a
-                  class="method-button"
-                  href="https://ourairports.com/data/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >Coordinate source <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg></a
-                >
-              </aside>
-            </div>
-          </details>
+          <!-- WORKSPACE:SOURCES -->
         </section>
-        <section id="workspace-research" class="workspace-panel research-workspace research-exhibit" role="tabpanel" aria-labelledby="workspace-tab-research" tabindex="0" lang="en" hidden>
+        <section id="workspace-research" class="workspace-panel research-workspace research-exhibit" role="tabpanel" aria-labelledby="workspace-tab-research" tabindex="0" hidden>
           <!-- WORKSPACE:RESEARCH -->
         </section>
-        <section id="workspace-briefing" class="workspace-panel briefing-workspace" role="tabpanel" aria-labelledby="workspace-tab-briefing" tabindex="0" lang="en" hidden>
+        <section id="workspace-briefing" class="workspace-panel briefing-workspace" role="tabpanel" aria-labelledby="workspace-tab-briefing" tabindex="0" hidden>
           <!-- WORKSPACE:BRIEF -->
         </section>
         <footer class="site-footer">
           <span
             >FUEL ATLAS <span class="footer-slash">/</span> ENERGY
             PLANNING</span
-          ><span>Research workspace · Victor / Gastón / Sandy</span
+          ><span>Fuel Atlas · Victor / Gastón / Sandy</span
           ><button type="button" data-open-workspace="sources">
             Source transparency
           </button>
@@ -1190,7 +476,7 @@
       </div>
       <h2 id="import-title">Import applicable airport quotations</h2>
       <p>
-        Import fee-inclusive into-plane quotations in USD/t. Files are processed in this browser session only and are not uploaded.
+        Import fee-inclusive into-plane quotations in USD/t. The file stays in this browser session.
       </p>
       <button class="button subtle" id="download-template">
         Download CSV template ↓</button
@@ -1201,7 +487,7 @@
       /></label>
       <div id="import-feedback" role="status"></div>
       <p class="micro">
-        Imported records are labelled user quotations. Verify contract applicability yourself. Missing or expired quotations never fall back to illustrative prices.
+        Quotations are matched to each airport and the planning date. Fill any missing airport prices before calculating.
       </p>
       <div class="dialog-footer">
         <button id="clear-quotes" class="text-button">Clear quotations</button

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-Hans"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><title>燃油图谱使用说明</title><style>
+.project-brief-content { color: #17334f; font-family: Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 15px; line-height: 1.65; max-width: 1320px; margin: 0 auto; }
+.project-brief-content * { box-sizing: border-box; }
+.project-brief-content h1, .project-brief-content h2, .project-brief-content h3, .project-brief-content p { margin: 0; }
+.project-brief-content h1 { font-size: clamp(28px, 3.3vw, 40px); line-height: 1.15; letter-spacing: -1.2px; color: #142b46; font-weight: 600; max-width: 790px; }
+.project-brief-content h2 { font-size: 25px; line-height: 1.25; letter-spacing: -.55px; font-weight: 600; color: #142b46; }
+.project-brief-content h3 { font-size: 18px; line-height: 1.35; font-weight: 600; color: #142b46; margin-bottom: 10px; }
+.project-brief-content p + p { margin-top: 12px; }
+.project-brief-content a { color: #0057b8; text-decoration: underline; text-underline-offset: 3px; }
+.project-brief-content a:hover { color: #003d83; }
+.project-brief-content a:focus-visible { outline: 2px solid #0057b8; outline-offset: 4px; border-radius: 1px; }
+.project-brief-content .brief-heading { display: flex; justify-content: space-between; gap: 40px; padding: 30px 0; border-bottom: 1px solid #d9e2ec; }
+.project-brief-content .brief-eyebrow { margin: 0 0 10px; color: #536b84; text-transform: uppercase; letter-spacing: 1.2px; font-size: 11px; font-weight: 600; }
+.project-brief-content .brief-deck { max-width: 760px; margin-top: 16px; font-size: 18px; color: #536b84; line-height: 1.5; }
+.project-brief-content .brief-status { flex: 0 0 245px; border-left: 3px solid #0057b8; padding: 5px 0 5px 18px; align-self: center; }
+.project-brief-content .brief-status span, .project-brief-content .brief-status strong, .project-brief-content .brief-status small { display: block; }
+.project-brief-content .brief-status span { color: #536b84; font-size: 12px; }
+.project-brief-content .brief-status strong { margin: 3px 0 6px; font-size: 19px; font-weight: 600; }
+.project-brief-content .brief-status small { color: #536b84; line-height: 1.5; font-size: 12px; }
+.project-brief-content .brief-thesis { padding: 30px 0; max-width: 1060px; }
+.project-brief-content .brief-thesis h2 { margin-bottom: 14px; }
+.project-brief-content .brief-callout { padding: 16px 20px; border-left: 3px solid #0057b8; background: #eef5fc; }
+.project-brief-content .brief-section { padding: 30px 0; border-top: 1px solid #d9e2ec; }
+.project-brief-content .brief-section-heading { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; }
+.project-brief-content .brief-section-heading > span { color: #0057b8; font-size: 12px; font-weight: 700; }
+.project-brief-content .brief-table-wrap { overflow-x: auto; border: 1px solid #d9e2ec; }
+.project-brief-content table { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.6; text-align: left; }
+.project-brief-content caption { text-align: left; padding: 12px 18px; color: #536b84; background: #fff; font-size: 12px; }
+.project-brief-content th, .project-brief-content td { padding: 14px 18px; border-top: 1px solid #d9e2ec; vertical-align: top; }
+.project-brief-content thead th { background: #f3f6fa; color: #344e69; font-size: 12px; font-weight: 600; }
+.project-brief-content tbody th { width: 28%; font-weight: 600; min-width: 170px; color: #17334f; }
+.project-brief-content .brief-note { font-size: 12px; color: #536b84; margin-top: 12px; }
+.project-brief-content .brief-columns { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 40px; }
+.project-brief-content .brief-columns > div { min-width: 0; }
+.project-brief-content .brief-value { padding: 26px 30px; margin: 2px 0 30px; background: #eef5fc; border: 1px solid #cbddec; }
+.project-brief-content .brief-value h2 { margin-bottom: 16px; }
+.project-brief-content .brief-equation { font-size: 18px; line-height: 1.55; font-weight: 600; color: #004d9d; max-width: 1060px; }
+.project-brief-content .brief-pilot-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; margin-top: 22px; }
+.project-brief-content .brief-pilot-grid article { padding: 20px; border: 1px solid #d9e2ec; border-top: 3px solid #0057b8; background: #fff; min-width: 0; }
+.project-brief-content .brief-pilot-grid p { font-size: 14px; }
+.project-brief-content .brief-day { font-size: 12px !important; color: #0057b8; font-weight: 600; margin-bottom: 10px; }
+.project-brief-content .brief-next { display: flex; align-items: baseline; gap: 14px; margin-top: 22px; padding: 20px; background: #f3f6fa; }
+.project-brief-content .brief-next strong { white-space: nowrap; color: #0057b8; }
+.project-brief-content .brief-footer { padding: 20px 0 30px; color: #536b84; border-top: 1px solid #d9e2ec; font-size: 12px; }
+.project-brief-content .brief-footer p:last-child { display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; }
+@media (max-width: 900px) {
+  .project-brief-content .brief-heading { flex-direction: column; gap: 22px; }
+  .project-brief-content .brief-status { align-self: stretch; flex-basis: auto; }
+  .project-brief-content .brief-pilot-grid { gap: 14px; }
+  .project-brief-content .brief-pilot-grid article { padding: 15px; }
+}
+@media (max-width: 680px) {
+  .project-brief-content { font-size: 14px; }
+  .project-brief-content h2 { font-size: 22px; }
+  .project-brief-content .brief-heading { padding: 22px 0; }
+  .project-brief-content .brief-columns, .project-brief-content .brief-pilot-grid { grid-template-columns: 1fr; gap: 22px; }
+  .project-brief-content .brief-section { padding: 25px 0; }
+  .project-brief-content .brief-value { padding: 20px; }
+  .project-brief-content .brief-equation { font-size: 16px; }
+  .project-brief-content .brief-next { flex-direction: column; gap: 6px; }
+  .project-brief-content th, .project-brief-content td { padding: 12px; }
+}
+@media print {
+  .project-brief-content { max-width: none; font-size: 10pt; color: #142b46; }
+  .project-brief-content h1 { font-size: 24pt; }
+  .project-brief-content h2 { font-size: 16pt; }
+  .project-brief-content h3 { font-size: 12pt; }
+  .project-brief-content .brief-heading { padding-top: 0; }
+  .project-brief-content .brief-status { flex-basis: 190px; }
+  .project-brief-content .brief-section { padding: 18px 0; }
+  .project-brief-content .brief-section-heading { break-after: avoid; }
+  .project-brief-content .brief-pilot-grid { grid-template-columns: 1fr; gap: 10px; }
+  .project-brief-content .brief-pilot-grid article, .project-brief-content .brief-value, .project-brief-content tr { break-inside: avoid; }
+  .project-brief-content .brief-footer p:last-child { display: none; }
+}
+
+.project-brief-content .brief-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 18px 0 0; }
+.project-brief-content .brief-actions a { display: inline-flex; align-items: center; gap: 16px; min-height: 38px; padding: 7px 12px; border: 1px solid #c4d3e3; font-size: 12px; font-weight: 600; line-height: 1.4; text-decoration: none; border-radius: 2px; }
+.project-brief-content .brief-actions a:first-child { background: #0057b8; border-color: #0057b8; color: white; }
+.project-brief-content .brief-actions a:hover { background: #eef5fc; }
+.project-brief-content .brief-actions a:first-child:hover { background: #003d83; }
+.project-brief-content .brief-actions a span { font-size: 11px; font-weight: 400; }
+@media print { .project-brief-content .brief-actions { display: none; } }
+.project-brief-content .guide-scenario { background: #eef5fc; padding: 20px 24px; margin: 24px 0; border-left: 3px solid #0057b8; max-width: none; }
+.project-brief-content .guide-scenario h2 { font-size: 18px; margin-bottom: 8px; }
+.project-brief-content .guide-steps { margin: 0 0 26px; padding: 0; list-style: none; }
+.project-brief-content .guide-steps > li { display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 18px; padding: 22px 0; border-top: 1px solid #d9e2ec; }
+.project-brief-content .guide-steps h2 { font-size: 22px; margin-bottom: 10px; }
+.project-brief-content .guide-step-number { display: flex; justify-content: center; align-items: center; height: 30px; width: 30px; border-radius: 50%; background: #eef5fc; color: #0057b8; font-size: 14px; font-weight: 600; }
+.project-brief-content .brief-section > h2 { margin-bottom: 16px; }
+.project-brief-content .model-guide-content table { font-size: 14px; }
+@media print { .project-brief-content .guide-steps > li { break-inside: avoid; padding: 14px 0; } .project-brief-content .guide-steps h2 { font-size: 13pt; } .project-brief-content .guide-scenario { padding: 12px 16px; margin: 16px 0; } }
+
+@page { size: A4; margin: 15mm 16mm 16mm; }
+body { margin: 0; background: white; color: #142b46; font-family: Arial,"Noto Sans CJK SC",sans-serif; }
+.print-page { max-width: 1120px; padding: 28px; margin: 0 auto; }
+.print-language { max-width: 1120px; margin: 20px auto 0; padding: 0 28px; font: 14px/1.5 Arial,sans-serif; }
+.print-language a { color: #0057b8; margin-right: 20px; }
+@media print {
+  .print-language { display: none; }
+  .print-page { max-width: none; padding: 0; }
+  .project-brief-content { font-size: 9.5pt; line-height: 1.5; }
+  .project-brief-content h1 { font-size: 23pt; letter-spacing: -.5px; }
+  .project-brief-content h2 { font-size: 14pt; }
+  .project-brief-content .brief-heading { display: block; padding: 0 0 14px; }
+  .project-brief-content .brief-deck { font-size: 11pt; margin-top: 10px; }
+  .project-brief-content .brief-eyebrow { font-size: 8pt; }
+  .project-brief-content .guide-scenario { padding: 11px 15px; margin: 16px 0; break-inside: avoid; }
+  .project-brief-content .guide-scenario h2 { font-size: 11pt; }
+  .project-brief-content .guide-steps { margin-bottom: 16px; }
+  .project-brief-content .guide-steps > li { padding: 12px 0; grid-template-columns: 25px minmax(0,1fr); gap: 12px; break-inside: avoid; }
+  .project-brief-content .guide-steps h2 { font-size: 12pt; margin-bottom: 7px; }
+  .project-brief-content .guide-step-number { width: 23px; height: 23px; font-size: 10pt; }
+  .project-brief-content .brief-value { padding: 12px 16px; margin: 0 0 16px; break-inside: avoid; }
+  .project-brief-content .brief-value h2 { margin-bottom: 8px; }
+  .project-brief-content .brief-section { padding: 16px 0; }
+  .project-brief-content section[aria-labelledby="guide-data-title"] { break-before: page; }
+  .project-brief-content .brief-section > h2 { margin-bottom: 12px; break-after: avoid; }
+  .project-brief-content table { font-size: 8.5pt; line-height: 1.45; }
+  .project-brief-content caption, .project-brief-content thead th { font-size: 8pt; }
+  .project-brief-content th, .project-brief-content td { padding: 8px 10px; }
+  .project-brief-content tbody th { width: 23%; min-width: 100px; }
+  .project-brief-content caption { padding: 7px 10px; }
+  .project-brief-content tr { break-inside: avoid; }
+  .project-brief-content .brief-footer { padding: 12px 0 0; font-size: 8pt; }
+}
+
+</style></head><body><nav class="print-language" aria-label="Language"><a href="./print.html" lang="en">English</a><a href="./print-zh.html" lang="zh-Hans">中文</a></nav><main class="print-page"><div class="project-brief-content model-guide-content">
+<header class="brief-heading"><div><p data-i18n="guide.eyebrow" class="brief-eyebrow">使用说明</p><h1 data-i18n="guide.title">这个模型怎么用</h1><p data-i18n="guide.deck" class="brief-deck">选好航线，生成一组数据，看看每一站怎么加油。</p></div></header>
+<nav class="brief-actions" aria-label="使用说明下载"><a href="./downloads/Fuel_Atlas_Model_Guide_EN.pdf" download><span data-i18n="guide.pdf.en">英文 PDF</span></a><a href="./downloads/Fuel_Atlas_Model_Guide_ZH.pdf" download><span data-i18n="guide.pdf.zh">中文 PDF</span></a><a href="./downloads/Fuel_Atlas_Model_Guide.md" download><span data-i18n="guide.notes">说明与数据接入计划</span></a><a href="./print-zh.html" data-i18n-href="guide.print.href"><span data-i18n="guide.print">打印版</span></a></nav>
+<section class="brief-thesis guide-scenario" aria-labelledby="guide-scenario-title"><h2 data-i18n="guide.scenario.title" id="guide-scenario-title">情景数据</h2><p data-i18n="guide.scenario.text">机场坐标来自公开地理数据。价格、供油上限和飞机参数是用于推演的生成数据，相同设置会得到相同结果。有自己的数据后，可以逐项替换。</p></section>
+<ol class="guide-steps">
+<li><div class="guide-step-number" aria-hidden="true">1</div><div><h2 data-i18n="guide.step1.title">选择航线</h2><p data-i18n="guide.step1.text">先选择出发地和目的地，再按需要添加经停，组成 1–5 段连续航线。地图会随选择变化。模型沿这条航线计算各站加油量。也可以单独打开示例航线。</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">2</div><div><h2 data-i18n="guide.step2.title">生成数据</h2><p data-i18n="guide.step2.text">为航线生成一组完整数据。机场油价和供油上限按情景规则设定，飞行时间、耗油和备份油根据距离及所选飞机参数计算。生成后可以继续修改。</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">3</div><div><h2 data-i18n="guide.step3.title">计算方案</h2><p data-i18n="guide.step3.text">修改后运行计算。模型会检查油量平衡、油箱容量、起降重量、备份油和各机场的供油上限。当前设置无法完成航线时，结果会指出需要调整的限制。</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">4</div><div><h2 data-i18n="guide.step4.title">比较两种方案</h2><p data-i18n="guide.step4.text">比较每站按需加油和提前多买燃油两种方案。两者采用相同的初始油量和终点油量。除了采购成本，也要看额外耗油、各站加油量与剩余燃油。播放航线可以查看这些数值沿途如何变化。</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">5</div><div><h2 data-i18n="guide.step5.title">换入自己的数据</h2><p data-i18n="guide.step5.text">导入带有效期的机场报价，选好飞行日期，再更新飞机和供油参数。报价统一为包含到机费用的美元/公吨。缺失或有效期重叠的报价会提示修正。最后可以导出输入和结果，保存本次比较。</p></div></li>
+</ol>
+<section class="brief-value" aria-labelledby="guide-read-title"><h2 data-i18n="guide.read.title" id="guide-read-title">成本降低意味着什么</h2><p data-i18n="guide.read.text">采购成本降低，可能同时伴随更多飞行耗油。用于携油的额外燃油已经计入采购成本。评估最终收益时，再补充单独的碳费用、操作费用和载荷影响。</p></section>
+<section class="brief-section" aria-labelledby="guide-data-title"><h2 data-i18n="guide.data.title" id="guide-data-title">接下来接哪些数据</h2><div class="brief-table-wrap"><table><caption data-i18n="guide.data.caption">每类数据从哪里来，用在什么地方</caption><thead><tr><th data-i18n="guide.data.input" scope="col">数据</th><th data-i18n="guide.data.source" scope="col">来源</th><th data-i18n="guide.data.use" scope="col">在模型中的用途</th></tr></thead><tbody>
+<tr><th data-i18n="guide.data.quote" scope="row">机场航油价格</th><td data-i18n="guide.data.quote.source">供应商报价、航司合同与发票</td><td data-i18n="guide.data.quote.use">替换生成价格，同时保留有效期、币种、单位、费用与采购条件。</td></tr>
+<tr><th data-i18n="guide.data.performance" scope="row">飞机性能</th><td data-i18n="guide.data.performance.source">航司认可的性能与飞行计划数据</td><td data-i18n="guide.data.performance.use">替换耗油率、重量限制、备份油和额外重量耗油参数。</td></tr>
+<tr><th data-i18n="guide.data.supply" scope="row">实际供油能力</th><td data-i18n="guide.data.supply.source">供应商、机场燃油运营商及合同供油权利</td><td data-i18n="guide.data.supply.use">设置每次停靠可获得的加油量，并测试供油中断。</td></tr>
+<tr><th data-i18n="guide.data.benchmark" scope="row">市场基准</th><td data-i18n="guide.data.benchmark.source">公开能源价格、汇率与国家燃油平衡数据</td><td data-i18n="guide.data.benchmark.use">观察市场背景并设置情景，机场合同价单独接入。</td></tr>
+</tbody></table></div></section>
+<section class="brief-section" aria-labelledby="guide-next-title"><h2 data-i18n="guide.next.title" id="guide-next-title">先从一个变化开始</h2><p data-i18n="guide.next.text">先改一个机场的价格或供油上限，重新计算并比较。再试不同的飞机参数或航线，更容易看清结果由什么驱动。研究报告里有更详细的携油成本分析。</p></section>
+<footer class="brief-footer"><p data-i18n="guide.updated">更新于 2026 年 11 月 13 日</p><p><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#calculations"><span data-i18n="guide.model">打开模型</span></a><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#research"><span data-i18n="guide.research">阅读研究报告</span></a><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#sources"><span data-i18n="guide.sources">查看数据来源</span></a></p></footer>
+</div>
+</main></body></html>
