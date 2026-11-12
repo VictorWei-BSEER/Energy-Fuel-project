@@ -8,33 +8,9 @@
     "region": "Europe / North Sea",
     "url": "https://www.eia.gov/dnav/pet/hist/RBRTED.htm"
   },
-  "fetchedAt": "2026-11-12T15:39:16.281961Z",
-  "observedAt": "2026-11-03",
+  "fetchedAt": "2026-11-12T20:51:59.156806Z",
+  "observedAt": "2026-11-11",
   "observations": [
-    {
-      "date": "2026-06-30",
-      "value": 70.46
-    },
-    {
-      "date": "2026-07-01",
-      "value": 69.24
-    },
-    {
-      "date": "2026-07-02",
-      "value": 68.53
-    },
-    {
-      "date": "2026-07-03",
-      "value": 68.68
-    },
-    {
-      "date": "2026-07-06",
-      "value": 69.56
-    },
-    {
-      "date": "2026-07-07",
-      "value": 71.78
-    },
     {
       "date": "2026-07-08",
       "value": 76.5
@@ -370,11 +346,35 @@
     {
       "date": "2026-11-03",
       "value": 107.03
+    },
+    {
+      "date": "2026-11-04",
+      "value": 91.84
+    },
+    {
+      "date": "2026-11-05",
+      "value": 97.96
+    },
+    {
+      "date": "2026-11-06",
+      "value": 97.83
+    },
+    {
+      "date": "2026-11-09",
+      "value": 91.03
+    },
+    {
+      "date": "2026-11-10",
+      "value": 90.16
+    },
+    {
+      "date": "2026-11-11",
+      "value": 92.14
     }
   ],
   "latest": {
-    "date": "2026-11-03",
-    "value": 107.03
+    "date": "2026-11-11",
+    "value": 92.14
   },
   "collection": {
     "method": "https",
@@ -382,8 +382,8 @@
     "detail": "Public reference observation; not an executable quote.",
     "limitations": "Different commodity and geography from USGC jet. Any jet-minus-Brent comparison is a cross-market indicative spread, not a refinery margin or executable arbitrage.",
     "transport": {
-      "sha256": "5b4723ec569d9c24c0b049abaf162b0883b9425fec0621bd88f75849c9f75e31",
-      "httpLastModified": "Wed, 04 Nov 2026 14:50:12 GMT"
+      "sha256": "a3e6f2995023ec38c1cb974351f8dc6db3e97db686568260964e09b6aad97cd1",
+      "httpLastModified": "Thu, 12 Nov 2026 14:48:06 GMT"
     }
   },
   "staleAfterDays": 7
