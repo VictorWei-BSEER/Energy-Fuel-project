@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "researchDate": "2026-11-12",
+  "question": "Under stated marginal-burn assumptions, what destination price premium offsets tankering costs, and how much destination uplift can be displaced during a local supply interruption?",
+  "counterfactual": {
+    "comparison": "Buy q at destination versus carry enough extra origin fuel to deliver the same q at destination.",
+    "heldConstant": [
+      "mission and route",
+      "payload",
+      "operational reserves",
+      "fuel required after destination refuelling",
+      "terminal fuel state"
+    ],
+    "notEstablished": [
+      "aircraft-specific performance",
+      "tank headroom",
+      "takeoff or landing weight feasibility",
+      "actual airport prices or available stocks",
+      "flight continuation or cancellations avoided"
+    ],
+    "quantityBasis": "One tonne useful fuel delivered at destination; local-interruption headroom is separately one tonne loaded at origin."
+  },
+  "airportSnapshot": {
+    "classification": "observed",
+    "sourceName": "OurAirports",
+    "sourceUrl": "https://raw.githubusercontent.com/davidmegginson/ourairports-data/main/airports.csv",
+    "referenceUrl": "https://ourairports.com/data/",
+    "license": "Public Domain",
+    "originalFetchedAt": "2026-11-12T03:25:48.696882Z",
+    "recordObservationTime": null,
+    "originalRepositoryPath": "dist/data/airports.json",
+    "snapshotSha256": "27cac6c8ac5c0fdd658c5eac47800805a01f87711cef170ad0ebffc167a7c7e9",
+    "upstreamCsvSha256": "11e7a1edf9e5bef91aa4492e3ab42bb5b38b5f2df81358a235ed5a393a571e54",
+    "scope": "Coordinates only; no airport fuel prices, fuel capacity, stock or flight schedules."
+  },
+  "airports": [
+    {
+      "iata": "SIN",
+      "icao": "WSSS",
+      "name": "Singapore Changi Airport",
+      "country": "SG",
+      "lat": 1.35019,
+      "lon": 103.994003
+    },
+    {
+      "iata": "HKG",
+      "icao": "VHHH",
+      "name": "Hong Kong International Airport",
+      "country": "HK",
+      "lat": 22.31184,
+      "lon": 113.914862
+    },
+    {
+      "iata": "NRT",
+      "icao": "RJAA",
+      "name": "Narita International Airport",
+      "country": "JP",
+      "lat": 35.76858,
+      "lon": 140.388714
+    }
+  ],
+  "routes": [
+    {
+      "id": "SIN-HKG",
+      "origin": "SIN",
+      "destination": "HKG"
+    },
+    {
+      "id": "HKG-NRT",
+      "origin": "HKG",
+      "destination": "NRT"
+    },
+    {
+      "id": "SIN-NRT",
+      "origin": "SIN",
+      "destination": "NRT"
+    }
+  ],
+  "parameters": {
+    "earthRadiusKm": {
+      "value": 6371.0088,
+      "classification": "scenario",
+      "note": "Fixed spherical mean-Earth radius used for reproducible great-circle geometry; not an aircraft flight path."
+    },
+    "burnCoefficientPerHour": {
+      "values": [
+        0.025,
+        0.035,
+        0.045
+      ],
+      "central": 0.035,
+      "rangeClassification": "literature",
+      "centralClassification": "scenario",
+      "source": "ICAO Environmental Report 2022, Economic Fuel Tankering: A Threat to Aviation Decarbonisation, p.150, quoting ICAO Doc 10013 section 4.1.2.",
+      "sourceUrl": "https://www.icao.int/sites/default/files/environmental-protection/Documents/EnvironmentalReports/2022/ENVReport2022_Art38.pdf",
+      "limitation": "Aircraft-dependent range of extra burn per additional weight per flight-hour, used as sensitivity bounds; no route or aircraft calibration."
+    },
+    "co2TonnesPerTonneFuel": {
+      "value": 3.16,
+      "classification": "literature",
+      "source": "ICAO CORSIA FAQ section 3.59, Jet-A and Jet-A1 conversion factor.",
+      "sourceUrl": "https://www.icao.int/sites/default/files/environmental-protection/CORSIA/CORSIA-FAQ.html",
+      "scope": "Direct combustion CO2 only; excludes fuel lifecycle and non-CO2 climate effects."
+    },
+    "speedKph": {
+      "values": [
+        750,
+        800,
+        900
+      ],
+      "central": 800,
+      "classification": "scenario",
+      "note": "Groundspeed proxy, not observed flight performance."
+    },
+    "pathFactor": {
+      "values": [
+        1.0,
+        1.05,
+        1.15
+      ],
+      "central": 1.05,
+      "classification": "scenario",
+      "note": "Ratio of modelled airborne path to great-circle distance; no taxi, winds, climb or actual routing model."
+    },
+    "controlledDurationH": {
+      "values": [
+        2,
+        4,
+        6
+      ],
+      "classification": "scenario",
+      "note": "Controlled time comparisons independent of the route-time proxy."
+    },
+    "originPriceScenarioUsdPerT": {
+      "value": 1000,
+      "classification": "scenario",
+      "note": "Illustrative normalization for carbon-cost sensitivity, not an observed airport price. Zero-carbon, zero-fee ratio results do not depend on this reference level."
+    },
+    "carbonUsdPerTCo2": {
+      "values": [
+        0,
+        100,
+        200
+      ],
+      "classification": "scenario",
+      "note": "Additional carbon charge or shadow value; not an observed carbon market price. Do not double count carbon already included in fuel prices."
+    },
+    "extraCostUsdPerDeliveredT": {
+      "value": 0,
+      "classification": "scenario",
+      "note": "Additional handling/payload opportunity cost per delivered tonne. Zero is a transparent lower-cost case, not evidence such costs vanish."
+    },
+    "requiredDeliveryT": {
+      "value": 1,
+      "classification": "scenario",
+      "note": "Normalization per useful tonne; no observation of an aircraft fuel requirement."
+    },
+    "extraOriginHeadroomT": {
+      "value": 1,
+      "classification": "scenario",
+      "note": "Separate local-interruption normalization; actual aircraft and supplier headroom remains unobserved."
+    },
+    "models": {
+      "values": [
+        "linear",
+        "exponential"
+      ],
+      "primary": "linear",
+      "classification": "scenario",
+      "note": "Linear retention 1-k*t holds the initial marginal uplift weight as a burn reference; exponential retention exp(-k*t) allows marginal mass to decay. Neither is an aircraft-calibrated law. Linear is more fuel-intensive only relative to this exponential comparator."
+    }
+  },
+  "actualAirportPrices": {
+    "status": "unavailable",
+    "values": null
+  },
+  "actualAirportInventories": {
+    "status": "unavailable",
+    "values": null
+  },
+  "outputInterpretation": {
+    "localDisruption": "Destination uplift displaced if origin has the extra supply/headroom. This does not infer flight continuation.",
+    "sharedQuota": "For the same q delivered, tankering consumes q/a rather than q units from a shared regional fuel quota; the difference is burned. This resource identity is not a cancellation model and does not rule out benefits from reallocating scarce fuel geographically.",
+    "uncertainty": "Finite sensitivity envelopes, not probabilistic confidence intervals or forecasts."
+  }
+}

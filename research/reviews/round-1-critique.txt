@@ -1,0 +1,63 @@
+FUEL ATLAS FINAL PROJECT — INDEPENDENT REVIEW, ROUND 1 OF 4
+Reviewer: independent AI analytical reviewer; no affiliation with McKinsey or any other consulting firm.
+Review date: 12 November 2026 (UTC+8).
+Material reviewed: proposed research design communicated by the project lead. No completed empirical results or essay have yet been reviewed.
+
+DECISION: REVISE THE DESIGN BEFORE MAKING SECURITY CLAIMS
+
+The project has a defensible and potentially original core: use a transparent threshold model to identify the airport-price spread required to justify carrying fuel, without pretending that public crude or regional jet benchmarks are airline purchase prices. The present concept nevertheless risks presenting a private operating-cost calculator as an analysis of Asian energy security. A visually polished dashboard will not resolve this identification problem.
+
+PROVISIONAL RUBRIC READINESS (design only; not a prediction of the instructor's grade)
+- Originality/intellectual ambition: 4/5. Linking tankering, disruption preparedness and environmental costs is promising.
+- Research/evidence: 2/5. Airport prices, aircraft-specific performance and local available stocks remain unavailable; contextual datasets cannot fill those gaps.
+- Analytical rigor: 2.5/5. A threshold analysis is feasible, but the conserved fuel quantity, matched counterfactual and security outcome need definition.
+- Asian energy-security relevance: 3/5. The regional route frame is appropriate; the causal connection from fuel logistics to security must become central.
+- Presentation/communication: 3/5. The proposed digital artifact and essay fit an alternative-format submission, but a hierarchy of findings is not yet established.
+
+HARD REVISIONS / ACCEPTANCE CRITERIA
+
+R1-01 [P0] Define one answerable question and one unit of security.
+Recommended question: "Under what price and disruption conditions can tactical fuel tankering support an onward flight through an East Asian airport fuel shortfall, and what limits its value as an energy-security response?"
+Acceptance: distinguish (a) the private cost decision and (b) the physical amount of onward fuel demand protected. Report delivered usable tonnes or a clearly specified share of onward fuel demand. Do not equate lower airline fuel expenditure with national energy security.
+
+R1-02 [P0] Use a matched physical counterfactual.
+Compare the same aircraft mission, payload, safety reserves, onward service and terminal fuel position with versus without extra fuel carried into the affected airport. The price comparison must pay for the extra fuel consumed in carrying the extra fuel. State whether the decision variable is origin uplift or fuel surviving to arrival; never use them interchangeably.
+Acceptance: show a fuel-conservation identity; show zero-extra-carry and zero-carry-penalty limits; prohibit credit for fuel never delivered or onward flights not actually supported. Any two-leg simplification must state the onward leg and explain why additional second-leg effects cancel or are omitted.
+
+R1-03 [P0] Make unobserved airport prices an identification limit, not a synthetic dataset.
+Use price ratios and break-even spreads as thresholds. If converting to dollars for illustration, label the selected base price explicitly as an illustration or sourced regional proxy, not a quote at SIN/HKG/NRT.
+Acceptance: no airport price map, ranking or arbitrage recommendation inferred from EIA/Brent/CFDs. A finding should read "the destination/origin price ratio must exceed X under these conditions", not "airlines should refuel at Singapore".
+
+R1-04 [P0] Separate tactical local shortfalls from common upstream shocks.
+Tankering relocates pre-purchased fuel; it creates no fuel supply. A local airport interruption, a regional refined-product shortage and a shared crude-import/chokepoint disruption are different mechanisms. Gulf import exposure does not establish the probability or quantity of an airport Jet A-1 shortfall.
+Acceptance: include at least a normal-operation baseline, a local downstream shortfall case and a correlated regional shortage case. If no defensible probabilities exist, present conditional scenarios and thresholds, not expected-loss estimates or forecasts.
+
+R1-05 [P1] Calibrate only what the sources support.
+Great-circle distances are observed geometry, not flown distance, flight duration, payload headroom or incremental fuel burn. A generic carrying-penalty range can support sensitivity analysis but does not validate aircraft-specific feasibility.
+Acceptance: every input classified as observed, literature-based, derived or scenario. If an engineering range is selected rather than directly estimated, say so. Do not describe the three routes as actual optimization opportunities unless performance and contract data establish that claim.
+
+R1-06 [P1] Include binding constraints and stop conditions.
+Tank volume, takeoff/landing mass, payload, safety reserves, supplier availability and fuel quality can prevent a financially attractive carry. Terminal or airport stock statistics do not measure fuel available to this operator.
+Acceptance: either implement sourced constraints or explicitly restrict results to per-unit thresholds before aircraft/operator feasibility checks. Carbon costs should be shown separately from financial carrying cost, with a transparent emissions factor and an expressly hypothetical carbon-price sensitivity.
+
+R1-07 [P1] Build an East Asian political-economy argument around the model.
+Explain why a hub's role, refinery/trade position, supply concentration and institutional ability to coordinate access change the relevance of the numerical thresholds. Imports, stocks and energy-security statistics must retain product, geography, time period and reporting limitations. Aviation-specific evidence should lead; general oil security should provide context.
+Acceptance: make at least one analytically meaningful comparison across Singapore, Hong Kong and Japan, supported by primary sources. Compare governance/infrastructure mechanisms rather than assuming all three airports have the same exposure. Gulf material is relevant through Asian supply links, not as an unconnected case study.
+
+R1-08 [P1] Specify the submission and evidence trail now.
+The artifact should produce an inspectable result, not just offer controls. A reader must be able to recover the same headline numbers from the supplied inputs and code.
+Acceptance: one main claim; a fixed baseline/results table; a sensitivity figure; an explicit evidence-versus-scenario legend; an 800–1,000-word explanatory essay with research question, methodology, findings and limitations; a reference list; a technical appendix and reproducible run command. References and appendix should not conceal the absence of analytical depth in the essay.
+
+RECOMMENDED DECISION-ORIENTED OUTPUTS
+1. A threshold curve/table connecting carrying penalty to the required destination/origin fuel-price premium.
+2. A disruption-resilience result in usable fuel carried forward, with an explicit physical cap or per-tonne normalization.
+3. A comparison of tankering with local inventory/contract flexibility/coordinated allocation, with actors, trigger conditions and limits. The comparison can be qualitative where the data do not support a quantitative ranking.
+4. A conclusion that states precisely what the model identifies and what unavailable data prevent it from identifying.
+
+FOUR-ROUND SEQUENCE REQUIRED FOR A GENUINE ITERATION TRAIL
+Round 1: this scope, evidence and identification critique. Lead revises design and logs changes.
+Round 2: review a frozen numerical implementation and its actual results; audit conservation, units, edge cases, sensitivities and reproducibility. Revise before proceeding.
+Round 3: review a revised draft with findings and policy implications; challenge citations, causality, external validity, comparative Asian relevance and feasibility. Revise before proceeding.
+Round 4: review the complete submission package after prior revisions; check executive clarity, rubric coverage, claim consistency, essay word count, references, reproduction and packaging. Record remaining limitations honestly.
+
+These must be four sequential critique-and-revision cycles, not four labels applied to the same unchanged draft. Retain the input version or hash, criticism, resulting change and verification for each round. Do not claim external professional endorsement or instructor approval.

@@ -1,0 +1,9 @@
+ROUND 3 AUTHOR RESPONSE — 12 November 2026
+
+R3-01: Qualified the route ordering to matched k, speed, routing and model form; explicitly reported overlapping envelopes. No numeric outputs changed.
+R3-02: Corrected RAND RR837 title and author list from primary source notes.
+R3-03: Corrected CAAS publication/access dates and relabelled 10 November as website footer metadata, not an article revision, in report and evidence register.
+R3-04: Replaced unsupported exhaustive commercial terms with the source-supported wholesale/negotiated-price distinction and EUROCONTROL citation. Marked quote schema as an author-proposed data-collection design.
+R3-05: Revised reflection to make operational-exception documentation conditional on relevant rules; it creates no new prior dispatch approval and preserves flight safety.
+
+Verification: reflection now 919 words under documented counting convention. Citations map to14references; denominators and522case values unchanged. Original904worddraft is preserved in versions/round-3-draft-report.json with its manifest. The temporary author_research.py draft generator was retired; report.json is now the single publication text source.

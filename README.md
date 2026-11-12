@@ -1,5 +1,7 @@
 # FUEL ATLAS / 东亚能源流向
 
+The **Asian energy security final project** is available at [`dist/research/index.html`](dist/research/index.html), with the [full report](dist/research/downloads/Final_Project.pdf), [919-word reflection](dist/research/downloads/Analytical_Reflection.pdf) and [offline submission package](dist/research/downloads/submission-package.zip). It studies conditional fuel-tankering thresholds and local fuel displacement; the published research is separate from the planning workspace below. Reproduction, evidence classifications and critique records are in [research/README.md](research/README.md).
+
 An energy planning workspace organized into three top tabs: **Oil market live information**, **Predictions & flight calculations**, and **Sources**. Calculations open by default; switching tabs preserves editable inputs and results. Published market observations remain separate from scenario assumptions, and no airport fuel prices, stock or demand are inferred from them. The former `/planner.html` address redirects to the Calculations tab.
 
 The Oil market tab embeds **WTI and Brent crude CFD charts from TradingView / OANDA**, with no API key required. Provider timestamps, delay indicators and market-closed states remain inside the original chart. This is a public market display, not an airport fuel quote or a numerical feed into the optimizer. Sources contains feed health, raw observation exports, the airport reference map and model methodology. See [market access, latency and current limits](docs/live-data.md).

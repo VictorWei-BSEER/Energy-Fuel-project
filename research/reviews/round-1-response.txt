@@ -1,0 +1,15 @@
+ROUND 1 REVISION RESPONSE
+
+Input: versions/design-v0.txt; independent review: round-1-critique.txt.
+Output: revised design in research/README.md and implementation contract supplied to quant_model.
+
+R1-01: Security unit is destination uplift tonnes displaced. Removed unsupported inference of saved flights or national resilience scores.
+R1-02: Fixed mission/payload/reserves and equal onward fuel position; distinguish origin uplift X, en-route marginal burn B, net arrival fuel D with X-B=D.
+R1-03: No airport prices are populated. Main output is a price ratio; currency/carbon values are explicitly hypothetical sensitivity inputs.
+R1-04: Define normal economic, local interruption and shared regional fuel-constraint cases separately. No assumed disruption probabilities or forecast.
+R1-05: Freeze coordinates with provenance; classify each parameter. Distance-to-time conversion remains a scenario. Add structural alternative to the linear retention approximation.
+R1-06: Restrict findings to normalized thresholds before aircraft/operator feasibility. Identify safety reserves, MTOW/MLW, tank volume, payload, next-leg fuel and actual supplier availability as required missing operational inputs.
+R1-07: Compare Singapore procurement governance, Hong Kong delivery infrastructure, and Japan's national reserve mechanism; trace common Gulf exposure without assigning it to airports.
+R1-08: Deliver fixed findings, sensitivity plots, 800–1,000-word reflection, source register, reproducible code and offline exhibit. Freeze numerical artifacts before Round 2.
+
+Verification: research design text explicitly contains the units, counterfactual, assumptions and three distinct disruption mechanisms. Numerical verification is scheduled for Round 2, not claimed at this stage.

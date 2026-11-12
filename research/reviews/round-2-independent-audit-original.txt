@@ -1,0 +1,34 @@
+Independent numerical audit — 12 November 2026
+PASS: no mathematical discrepancy found in the implemented or exported scenario domain.
+
+Model SHA256: af261410c6fa93dbd20b2e29b07f626ffefedf805863dca0963b7848aef2dde9
+Input SHA256: 606e8588488a1423afe63a8c9994a7ccc116e96bde8c735c5d3a1c2174f86e8c
+
+Checks actually executed:
+- provenance_hashes: 2
+- frozen_airport_coordinate_matches: 3
+- json_csv_central_consistency_rows: 36
+- route_distance_and_time_rows: 504
+- independent_route_geometries: 3
+- artifact_cashflow_and_mass_balance_rows: 522
+- monotonic_adjacent_comparisons: 1296
+- linear_exponential_pairs: 243
+- route_model_envelopes: 6
+- boundary_cases: 14
+- cashflow_threshold_sign_cases: 6
+- invalid_domain_rejections: 13
+- geometric_boundary_cases: 2
+
+Independent great-circle distances (spherical law of cosines, radius 6371.0088 km):
+- SIN-HKG: 2565.866589146 km
+- HKG-NRT: 2962.363576651 km
+- SIN-NRT: 5358.048216313 km
+
+Headline: 4 h, k=0.035/hour, 1 t net delivered => 1.162790697674 t extra origin uplift, 0.162790697674 t additional burn, 0.514418604651 t combustion CO2, 16.2790697674% zero-carbon premium. With $100/tCO2 and illustrative $1000/t origin fuel: 21.4232558140%.
+Independent calculation of the distinct 1 t origin-headroom case: 0.86 t delivered, 0.14 t burned, 0.4424 t CO2. Do not mix its denominator with the net-delivered headline.
+
+Source/unit review: ICAO range is 0.025–0.045 per airborne hour of additional onboard weight, not percent of total baseline trip fuel. Both retention laws are explicitly author assumptions; aircraft calibration and operational feasibility are not established. Fuel and CO2 are metric tonnes, prices USD/t fuel, carbon USD/tCO2. Time is derived from assumed speed/path and is not an observed schedule or flight track.
+
+Interpretation: conditional approximations and finite sensitivity envelopes, not live airport prices, probabilistic confidence intervals, dispatch recommendations or observed savings. Proprietary quote feeds are unnecessary for a price-ratio threshold analysis. Actual operator-valid airport prices and aircraft/operations data would be needed for actionable airline purchase/dispatch recommendations.
+
+Audit scope: checked 36 central CSV rows and 486 sensitivity CSV rows, plus consistency of all 36 central JSON rows with CSV; some central scenarios also occur within the sensitivity grid. Numeric tolerance 2e-9 accounts for 12-significant-digit CSV serialization. Independent geometry, financial cash-flow reconstruction, mass conservation, monotonicity and public API boundary cases were used. Production code was not changed.

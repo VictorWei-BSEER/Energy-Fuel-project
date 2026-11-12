@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Round 2 revised numerical artifacts; historical input manifest preserved.",
+  "pathBase": "repository root",
+  "files": {
+    "research/README.md": "7434295142b848b8874cc17d04a804fb69f91eef9ccfedbc3a00e61abbb8fe19",
+    "research/inputs.json": "606e8588488a1423afe63a8c9994a7ccc116e96bde8c735c5d3a1c2174f86e8c",
+    "research/model.py": "709c4e247b1e2167560429c6118d535f7463ad7e11ac25221667874ccae6a785",
+    "research/results.json": "a17d915c295a672a22abf2376a1195d739dc444a97e9279b685c5eb45f518973",
+    "research/results.csv": "cde330d86b9fb72f225b5e552b5290165036be8c1abfaf953a8b1de77ae3591e",
+    "research/sensitivity.csv": "4bec43948523391629557173caf60cec6453af179493930935c857c4f7ed91fd",
+    "tests/test_research_model.py": "4e3bf381d7c46b8bd81f2fb40e2d236f8da19d66f9d975f0f4138b7de8fe88e3",
+    "research/reviews/round-2-response.txt": "fd23511c8b3419dd96309ac5d32e604fe02d62fa9859ab6e34bdef58f61d0349",
+    "research/reviews/round-2-independent-audit-original.txt": "271f3ce89df253f6dc64786f3ccb44470dede205173882769c88f94df8201373",
+    "research/reviews/round-2-independent-audit-revised.txt": "e8da8edadb59d307c3b53adfc32d1d85061ca1bb24c061540869c0373db8b70c",
+    "research/reviews/independent_numerical_check.py": "caa172a7ae484207033d7678c577099522e7564cf5fdee4552673141b97a0114",
+    "research/reviews/airport-source-snapshot.json": "27cac6c8ac5c0fdd658c5eac47800805a01f87711cef170ad0ebffc167a7c7e9",
+    "research/versions/round-2-input-manifest.json": "12cfc2abb8f4dbcc32919675310bb69035f9a75f96ce70f6cb1ad32232279cba"
+  }
+}

@@ -1,0 +1,7 @@
+*.pdf binary
+*.docx binary
+*.png binary
+*.zip binary
+# Matplotlib emits insignificant trailing spaces in SVG path coordinates.
+research/figures/*.svg -whitespace linguist-generated=true
+dist/research/figures/*.svg -whitespace linguist-generated=true

@@ -1,0 +1,27 @@
+{
+  "title": "Fuel tankering and East Asian aviation security",
+  "publicationDate": "2026-11-12",
+  "sourceSha256": "8035da0d81b33ae64695aea535f87a2c5bef22d4e84edc744400f14f1f4d01bb",
+  "reflectionWords": 919,
+  "wordCountConvention": "Citation-only markers excluded; hyphenated compounds one word; en/em dashes separate words; only reflection paragraphs counted.",
+  "draftValidationBypassed": false,
+  "outputs": [
+    {
+      "name": "Final_Project.pdf",
+      "bytes": 321267,
+      "sha256": "2aa943bd8294442a8e4b171bff9112ae4319685dfd28bd0569c69f7e6d34ae9a",
+      "pages": 16
+    },
+    {
+      "name": "Analytical_Reflection.pdf",
+      "bytes": 44595,
+      "sha256": "145dd6cfd98032f8d9b4266cab6993d67561fc94e6f04d79c6919e8d939c2745",
+      "pages": 3
+    },
+    {
+      "name": "Analytical_Reflection.docx",
+      "bytes": 43388,
+      "sha256": "a25dd7e8f391379b9fd4137eb0b6d06a5037f201dbea6e103ff0b26313be1b8a"
+    }
+  ]
+}

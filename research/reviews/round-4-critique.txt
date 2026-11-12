@@ -1,0 +1,72 @@
+ROUND 4 — independent AI final-delivery review
+Date: 12 November 2026 (UTC)
+Reviewer: a separate AI review agent, supported by a separate read-only static-publication audit. This is not consultancy endorsement, instructor approval or a formal accessibility certification.
+
+SEQUENCE AND REVIEW INPUTS
+This is the fourth sequential critique, performed after all five Round 3 responses were implemented. Reviewed the revised 919-word reflection/report, actual generated PDF and DOCX publications, research exhibit HTML/CSS/JavaScript, source classifications, figures and the first sealed offline ZIP. The Round 4 input manifest and draft report preserve this review's starting version.
+
+Initial reviewed report SHA-256:
+bc2533a9c7cdc65ec04c655d5f2ac4c2e5ca39b9dca011ffe4fb88cfe1fa2882
+Initial reviewed ZIP:
+/workspace/artifacts/energy-security-project/submission-package.zip
+1,041,717 bytes
+SHA-256: 35ebde57a187549246542d758a6514432d11ff39204488006635c9d50230d22f
+Initial publication hashes:
+Final_Project.pdf: 2b309f1021d6d937ac48d123d83dfd03927e80f08a3fc6884971825793a48d1b
+Analytical_Reflection.pdf: 145dd6cfd98032f8d9b4266cab6993d67561fc94e6f04d79c6919e8d939c2745
+Analytical_Reflection.docx: a25dd7e8f391379b9fd4137eb0b6d06a5037f201dbea6e103ff0b26313be1b8a
+
+VERDICT
+No unresolved substantive mathematical, evidence-classification or assignment-fit defect was found. The package provides a usable creative-format submission with an analytical reflection within the required word limit, explicit Asian security mechanisms, reproducible scenario findings and traceable limitations. Final corrections are publication/reproducibility improvements, not new empirical research requirements. Actual airport prices and operational data are correctly unknown; this review does not demand that they be fabricated or imply they are now available.
+
+FINAL IMPROVEMENTS TO COMPLETE
+
+R4-01 — Normalise reference punctuation.
+Actual defect: reference 7 renders “article revision..” with a duplicated period in exhibit/index.html (working file dist/research/index.html, line 353 in the reviewed version). The underlying locator already ends in a period and the renderer appends another. Use a consistent rule so the reference ends with one period in HTML, PDF and DOCX. This is minor, but it is a verified editorial defect, not a generic recommendation.
+
+R4-02 — Make the rebuild instructions executable for a recipient.
+The numerical commands already work from the extracted ZIP. The documentation names the figure/document dependencies and requirements file, but it should provide the explicit dependency-install command and distinguish repository paths from extracted-package paths. Suggested sequence: install research/publication-requirements.txt when rebuilding publications; run the model/test/audit commands from the extracted root; copy exhibit/ to dist/research/ before the existing exhibit build if using that source layout. State the archive check command with --package and the actual ZIP path where appropriate. This makes the documented reproducibility workflow easier to follow without implying a failure of the numerical model.
+
+R4-03 — Close the QA record with its actual scope.
+The final review record should report the checks actually completed: static asset/anchor/metadata checks, DOM interaction tests, extracted-package numerical reproduction, PDF text verification and rendered PDF inspection. It must also say that no real-browser visual/interaction run was completed; static markup and DOM tests are not a substitute for that claim. Do not assert comprehensive browser compatibility or WCAG conformance. Add the completed fourth critique and the concrete responses only after implementing them, then regenerate documents and reseal the package so all representations agree. A final revised manifest should preserve the distinction between this reviewed draft ZIP and the final ZIP.
+
+CHECKS ACTUALLY PERFORMED
+
+Written analysis and Round 3 closure
+- The revised report explicitly conditions the route ordering on matched assumptions and acknowledges overlapping envelopes.
+- The RAND title/authors are corrected. CAAS article publication and site-footer date are distinguished. The proposed quote schema is labelled as the project's design, with appropriately narrowed sourced facts.
+- The reflection's regulatory recommendation is conditional on adopting relevant rules; it avoids new prior dispatch approval and protects flight safety.
+- The reflection contains 919 words under the declared convention, and all nine source paragraphs appear exactly in the DOCX.
+- Numeric headline, route thresholds, carbon illustrations and the two mass-balance denominators remain consistent across report, reflection and exhibit.
+- No live airport quote, actual stock position, current airline profit, outage probability or aircraft dispatch clearance is inferred from public wholesale context or scenario assumptions.
+
+Publication and figures
+- The reviewed full report has 15 PDF pages; the reflection PDF has three pages including references. PDF metadata identifies the title, authors and source date. No replacement glyphs were found in extracted PDF text.
+- Directly inspected rasterised cover, chart page and review page. Text and plotted labels were legible with no visible clipping in those inspected pages. The publication agent separately reports inspecting all 15 report page rasters and all nine reflection paragraphs; that broader inspection is attributed to that agent rather than claimed as this reviewer's own.
+- Figures identify analyst calculations and scenario inputs, retain direct-combustion CO2 units, distinguish delivered and gross-uplift bases, and label sensitivity bars as designed envelopes rather than confidence intervals.
+- The fixed four-hour hero result is explicitly a controlled case. Changing interactive results and the local-displacement number use the selected inputs; route results retain their own separately disclosed frozen timing assumptions.
+
+Static exhibit and accessibility structure
+- Separate read-only audit found no duplicate IDs, unmatched tags, unresolved in-page anchors or unresolved ARIA references. Inputs have explicit or wrapping labels; visible focus and reduced-motion rules are declared; responsive breakpoints are present.
+- The chart/table presentation gives quantities and units outside visual colour alone. Map connections are labelled schematic rather than observed tracks.
+- JavaScript syntax and local asset references pass. Packaged navigation correctly replaces links to the absent planning workspace and to the ZIP itself with START-HERE.txt.
+- These are structural/static findings. No browser rendering or assistive-technology session was performed.
+
+Sealed-package and source consistency
+- Independently ran scripts/check_research_package.py --package against the reviewed ZIP: PASS.
+- Checker reported 55 verified SHA-256 entries, 36 local references, 25 fragments, seven frozen files, three publication documents, 919-word HTML/DOCX reflection consistency, 36 central CSV cases and 486 sensitivity CSV cases.
+- Independent static audit also checked ZIP CRC and packaged local href/src targets. Embedded input/results data and downloadable files match.
+- Parent's numerical agent separately reports five altered-copy negative controls rejected by the checker; this review did not independently repeat those altered-copy experiments.
+
+Actual extracted-ZIP reproduction
+Extracted the reviewed ZIP into a new temporary directory and executed its delivered files, without relying on the repository's market-data files:
+1. python3 research/model.py --check — PASS; deterministic results.json, results.csv and sensitivity.csv verified.
+2. python3 -m unittest discover -s tests -p test_research_model.py — PASS, 21 tests. The console line about an intentionally altered results.csv is an expected negative-control test; the suite exits zero with OK.
+3. python3 research/reviews/independent_numerical_check.py — PASS. Checks include all 522 exported case rows, 36 JSON/CSV matches, independently computed route geometry, 1,296 monotonic comparisons, 243 model-form comparisons, six envelopes, provenance, domain boundaries and threshold cash-flow signs.
+The delivered model hash remains 709c4e247b1e2167560429c6118d535f7463ad7e11ac25221667874ccae6a785 and input hash remains 606e8588488a1423afe63a8c9994a7ccc116e96bde8c735c5d3a1c2174f86e8c. The audit is an independent numerical reconstruction, not aircraft-performance validation.
+
+ASSIGNMENT FIT AND DELIVERY BOUNDARY
+The interactive exhibit is the chosen creative/digital project; the 919-word analytical reflection is the required explanatory essay. The full report, technical evidence and reproducibility files are supporting material. The project engages political/institutional allocation, economic incentives and technological/physical delivery constraints with explicit relevance to East and Southeast Asian aviation. It identifies conditional thresholds and substitution quantities rather than claiming national-security welfare estimates. The hosted site may require existing access; the self-contained ZIP supplies a reviewable alternative.
+
+FINAL ACCEPTANCE
+Complete R4-01 through R4-03, regenerate the three publications, rerun the package checker, preserve the initial manifest and record the final hashes. The final response should distinguish the completed academic research package from a live airport-pricing or dispatch system. No further model retuning or broad additional testing is indicated unless the final edits change model behaviour or reveal a new failure.

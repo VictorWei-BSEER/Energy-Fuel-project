@@ -1,0 +1,66 @@
+FUEL ATLAS FINAL PROJECT — INDEPENDENT REVIEW, ROUND 2 OF 4
+Reviewer: independent AI analytical reviewer; no consulting-firm affiliation.
+Review date: 12 November 2026 (UTC+8).
+Material reviewed: research/README.md, inputs.json, model.py, results.json, results.csv, sensitivity.csv, and versions/round-2-input-manifest.json.
+
+DECISION: NUMERICAL CORE PASSES; MAKE THREE TARGETED REVISIONS BEFORE ROUND 3
+
+The revised design addresses Round 1's main identification weaknesses. It measures destination uplift displaced rather than flights saved, separates a local interruption from a shared regional fuel constraint, and keeps absent airport prices absent. The quantitative output is a conditional threshold study, not an estimate of actual tankering opportunities. No calculation error was found in the supplied results.
+
+VERSION / HASH AUDIT
+The following SHA-256 values were checked against actual file bytes:
+- README.md: 62ed6afc92dea369e13dce86b8ecc64bbb54da7de07d5a5e0f2428def39a1a8a — matches original Round 2 manifest.
+- inputs.json: 606e8588488a1423afe63a8c9994a7ccc116e96bde8c735c5d3a1c2174f86e8c — matches.
+- results.json: a17d915c295a672a22abf2376a1195d739dc444a97e9279b685c5eb45f518973 — matches.
+- results.csv: 17dd478170299434e4386b290785a88e193f49a4bee6d9adacdffae5fddcd0e7 — matches.
+- sensitivity.csv: a592b01c1c8444faa016babd64295c0e67d8e517aabe2a9c692ba46fbd74af3f — matches.
+- model.py actually reviewed: af261410c6fa93dbd20b2e29b07f626ffefedf805863dca0963b7848aef2dde9.
+The original manifest records model.py as ae74979c86be7394949f5023dfbe0da3d4320fd1ccefe5eee71b7b946cb3f870. The quantitative implementer confirmed a concurrent three-line finite-output validation guard in local_interruption; inputs and numerical outputs were unchanged. The current model reproduces all three outputs byte-for-byte. Preserve this revision history rather than silently claiming the initial manifest covered the current code.
+
+INDEPENDENT VERIFICATION PERFORMED
+1. Ran `python3 research/model.py --check`: all three checked-in numerical outputs reproduce deterministically.
+2. Recomputed the four-hour result with 50-digit Decimal arithmetic independently of the model's float implementation.
+3. Audited all 486 sensitivity rows and 36 central rows from CSV for mass conservation, additional direct-combustion CO2, break-even cost equality, headroom bounds and gap conservation. There are 486 unique sensitivity IDs.
+4. Independently exercised 160 delivery settings, 640 shortfall/headroom settings and 1,080 break-even settings across both retention models, five durations including zero, four coefficients including zero, four quantities/headrooms, and three origin prices/carbon prices/fees.
+5. Confirmed zero-carbon/zero-fee thresholds equal 1/a independently of origin-price normalization. At the calculated threshold, incremental benefit is zero to floating-point tolerance. Zero carrying coefficient/time removes the carrying premium. Extra fees and carbon charge enter with consistent units.
+
+All independent checks passed. The maximum CSV fuel-conservation residual was approximately 5.0e-12 tonnes; the maximum CO2 residual was 6.1e-12 tonnes; the maximum break-even money residual was 9.6e-9 USD. These are consistent with 12-significant-digit CSV serialization, not model errors.
+
+VERIFIED NUMERICAL FINDINGS
+For a controlled four-hour scenario with k=0.035/hour and linear retention:
+- Retention a = 0.86.
+- Delivering 1.000000 tonne requires 1.1627906977 tonnes of additional origin uplift.
+- Extra burn = 0.1627906977 tonnes; direct-combustion CO2 = 0.5144186047 tonnes.
+- With zero additional fee/carbon charge, destination/origin price must exceed 1.1627906977, a 16.2790698% premium.
+- At the expressly illustrative origin price USD1,000/t and carbon value USD100/tCO2, the premium becomes 21.4232558%. This is not an airport quote or current regulatory charge.
+- Separately, 1.000000 tonne of extra origin headroom delivers 0.860000 tonne, burns 0.140000 tonne and emits 0.442400 tonne CO2. The remaining gap against a one-tonne need is 0.140000 tonne.
+
+Central geography-derived examples (linear k=0.035/hour, speed800km/h, path factor1.05, zero carbon/fee):
+- SIN-HKG: 2,565.87km great-circle distance; 3.36770h proxy; 13.36191% threshold premium.
+- HKG-NRT: 2,962.36km; 3.88810h proxy; 15.75194% threshold premium.
+- SIN-NRT: 5,358.05km; 7.03244h proxy; 32.64980% threshold premium.
+These durations are scenario-derived proxies. The distances neither validate performance nor establish aircraft availability, routes flown or feasible tankering volumes.
+
+TARGETED REVISIONS
+
+R2-01 [P1] Explicitly separate the feasible price-comparison world from the shortage world.
+The matched accounting counterfactual is correct when both purchase locations can supply the same useful fuel. During an actual destination interruption, buying the comparison tonne there may be impossible. The normal-operation break-even price is therefore not a dispatch decision rule or a valuation of avoiding cancellation during a shortage.
+Acceptance: add this distinction to the methods/report and near any UI displaying threshold and shortfall figures together. Define the shortage output as conditional fuel displacement given origin availability/headroom. Do not imply that the model monetizes the value of keeping a flight operating.
+
+R2-02 [P1] Make the gross-origin versus net-destination denominator impossible to miss.
+The code correctly separates these bases, but one headline is 0.5144tCO2 per net tonne delivered while the local-interruption case is 0.4424tCO2 per gross tonne loaded. A presentation could accidentally combine them.
+Acceptance: provide a compact paired example or explicitly labelled figure showing both bases. Add localAdditionalBurnT and localAdditionalCo2T to the machine-readable CSV so the shortfall case can be audited without reconstructing omitted quantities. Rebuild results after this schema addition; these changes should not alter existing numerical values.
+
+R2-03 [P1] Close the frozen-version provenance gap.
+The code changed between the initial hash manifest and review. The change is benign and documented above, but a professional reproducibility claim requires a matching final code/input/output set.
+Acceptance: retain the original manifest as the submitted Round 2 snapshot, record the finite-output-guard change, and create a reviewed/revised manifest covering the actual code, outputs and tests used for the next round. Do not overwrite the historical evidence of the sequence.
+
+REPORTING ADVICE FOR ROUND 3 (not new numerical defects)
+- Make the controlled-duration example the main identified finding. Route examples should be clearly secondary geographic illustrations rather than airport recommendations.
+- The carbon illustration depends on c/pA; the zero-carbon/zero-fee ratio does not depend on the arbitrary USD1,000/t normalization. Keep this distinction next to monetary illustrations.
+- Zero additional handling/payload opportunity cost is a lower-cost scenario, not an empirical estimate. The formula shows that each additional f/pA shifts the required ratio upward.
+- The 486-case envelope is a finite sensitivity grid, not a confidence interval or probability distribution. The linear model is more fuel-intensive only relative to the specified exponential comparator; this is not proof that it bounds real aircraft performance.
+- A shared fuel quota accounting identity establishes additional fuel consumption, not a universally negative security outcome: scarce fuel may still be more useful in one place than another. Qualify any regional policy claim accordingly.
+
+REMAINING LIMITS
+No actual airport-price spreads, operator inventory entitlements, aircraft mass/tank margins, disruption probabilities, cancellations prevented, or quantified welfare benefits have been estimated. Primary-source interpretation and comparative Asian policy claims should be checked in Round 3 when the revised analytical text exists.

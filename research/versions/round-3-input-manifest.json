@@ -1,0 +1,11 @@
+{
+  "research/report.json": "d895a812d9805d96309412bd11c7c3f2c26c648d45b8ff85f603cfd3732a72f1",
+  "research/inputs.json": "606e8588488a1423afe63a8c9994a7ccc116e96bde8c735c5d3a1c2174f86e8c",
+  "research/model.py": "709c4e247b1e2167560429c6118d535f7463ad7e11ac25221667874ccae6a785",
+  "research/results.json": "a17d915c295a672a22abf2376a1195d739dc444a97e9279b685c5eb45f518973",
+  "research/results.csv": "cde330d86b9fb72f225b5e552b5290165036be8c1abfaf953a8b1de77ae3591e",
+  "research/sensitivity.csv": "4bec43948523391629557173caf60cec6453af179493930935c857c4f7ed91fd",
+  "dist/research/index.html": "4b818be4601aeb4f5eafa7bfab76636afd5e470f1ce09457da9d9b210395668a",
+  "dist/research/research.js": "669c499f2da0d452de84da27c71d1b1473201a46de2a77155d871a1408df2888",
+  "dist/research/research.css": "18ff9d917cb9392292c49357581128ee76951ef111b2d43ff31d22492838d4ac"
+}

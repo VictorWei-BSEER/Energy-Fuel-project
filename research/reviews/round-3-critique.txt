@@ -1,0 +1,75 @@
+ROUND 3 — independent AI review of the written analysis, reflection and references
+Date: 12 November 2026 (UTC)
+Reviewer: a separate AI review agent. This is not a review by, or endorsement from, a consulting firm, university examiner or external expert.
+
+REVIEW INPUTS AND VERSION BOUNDARY
+Reviewed the actual research/report.json, its 904-word reflection, all seven analytical sections, recommendations, technical appendix and 14 references; cross-checked research/energy-security-evidence.json, research/technical-evidence.json and the frozen Round 2 numerical results. Parent is preparing visual/publication artifacts separately. Those artifacts and rendered accessibility are not covered by this round.
+
+SHA-256 hashes checked during this review:
+research/report.json: d895a812d9805d96309412bd11c7c3f2c26c648d45b8ff85f603cfd3732a72f1
+scripts/author_research.py: 23350222d8c70f5df84cdd6795a91f3c435686d674a8512d890b7f5637505872
+research/energy-security-evidence.json: 46ced59bb14f21ed3dc2cf24dc2163468113f10c7fd6ecef0e1507d6a8ee8f63
+research/technical-evidence.json: 5b1a9761883e599d7722661641292275bff751a333da7c278aeba4434dff12bb
+research/versions/round-2-revised-manifest.json: 068d373e256e830615f7066831d8729abf47a43ea13b7edc1887e13c9e2f3c29
+
+VERDICT
+The report now presents a defensible conditional analysis, with substantive Asian institutional context and a reflection within the specified 800–1,000-word limit. No new arithmetic or mass-balance error was found in the reported headline results. It is not yet ready to freeze for submission: four concrete claim/citation corrections below are necessary, followed by the planned fourth review of the revised and rendered package. The missing airport transaction and operating data remain a limitation on empirical conclusions, not a reason to invent inputs.
+
+REQUIRED REVISIONS
+
+R3-01 — Bound the route-ranking claim to matched assumptions.
+Location: section 4, final paragraph, beginning “The longest link has the highest threshold throughout the stated no-carbon envelope comparisons”.
+Problem: the wording can be read as a ranking robust to the full uncertainty envelopes. The envelopes overlap. SIN–NRT's linear lower bound (17.49%) is below HKG–NRT's upper bound (25.69%) and SIN–HKG's upper bound (21.51%). Longer distance has the higher threshold when the other assumptions are matched; it need not do so when aircraft/performance and timing assumptions differ across routes.
+Required change: state explicitly that the ranking holds for matched k, speed, routing factor and model form; disclose that overlapping envelopes do not support an unconditional cross-route ranking. Keep the actual result values unchanged. Ensure any figure caption and executive takeaway use the same condition. The reflection already says “under these assumptions”; it does not require a new numerical claim.
+Verification: inspect revised section 4 and figure captions. A reader must be able to distinguish a controlled model comparison from a real route-performance ranking.
+
+R3-02 — Correct the RAND bibliographic record.
+Location: reference 14.
+Problem: the URL points to RAND RR-837, whose primary PDF title is “Tankering Fuel on U.S. Air Force Transport Aircraft: An Assessment of Cost Savings”. The report instead gives “Reducing the Cost of Airlift Operations”. The source notes already contain the correct title. The verified authors are Tanguy Hubert, Christopher Guo, Christopher A. Mouton and James D. Powers, with publication year 2015.
+Required change: correct the title and preferably name the authors, retaining RAND as publisher and the existing URL. The existing contextual qualification about military accounting and lack of Asian commercial calibration is appropriate. Do not remove the useful denominator/accounting comparison merely to avoid the citation repair.
+Verification: generated reference list matches the primary PDF's title page and source notes.
+
+R3-03 — Separate CAAS publication date from website-footer update date.
+Location: reference 7 locator; any corresponding source metadata.
+Problem: the primary CAAS article is dated 5 November 2026. “Last updated on 10 November 2026” appears in the site footer, not as demonstrated article revision metadata. The report currently says “5 November 2026, updated 10 November”, which implies an article revision that the cited page does not establish.
+Required change: record “published 5 November 2026; accessed 12 November 2026”. Remove the article-update claim or label it explicitly as a site-footer date if preserving it serves a provenance purpose. Preserve the important distinction that the tender and delivery arrangements are prospective: the source discusses tender closing in December 2026 and delivery beginning in June 2027.
+Verification: search report, source metadata, downloadable documents and rendered references for the unsupported article-update attribution.
+
+R3-04 — Match the airport-pricing claim to the evidence actually cited.
+Location: section 2, second paragraph, detailed list ending in citation [12].
+Problem: EIA's spot-price definitions describe location/quantity-specific spot transactions and the quoted products. They do not substantiate the complete asserted airport-contract list of benchmark differentials, taxes, concession/throughput charges, handling, credit terms, minimum purchases and quantity. The central conclusion—that a public wholesale benchmark is not an executable airport offer—is defensible, but the citation does not cover every factual detail attached to it.
+Required change: either add a primary supplier/contract source supporting the detailed components, or narrow the factual list to components supported by existing evidence. EUROCONTROL [13] can support the negotiated/geographic/distribution and quantity/competition discussion to the extent those items are explicit in the source. The following quote-record schema can remain an author-designed due-diligence proposal, but label it as such rather than implying every field is evidenced by EIA. Avoid adding unsupported data merely to make the quote form look complete.
+Verification: every factual commercial-contract claim in the revised paragraph has a source with matching coverage; proposed schema fields are visibly recommendations. The missing-quote status remains explicit.
+
+TARGETED IMPROVEMENT, NOT A DISCOVERED MODEL ERROR
+
+R3-05 — Make the regulatory recommendation conditional and operationally feasible.
+Location: reflection paragraph 8, “Asian authorities could require evidence for shortage-related extra carriage”.
+The main report correctly treats ReFuelEU as a comparator and states that transferring the rule requires local legal and market analysis. The reflection can be more precise: if authorities adopt anti-tankering or emergency-allocation rules, they should preserve and document justified operational exceptions, rather than implying that every shortage-related uplift needs a new prior administrative permission. Distinguish retrospective evidence/reporting from dispatch approval, and do not override established flight-safety requirements. This is a useful policy refinement, not evidence that the existing model is wrong or that a particular Asian jurisdiction already has the European rule.
+
+KNOWN IN-PROGRESS ITEMS (NOT ADDITIONAL FAILURES)
+The report still says 20 tests whereas the revised numerical package has 21. Parent has already identified and is correcting that count. reviewSummary currently lists two completed rounds; that is accurate at this draft stage and must be advanced only as actual critique and revisions occur. Do not fabricate four completed rounds before the fourth review.
+
+WHAT WAS CHECKED AND HOLDS UP
+1. Denominators: one tonne useful fuel delivered requires 1.16279 tonnes extra origin uplift at four hours; the separate one-tonne gross-origin scenario delivers 0.86 tonnes. The corresponding 0.51442 versus 0.4424 tonnes CO2 are not interchangeable. Report and reflection distinguish them correctly.
+2. Counterfactuals: normal price comparison explicitly requires both purchase options to be available. The outage case reports physical destination uplift displaced, not cancellation reduction or the value of keeping a flight operating.
+3. Sensitivity: 486 route-grid cases and 36 central cases match the package design. Finite minima/maxima are not presented as confidence intervals. The exponential rule is a structural comparison, not an empirical validation of the linear rule.
+4. Geometry: route distances are observed-coordinate-derived; speed/routing/time are scenarios. No scheduled flight duration or aircraft-specific fuel performance is claimed.
+5. Financial evidence: USD 1,000/t and USD 100/200 per tonne CO2 are explicitly illustrative. No absent airport quote is imputed. The zero-fee result is described as a lower-cost model case, not evidence of free handling or absent payload costs.
+6. Asian security: the report separates crude/refinery exposure, national stocks, airport delivery systems and airline access. EIA's 89% figure is for crude and condensate through Hormuz to Asia in the first half of 2025, not all jet-fuel supply. No outage probability is inferred from that figure.
+7. Institutional inference: Hong Kong installed storage is not equated with usable stocks/days of cover; Singapore's announced SAF coordination is not proof of present fuel adequacy; Japan's March 2026 national stock-release commitment is not a November Narita jet-fuel inventory.
+8. Policy scope: the European 90% obligation is identified as annual, by operator and Union airport, rather than per-flight or applicable in Asia. National allocation, contract rights, competing demands and emissions trade-offs are acknowledged.
+9. Research honesty: the report does not claim causal identification, a measured operational optimum or a production trading system. The proposed empirical validation stage specifies the missing evidence and comparison against actual uplift decisions.
+
+PRIMARY-SOURCE CHECKS IN THIS ROUND
+Opened and inspected the official RAND RR837 PDF, the CAAS article and EIA spot definitions directly. These checks establish R3-02, R3-03 and R3-04. The official EUR-Lex notice returned a robot challenge to this review's retrieval; I have not treated that failed retrieval as fresh verification or evidence that the project's existing official-source interpretation is false. Existing source notes document the notice; the final package should retain the official URL and exact locator. Other Asian institutional claims were reviewed against the source-note/evidence records and their explicit limits; this review is not a claim of a new independent field audit.
+
+ASSIGNMENT / PROFESSIONAL-QUALITY ASSESSMENT
+Originality and ambition: strong for a course creative-format project, because it connects a transparent per-unit mechanism to regional infrastructure and governance rather than pretending to have a proprietary trading feed.
+Research depth: substantive but necessarily bounded by public evidence; airport transactions and operations are missing. The required citation repairs matter because bibliography precision is part of professional credibility.
+Analytical rigor: strong conditional reasoning after Round 2, with explicit counterfactuals, units, constraints, structural sensitivity and reproducibility. Avoid the one remaining overbroad ranking claim.
+Asian energy-security relevance: clear and more substantial than geographic decoration. The policy chain links import/refining exposure to product logistics and actual aircraft access.
+Communication: the 904-word reflection explains question, method, results, relevance and limits within the 800–1,000-word requirement. Final rendering must preserve the distinction between observed data and scenarios; that will be a Round 4 publication check.
+
+ROUND 3 ACCEPTANCE GATE
+Record the actual responses to R3-01 through R3-04, handle or explicitly justify R3-05, regenerate the report/essay artifacts, check their new word count and source metadata, and freeze their new hashes before the fourth review. No model retuning or manufactured evidence is necessary to address these findings.

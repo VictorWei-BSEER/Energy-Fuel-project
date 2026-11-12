@@ -1,0 +1,116 @@
+Publication quality assurance
+Project: Fuel tankering and East Asian aviation security
+Publication date: 2026-11-12
+Method: Python renderer checks, PDF text inspection and raster inspection.
+No browser was run for these publication checks. This record does not claim a
+browser, screen-reader, Microsoft Word or LibreOffice visual test.
+
+Renderer and development checks
+- The renderer creates the report PDF and standalone reflection PDF/DOCX from
+  research/report.json, without fetching content from the network.
+- Temporary development fixtures were stored outside the repository and were
+  never used as the project source or distributed final documents.
+- Repeated fixture builds produced identical PDF and DOCX SHA-256 hashes.
+- PDF and DOCX metadata use the publication date in the source JSON.
+- PDF document language is en-US. Section bookmarks are present. The DOCX uses
+  semantic Title and Heading styles. The PDFs are not claimed to be PDF/UA or
+  fully tagged accessible documents.
+- The renderer rejects reflections outside 800-1,000 words in ordinary builds,
+  rejects a declared count that differs from its count, and checks that numeric
+  citations in report narrative resolve to declared reference IDs.
+- Counting excludes citation-only markers; hyphenated compounds count as one;
+  en/em dashes separate words. Only reflection paragraphs are counted.
+
+Round 3 publication inspected
+Source SHA-256:
+bc2533a9c7cdc65ec04c655d5f2ac4c2e5ca39b9dca011ffe4fb88cfe1fa2882
+Reflection: 919 words, with final word-count validation enabled.
+Final_Project.pdf: 15 pages; 318,547 bytes.
+Analytical_Reflection.pdf: 3 pages; 44,595 bytes.
+Analytical_Reflection.docx: 43,388 bytes.
+
+Inspection and corrections
+- All report pages and standalone reflection pages were rasterized with
+  pdftoppm and visually inspected. Charts, references and the final essay page
+  were additionally inspected at enlarged resolution.
+- The initial layout left the final recommendation trade-off on a page by
+  itself. Recommendation spacing and grouping were corrected while retaining
+  11-point body text.
+- The initial standalone reflection left two essay lines on a third prose
+  page. Paragraph spacing and leading were adjusted, retaining 11-point body
+  text. The final standalone document has two prose pages and one reference
+  page.
+- A longer corrected reference split onto a nearly empty second reference
+  page. Reference spacing was adjusted and each reference kept together; the
+  complete report bibliography fits on one page.
+- Chart axes, labels and captions, table cells, citation markers, heading
+  placement, running headers, dates and page numbers were inspected for
+  clipping and collisions.
+- A pdftotext bounding-box check found no words outside the page boundary.
+- All nine essay paragraphs were recovered exactly after whitespace
+  normalization from both PDFs; none was omitted or truncated.
+- PDF link annotations and outline bookmarks were inspected programmatically.
+  Citation links have internal reference targets; HTTP(S) source URLs have
+  external links. This check does not claim that every remote website remained
+  accessible at publication time.
+- The DOCX archive passed its ZIP integrity check. External source hyperlinks,
+  heading styles and document metadata were inspected programmatically.
+- The three exported documents and publication manifest in the site download
+  directory matched their artifact-directory counterparts byte for byte.
+
+Portability
+- Default output is artifacts/energy-security-project relative to the
+  repository or extracted project root, rather than a workspace-specific path.
+- Default mirroring uses dist/research/downloads when dist/research exists;
+  otherwise it uses exhibit/downloads for the extracted offline package.
+- --output and --mirror remain available for explicit destinations.
+
+Final Round 4 publication
+The reviewed source contains four actual critique/revision entries, numbered
+1 through 4. The reflection remains 919 words. Final word-count validation was
+enabled; the development bypass was not used.
+
+Final source SHA-256:
+8035da0d81b33ae64695aea535f87a2c5bef22d4e84edc744400f14f1f4d01bb
+
+Final_Project.pdf
+Pages: 16
+Bytes: 321267
+SHA-256: 2aa943bd8294442a8e4b171bff9112ae4319685dfd28bd0569c69f7e6d34ae9a
+
+Analytical_Reflection.pdf
+Pages: 3 (two essay pages and one reference page)
+Bytes: 44595
+SHA-256: 145dd6cfd98032f8d9b4266cab6993d67561fc94e6f04d79c6919e8d939c2745
+
+Analytical_Reflection.docx
+Bytes: 43388
+SHA-256: a25dd7e8f391379b9fd4137eb0b6d06a5037f201dbea6e103ff0b26313be1b8a
+
+Final checks and correction
+- All 16 report page rasters were reinspected, with enlarged inspection of
+  the revised technical appendix, validation-scope page and final review page.
+  No clipping, overlapping content or nearly empty orphan-line pages remain.
+- The final whole-report text check identified missing mathematical glyphs
+  for Unicode minus and less-than-or-equal in the installed Noto Sans font.
+  The renderer now explicitly uses DejaVu Sans Mono for those mathematical
+  operators. The affected page was rerendered and visually reinspected.
+- All 53 executive-summary, finding, section, reflection and appendix prose
+  paragraphs were recovered exactly after whitespace normalization from the
+  final report PDF. All nine essay paragraphs were recovered from the final
+  standalone PDF. Neither PDF contains null glyphs.
+- The final report bounding-box check found zero words outside page bounds.
+- The report has 52 link annotations, including 19 external-link annotations;
+  the standalone reflection has 25, including 14 external-link annotations.
+  Wrapped URLs may create more than one annotation for a single source.
+  Both documents retain section outlines and en-US document language.
+- Final DOCX ZIP integrity passes. The exported documents match their site
+  mirrors byte for byte, and all three match the publication manifest hashes.
+- A fresh render into a temporary directory reproduced the final manifest,
+  page counts, byte sizes and all three document SHA-256 hashes exactly.
+- The final source and publication outputs are frozen for archive sealing.
+  The earlier Round 3 figures in this record are historical checks only.
+
+Remaining scope limits remain as stated at the start of this record: these
+publication checks are not a browser or assistive-technology certification,
+nor a visual rendering test of the DOCX in an office application.

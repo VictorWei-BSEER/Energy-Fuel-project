@@ -1,0 +1,23 @@
+{
+  "stage": "After all four critique/revision rounds",
+  "pathBasis": "Repository-relative paths; dist/research corresponds to exhibit in the ZIP. This manifest excludes itself and the enclosing archive.",
+  "files": {
+    "research/report.json": "8035da0d81b33ae64695aea535f87a2c5bef22d4e84edc744400f14f1f4d01bb",
+    "research/inputs.json": "606e8588488a1423afe63a8c9994a7ccc116e96bde8c735c5d3a1c2174f86e8c",
+    "research/model.py": "709c4e247b1e2167560429c6118d535f7463ad7e11ac25221667874ccae6a785",
+    "research/results.json": "a17d915c295a672a22abf2376a1195d739dc444a97e9279b685c5eb45f518973",
+    "research/results.csv": "cde330d86b9fb72f225b5e552b5290165036be8c1abfaf953a8b1de77ae3591e",
+    "research/sensitivity.csv": "4bec43948523391629557173caf60cec6453af179493930935c857c4f7ed91fd",
+    "dist/research/index.html": "7aad401edbea5ce718a966540ec89c0c77e8bf78527afee2e37b8a80e69c7592",
+    "dist/research/research.js": "669c499f2da0d452de84da27c71d1b1473201a46de2a77155d871a1408df2888",
+    "dist/research/research.css": "18ff9d917cb9392292c49357581128ee76951ef111b2d43ff31d22492838d4ac",
+    "scripts/build_research.py": "c337873358f7f6ae8eabf1cc6c71f20a7c52ef77a29405255167299d0b54c551",
+    "scripts/render_research.py": "adeb8209542d0ab2201104ece2399cc054cdd4a0f91613f53d2098b630e98b06",
+    "scripts/check_research_package.py": "7f6481aabae2e6be4c2d136f57b238c38b616aea257e8e665d59c0c99eee5331",
+    "tests/research.test.mjs": "d0a462202f61f9866287da319238c7d9bdd17e900b97b4d91cc3d3c153d00afc",
+    "tests/test_research_model.py": "4e3bf381d7c46b8bd81f2fb40e2d236f8da19d66f9d975f0f4138b7de8fe88e3",
+    "dist/research/downloads/Final_Project.pdf": "2aa943bd8294442a8e4b171bff9112ae4319685dfd28bd0569c69f7e6d34ae9a",
+    "dist/research/downloads/Analytical_Reflection.docx": "a25dd7e8f391379b9fd4137eb0b6d06a5037f201dbea6e103ff0b26313be1b8a",
+    "dist/research/downloads/Analytical_Reflection.pdf": "145dd6cfd98032f8d9b4266cab6993d67561fc94e6f04d79c6919e8d939c2745"
+  }
+}

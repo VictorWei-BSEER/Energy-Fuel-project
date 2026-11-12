@@ -1,0 +1,405 @@
+{
+  "title": "Fuel tankering and East Asian aviation security",
+  "subtitle": "A public-data threshold model of fuel cost, local supply substitution and carbon trade-offs",
+  "date": "2026-11-12",
+  "team": "Fuel Atlas project team | Gastón, Victor and Sandy",
+  "scopeNote": "Creative-format final project: interactive research exhibit, reproducible quantitative analysis and an 800–1,000-word analytical reflection. All model outputs are conditional scenarios. No airport fuel quote, inventory or aircraft dispatch clearance is inferred.",
+  "links": [
+    {
+      "label": "Interactive research exhibit (site access required)",
+      "url": "https://fuel-atlas-east-asia.victorskwei.chatgpt.site/research/"
+    },
+    {
+      "label": "Source code and reproducibility files",
+      "url": "https://github.com/VictorWei-BSEER/Energy-Fuel-project"
+    }
+  ],
+  "executiveSummary": [
+    "Tankering can reduce demand for refuelling at a particular airport, but carrying that fuel consumes fuel. The policy question is whether the value of geographic flexibility justifies this resource cost, and who bears the cost. Public data support a transparent threshold calculation; they do not support claims of current airport arbitrage or operational readiness.",
+    "This project connects a marginal fuel-transport model to three East and Southeast Asian hub links and three institutional settings: Hong Kong's airport delivery infrastructure, Singapore's coordinated procurement and Japan's national emergency stock response. The Gulf appears as an upstream supply exposure transmitted to Asian importers, rather than as a substitute for an Asian case study. [4, 5, 6, 7, 9]",
+    "The principal recommendation is to measure fuel availability at the point of use and separate ordinary price optimisation from shortage response. A live wholesale benchmark is useful market context; an actual dispatch or procurement decision needs dated into-plane quotes, aircraft constraints, stocks and delivery rights. The accompanying exhibit preserves these distinctions and exposes every scenario assumption."
+  ],
+  "keyFindings": [
+    {
+      "title": "16.3%: a conditional price threshold, not an observed trading margin",
+      "text": "At four hours and a 3.5% hourly marginal-burn coefficient, the linear model requires a destination price premium of 16.3% to cover extra fuel consumption. This comparison assumes both buying options are available, identical useful destination fuel and no additional fees or carbon cost. The exponential alternative gives 15.0%."
+    },
+    {
+      "title": "0.86 tonnes displaced for one extra tonne loaded",
+      "text": "With one tonne of additional origin supply and aircraft headroom, the same four-hour scenario displaces 0.86 tonnes of destination uplift. It burns 0.14 tonnes and emits 0.442 tonnes of direct CO₂. Delivering a full tonne instead needs 1.163 tonnes loaded and emits 0.514 tonnes of additional CO₂. The denominator changes; neither result establishes flights saved."
+    },
+    {
+      "title": "Airport access is the missing link between oil stocks and aviation resilience",
+      "text": "National emergency stocks, refinery compatibility, certified jet fuel logistics and aircraft uplift are separate stages. Tankering can bridge a local bottleneck if another airport has usable supply. It does not manufacture fuel or establish regional welfare gains. Policies must consider both spatial allocation and total resource consumption."
+    }
+  ],
+  "sections": [
+    {
+      "title": "1. Research question and analytical scope",
+      "paragraphs": [
+        "Research question: under stated marginal-burn assumptions, what destination price premium offsets the cost of carrying additional fuel, and how much destination uplift can that carriage displace during a local supply interruption? The unit of analysis is an additional tonne of fuel for a fixed aircraft mission. The principal outcomes are price ratio, additional burn, direct CO₂ and tonnes of destination uplift displaced.",
+        "The motivating idea is fuel-price arbitrage, but the study does not treat an anecdote about Gulf airline purchasing as a verified dataset. Its testable claim is conditional: increasing carrying time or the marginal burn coefficient increases the cost of moving useful fuel in the model. Its policy question is broader: how does airline flexibility interact with airport logistics and an import-dependent region's security?",
+        "The model excludes route choice, airline competition, endogenous fuel prices, fleet scheduling, cancellation costs and optimal regional allocation. Consequently, it can identify break-even conditions and physical trade-offs, but cannot estimate the number of flights preserved, firm profit, outage probability or national welfare. The final project is a digital research exhibit plus analysis, rather than a commercial trading or flight-planning system."
+      ]
+    },
+    {
+      "title": "2. Evidence architecture and the airport-price problem",
+      "paragraphs": [
+        "Inputs are classified as observed, literature-based, derived or scenario. Observed airport coordinates come from a frozen OurAirports snapshot. The 2.5–4.5% per-hour penalty range and 3.16 combustion factor come from ICAO. Distances are derived from coordinates. Flight times, midpoint burn coefficient, carbon values, reference fuel price and available extra uplift are scenarios. Real airport transaction prices, inventories and aircraft headroom are unavailable. [1, 2, 3]",
+        "Public wholesale prices describe a product, location, quantity and observation period. They do not establish an airline's into-plane purchase price. A wholesale benchmark therefore cannot be copied onto every airport or labelled an executable quote. EUROCONTROL's historical sample also identifies negotiated contracts, quantities, geography, distribution and competition as influences on airport fuel prices; it is not a current Asian pricing dataset. [12, 13]",
+        "As a proposed data-collection design, this project would record airport and supplier, product specification, currency and unit, quote validity, uplift quantity, benchmark assessment period, differential, taxes and delivery charges, payment terms and availability. These are fields to verify, not claimed observations or a universal contract structure. A supplier's dated offer or contract evidence would populate the record. Units, tax treatment and delivery scope must be comparable before evaluating a price ratio; missing fields should remain missing.",
+        "The project uses price ratios where possible so that a nonexistent airport price is unnecessary. The USD 1,000/t reference used for carbon sensitivity is visibly hypothetical. A shadow value of USD 100 or 200/tCO₂ is not an observed permit price or a claim about CORSIA compliance cost. Policy source publication dates, historical measurement periods and project access dates remain distinct."
+      ],
+      "tables": [
+        {
+          "title": "What the evidence can establish",
+          "columns": [
+            "Evidence class",
+            "Example",
+            "Permitted inference"
+          ],
+          "columnWidths": [
+            1,
+            1.6,
+            2.2
+          ],
+          "rows": [
+            [
+              "Observed geometry",
+              "SIN/HKG/NRT coordinates",
+              "Geographic distance; no fuel price or stock inference"
+            ],
+            [
+              "Literature parameter",
+              "ICAO marginal burn range",
+              "Sensitivity bounds; no aircraft calibration"
+            ],
+            [
+              "Derived output",
+              "Threshold / direct CO₂",
+              "Conditional consequences of stated inputs"
+            ],
+            [
+              "Analyst scenario",
+              "Speed, routing, carbon value",
+              "A case to explore; not a measurement"
+            ],
+            [
+              "Unknown",
+              "Into-plane quote, stock, headroom",
+              "No actual profitability or dispatch conclusion"
+            ]
+          ],
+          "caption": "The same classification appears in the machine-readable inputs and interactive exhibit."
+        }
+      ]
+    },
+    {
+      "title": "3. A matched fuel-transport comparison",
+      "paragraphs": [
+        "Compare two alternatives that leave the aircraft with the same useful fuel q at the destination: purchase q locally, or load enough additional fuel at the origin to deliver q after burning part of the extra load in transport. Mission, payload, operational reserves, onward requirement and terminal fuel state are fixed. Common flight fuel and common onward consumption cancel from the marginal comparison. The accounting follows the transport-factor logic discussed by RAND, without importing its military performance calibration. [14]",
+        "Let k be the marginal burn coefficient per hour and t the airborne duration. The main approximation retains a = 1 − kt of the additional origin uplift. It is valid only for 0 ≤ kt < 1. The alternative a = exp(−kt) allows marginal fuel mass to decay continuously. ICAO supplies an indicative coefficient range, not either equation. Linear is more fuel-intensive relative to this exponential comparator at the same k and t; neither has been shown conservative relative to a real aircraft. [1]",
+        "Required extra origin uplift is X = q/a; additional burn is X − q; direct combustion CO₂ is 3.16(X − q). Let pA and pB be comparable origin and destination fuel prices in USD/t; c an additional carbon value in USD/tCO₂; and f an additional fee or opportunity cost in USD per useful tonne delivered. At break-even, pBq = pAX + 3.16c(X − q) + fq. Carbon already included in a fuel price must not be counted again.",
+        "The ratio is an ordinary price comparison only when both purchase options are available. Above the threshold, carriage has a lower modelled marginal cost; below it, destination purchase does. An unavailable destination supply invalidates that ordinary purchase counterfactual. Shortage response is assessed separately as physical displacement, without assigning an unobserved value to maintaining service."
+      ],
+      "equations": [
+        "a_linear = 1 - k*t;  a_exponential = exp(-k*t)",
+        "X = q/a;  B = X-q;  CO2 = 3.16*B",
+        "pB/pA = 1/a + (3.16*c/pA)*(1-a)/a + f/pA"
+      ]
+    },
+    {
+      "title": "4. Quantitative findings and sensitivity",
+      "paragraphs": [
+        "At four hours and k = 0.035/h, linear retention is 0.86. On the one-tonne-delivered basis, X = 1.16279 t, B = 0.16279 t and additional direct CO₂ = 0.51442 t. With zero additional carbon cost and fees, the threshold is pB/pA = 1.16279, or 16.28% above the origin price. The exponential comparator gives 15.03% and 0.47487 t CO₂. These are structural model alternatives, not statistical estimates.",
+        "At an assumed pA = USD 1,000/t, a USD 100/tCO₂ additional shadow value raises the central linear threshold to 21.42%. Any positive f raises it further by f/pA. The zero-fee result is a transparent lower-cost case within the model, not evidence that handling, payload displacement or financing costs vanish.",
+        "Great-circle distances are 2,565.87 km for SIN–HKG, 2,962.36 km for HKG–NRT and 5,358.05 km for SIN–NRT. Multiplying by an assumed routing factor of 1.05 and dividing by 800 km/h gives time proxies of 3.37, 3.89 and 7.03 hours. These are neither scheduled block times nor actual flights; taxi, winds, climb and aircraft-specific performance are not modelled. [3]",
+        "Central linear no-carbon thresholds are 13.36%, 15.75% and 32.65%. The full factorial sensitivity varies k across 0.025, 0.035 and 0.045/h; groundspeed across 750, 800 and 900 km/h; routing factor across 1.00, 1.05 and 1.15; carbon value across 0, 100 and 200; and model form across linear and exponential. It contains 486 route scenarios, alongside 36 central controlled/route cases. Envelopes are minima and maxima of a designed grid, not confidence intervals.",
+        "Under matched burn, speed, routing and model assumptions, the longest link has the highest threshold because it requires more carrying time. The route-specific sensitivity envelopes overlap: uncertainty in aircraft performance and timing can outweigh a distance-only comparison. Longer carriage raises the fuel cost within a matched model, but the results do not establish actual profitability or an unconditional ranking across different aircraft and operating conditions."
+      ],
+      "tables": [
+        {
+          "title": "No-carbon route thresholds",
+          "columns": [
+            "Route",
+            "Time proxy",
+            "Central linear",
+            "Linear envelope",
+            "Exponential envelope"
+          ],
+          "rows": [
+            [
+              "SIN–HKG",
+              "3.37 h",
+              "13.36%",
+              "7.67–21.51%",
+              "7.39–19.37%"
+            ],
+            [
+              "HKG–NRT",
+              "3.89 h",
+              "15.75%",
+              "8.97–25.69%",
+              "8.58–22.68%"
+            ],
+            [
+              "SIN–NRT",
+              "7.03 h",
+              "32.65%",
+              "17.49–58.66%",
+              "16.05–44.73%"
+            ]
+          ],
+          "caption": "Premium above origin price, c = f = 0. Central settings k = 0.035/h, path factor 1.05, speed 800 km/h. Envelopes vary burn, routing and speed jointly; they are not confidence intervals."
+        }
+      ]
+    },
+    {
+      "title": "5. From local flexibility to regional security",
+      "paragraphs": [
+        "A local interruption has a useful physical metric: destination uplift displaced. If the destination gap is qNeed and additional origin headroom is Xmax, extra origin use is min(Xmax, qNeed/a), and displacement is a times that amount. Headroom must include available origin fuel as well as permissible aircraft capacity, takeoff and landing weight and payload constraints. One tonne is a normalization, not an assertion about any aircraft.",
+        "On the separate one-tonne-loaded basis, the four-hour linear case delivers 0.86 t, burns 0.14 t and emits 0.4424 t CO₂. It leaves 0.14 t of a one-tonne destination gap uncovered. No origin headroom means no displacement. These facts cannot identify whether a flight operates, because the minimum fuel required, other supply options and regulatory decisions are not observed.",
+        "For a fixed useful quantity q, tankering consumes q/a from a shared fuel resource where local provision uses q; the difference is burned. This mass-balance identity makes the resource cost explicit. It does not prove that geographic transfers are socially undesirable: supply may be stranded at one airport while another has high service value. Estimating the net benefit requires a network allocation model with demand, capacity, congestion and cancellation costs.",
+        "Regional security also depends on the location and ownership of stocks, refining compatibility and the route to a certified fuel hydrant. A common crude-price or import shock is not equivalent to a broken local pipeline or an unavailable supplier. The model treats the latter as a displacement scenario and leaves the former as a resource constraint; it does not assign fabricated outage probabilities."
+      ]
+    },
+    {
+      "title": "6. Three institutional lenses on Asian energy security",
+      "paragraphs": [
+        "Upstream exposure: EIA reports that 20.9 million barrels/day of oil transited Hormuz in the first half of 2025, with 89% of its crude and condensate flows destined for Asia. These are historical oil-flow estimates, not jet fuel volumes or a current traffic feed. The IEA's 2026 Southeast Asia analysis identifies Middle Eastern crude dependence and medium/heavy refinery feedstock constraints. Both show why diversification requires physical compatibility and logistics, not only an alternative price screen. [4, 5]",
+        "Hong Kong — delivery infrastructure. AFSC describes 12 on-airport tanks with 220,000 m³ of installed capacity, an apron hydrant network and the Sha Chau marine facility as emergency backup to the permanent aviation fuel facility. These arrangements show layers of delivery capability and an institutional operator. They do not reveal tank contents, usable jet fuel, replenishment lead time or days of cover. A resilience assessment should test the whole delivery chain and backup activation, rather than label a facility a single point of failure without evidence. [6]",
+        "Singapore — coordinated procurement. CAAS's November 2026 SAF announcement specifies price, supply-chain resilience, delivery certainty and sustainability documentation as procurement criteria, with future tender and delivery arrangements. This provides an example of pooling procurement and defining non-price requirements. It is not evidence that those prospective volumes have already been delivered or that SAF is immune to supply concentration. SAF remains a fuel with tailpipe CO₂; lifecycle claims require separate evidence. [7]",
+        "Japan — national emergency capacity. The IEA's 19 March 2026 announcement lists Japan's 79.8-million-barrel contribution to an emergency stock action. It records a commitment and initial market releases at that date, not a measured November stock position or a Narita jet fuel allocation. IEA stockholding obligations for relevant net-importing members concern at least 90 days of net oil imports, potentially spanning crude and products; they do not guarantee 90 days of airport jet fuel. [8, 9]",
+        "Together, these cases are a comparative framework, not a ranking. Their evidence differs in scale and timing, so converting it into a common numerical 'risk score' would obscure rather than resolve uncertainty. The political economy question is who controls stocks and delivery rights, who can buy flexibility and who bears congestion and emissions when one carrier shifts demand."
+      ]
+    },
+    {
+      "title": "7. Governance, limits and the next empirical test",
+      "paragraphs": [
+        "ReFuelEU offers a governance comparator rather than a policy assumed to apply in Asia. Article 5's 90% obligation is assessed annually for each operator at each Union airport. The Commission's May 2026 notice distinguishes documented shortage-related carriage from a response to high prices alone. Such distinctions can preserve operational flexibility while limiting incentives to carry avoidable fuel for price reasons. Transferring the rule to Asia would require local legal and market analysis. [10, 11]",
+        "Historical European evidence supports the mechanism but not the magnitude of an Asian result. EUROCONTROL's 2019 paper estimated substantial extra fuel use and emissions from tankering using June 2018 ECAC traffic and model extrapolation. Those figures, negotiated price samples and its 3.15 emissions factor are not imported into this model. Its trip-fuel percentage examples are also not the per-hour additional-weight coefficient used here. [13]",
+        "The next empirical test should obtain comparable dated origin/destination into-plane offers and aircraft-specific performance for one route, then predict the marginal break-even threshold before comparing it with recorded uplift choices. A second stage should add actual stocks, delivery capacities, restoration times and service values to optimise a disrupted network. Validation should report prediction error and cases where constraints overturn a price-only recommendation.",
+        "This study's analytical value is making the boundaries explicit: an observable geometry, an acknowledged literature range, conditional calculations, and institutional evidence at the appropriate scale. It does not claim causal identification, a measured optimal strategy, current airport fuel availability or a production trading system."
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "owner": "Airline fuel procurement and flight operations",
+      "action": "Use a standard into-plane quote record and aircraft-specific incremental performance calculation before approving economic tankering. Evaluate supplier availability separately from price. Record the useful fuel delivered and the additional burn, not only the gross uplift.",
+      "trigger": "A comparable quote premium exceeds the aircraft-specific threshold and all operational constraints are satisfied.",
+      "tradeoff": "Potential purchasing savings versus extra fuel, direct CO₂, displaced payload and other contract or operating costs; the present scenarios do not authorise dispatch."
+    },
+    {
+      "owner": "Airport operator and fuel consortium",
+      "action": "Maintain a dated operational dashboard of usable certified jet fuel, delivery throughput, restoration estimates and tested backup access. Distinguish physical storage capacity from usable inventory and contractual rights.",
+      "trigger": "A documented delivery limitation or reduced usable stock threatens the locally defined operational buffer.",
+      "tradeoff": "Higher inventory and redundant delivery capacity incur cost, but can reduce dependence on costly airborne substitution; the study does not estimate a cost-optimal buffer."
+    },
+    {
+      "owner": "Energy and civil aviation authorities",
+      "action": "Coordinate emergency product allocation across refineries, terminals and airports, with evidence-based treatment of shortage-related carriage. Track distributional effects when airlines shift demand and distinguish strategic oil stocks from deliverable aviation fuel.",
+      "trigger": "A common import/refinery shock or correlated airport shortages; use verified system conditions, not a synthetic risk score.",
+      "tradeoff": "Protecting priority connectivity may conflict with other transport demand, private contract rights and emissions objectives; a network allocation model is needed to compare these choices."
+    }
+  ],
+  "reflection": {
+    "title": "Analytical reflection: flexibility is not fuel security",
+    "paragraphs": [
+      "Can an airline improve energy security by buying fuel somewhere else? Fuel tankering means carrying additional fuel from an origin airport to reduce purchases later. The same action can respond to price differences or an interruption in supply. This project asks what destination price premium compensates the additional fuel consumed in transport, and how much destination refuelling demand a given extra uplift can displace. Its contribution is a reproducible threshold model linked to an East Asian policy comparison. It evaluates conditional trade-offs rather than claiming to identify profitable trades from unavailable airport prices.",
+      "The question matters because Asian aviation connects globally traded oil to infrastructure that must deliver a specific product at a specific time. EIA estimates that Asia received 89% of crude oil and condensate passing through Hormuz in the first half of 2025; this is not a measurement of jet fuel deliveries. The IEA's 2026 Southeast Asia outlook also identifies dependence on Middle Eastern crude and constraints on substituting refinery feedstocks. These sources establish exposure, not the probability that Changi, Hong Kong or Narita will run short. A national oil inventory cannot automatically become certified jet fuel at an airport hydrant. [4, 5]",
+      "The model compares buying one tonne at the destination with loading enough additional fuel at the origin to deliver that same tonne. Route, payload, reserves, onward requirements and terminal fuel position are held constant. ICAO reports an aircraft-dependent additional fuel penalty of 2.5–4.5% of added weight per flight hour. I use that range as a sensitivity parameter, with 3.5% as an illustrative midpoint. A linear retention rule is the main approximation; an exponential rule tests structural sensitivity. Neither is an ICAO-prescribed equation or an aircraft performance calibration. Combustion emissions use ICAO's factor of 3.16 tonnes of CO₂ per tonne of Jet A fuel. [1, 2]",
+      "At four hours, the central linear case retains 86% of extra origin fuel. Delivering one useful tonne therefore requires 1.163 tonnes of extra uplift, burns 0.163 tonnes and emits 0.514 tonnes of additional direct CO₂. With both purchase options available, and no additional fees or carbon charge, the destination price must exceed the origin price by 16.3% to break even. An illustrative USD 100 per tonne CO₂ shadow price raises that threshold to 21.4% when origin fuel is assumed to cost USD 1,000 per tonne. These currency values are scenarios, not observed prices. The exponential alternative reduces the no-carbon threshold to 15.0%, showing that model structure matters.",
+      "Three routes connect the mechanism to regional geography: Singapore–Hong Kong, Hong Kong–Narita and Singapore–Narita. Public airport coordinates determine great-circle distance; assumed routing and groundspeed convert distance into an airborne-time proxy, not a timetable. Central no-carbon thresholds are 13.4%, 15.8% and 32.6%, respectively. Varying burn coefficients, routing and speed produces linear-model envelopes of 7.7–21.5%, 9.0–25.7% and 17.5–58.7%. These are finite scenario ranges, not confidence intervals. The comparison suggests that transporting an extra tonne becomes more costly over longer missions under these assumptions; it does not establish any route's actual profitability. [3]",
+      "A shortage changes the decision problem. With one tonne of extra origin headroom, the four-hour case displaces only 0.86 tonnes of destination uplift, burning 0.14 tonnes and emitting 0.442 tonnes of CO₂. This uses a different denominator from delivering one full tonne. The result measures physical substitution, not flights saved. Its value depends on usable origin supply, aircraft weight limits, payload trade-offs and the destination's remaining requirements. Under a shared fuel quota, carrying fuel consumes more total fuel than supplying the same useful quantity locally. Nevertheless, moving fuel toward a bottleneck could preserve service; the model cannot estimate that benefit without allocation and operational data.",
+      "Institutional differences help explain why flexibility at one airline does not equal security for a region. Hong Kong's fuel operator documents airport storage, hydrants and an emergency marine backup: installed capacity is evidence of infrastructure, not actual stock or days of cover. Singapore's announced SAF procurement criteria include supply-chain resilience and delivery certainty, illustrating a coordination mechanism rather than proving current supply adequacy. Japan's participation in the IEA's March 2026 stock-release action illustrates national emergency capacity, but those commitments were not airport-specific jet fuel inventories. The relevant policy chain therefore runs from crude and refining through product logistics to aircraft access. [6, 7, 9]",
+      "Policy should distinguish economic tankering from documented operational necessity. Europe's ReFuelEU rule provides a comparator: the 90% uplift requirement applies annually by operator and Union airport, with provisions for justified shortages; it is not an Asian rule or a per-flight restriction. If Asian authorities adopt anti-tankering or emergency-allocation rules, they should document justified operational exceptions without imposing new prior dispatch approval or compromising flight safety. Improving stock visibility, supplier coordination and delivery redundancy remains essential. Airlines should compare verified into-plane quotes only after engineering feasibility checks. Authorities should assess distributional effects too: shifting demand toward an origin may help one carrier while tightening supply for others. This project does not quantify that externality. [10, 11]",
+      "The principal limitation is missing transaction and operational evidence. Wholesale benchmarks cannot identify airport contract prices, taxes, credit terms or handling charges. Public observations are separated from literature parameters and analyst scenarios throughout the exhibit; no missing quote is silently imputed. A stronger study would combine dated supplier quotes, aircraft performance and weight data, airport inventories and disruption records, then test predictions against actual uplift decisions. For now, the defensible finding is narrower: tankering offers conditional spatial flexibility at a measurable fuel and emissions cost. Making that boundary visible is part of rigorous analysis, not a reason to disguise uncertainty. [12]"
+    ],
+    "wordCount": 919
+  },
+  "technicalAppendix": [
+    {
+      "title": "Units, domains and feasibility",
+      "paragraphs": [
+        "All fuel quantities are metric tonnes; times are hours; k has units h⁻¹; pA and pB are USD/t fuel; c is USD/tCO₂; f is USD per delivered tonne. The ratio pB/pA is dimensionless. Inputs must be finite and non-negative, with pA strictly positive and linear kt strictly below one. The code rejects invalid domains rather than producing infinite or negative usable fuel.",
+        "Actual allowable extra uplift must respect tank capacity, certified performance, takeoff/landing mass, payload, reserves and supplier availability. None is inferred from airport coordinates. Results are marginal, normalized and conditional; large uplift or long missions may invalidate the simplified burn approximation."
+      ]
+    },
+    {
+      "title": "Reproduction and audit trail",
+      "paragraphs": [
+        "The repository contains research/inputs.json, research/model.py, results.json, results.csv and sensitivity.csv. From the repository root: python3 research/model.py regenerates outputs; python3 research/model.py --check checks exact reproduction; python3 -m unittest discover -s tests -p 'test_research_model.py' runs the numerical tests. The frozen coordinate provenance is embedded in inputs.json, so model reproduction needs no network access.",
+        "The publication source is research/report.json. scripts/build_research.py builds figures and embeds the final inputs, results, essay and references in the offline exhibit. scripts/render_research.py creates the report PDF and reflection PDF/DOCX. research/publication-requirements.txt records renderer dependencies. The offline ZIP contains the exhibit, downloads, code, evidence notes and review records.",
+        "Four sequential critique/revision rounds address framing, quantitative validity, policy/evidence and final delivery. Original and revised manifests distinguish the code versions reviewed. Independent numerical auditing complements unit tests. Review records identify actual changes, not an endorsement by a consulting firm."
+      ]
+    },
+    {
+      "title": "What is not estimated",
+      "paragraphs": [
+        "No actual airport price, stock, aircraft headroom, cancellation probability, welfare value, current carbon compliance price or forecast is imputed. The 486-case sensitivity grid gives scenario envelopes only. Direct CO₂ excludes fuel lifecycle emissions, contrails and other non-CO₂ effects. The carbon shadow value is an explicit analytical choice.",
+        "The research is frozen to a dated evidence set so its findings remain reproducible. Live market context elsewhere in Fuel Atlas may update independently and is not an input to these published thresholds. The offline copy is self-contained; the hosted site may require its existing access permissions."
+      ]
+    }
+  ],
+  "references": [
+    {
+      "id": "1",
+      "author": "ICAO",
+      "year": "2022",
+      "title": "Economic Fuel Tankering: A Threat to Aviation Decarbonisation",
+      "url": "https://www.icao.int/sites/default/files/environmental-protection/Documents/EnvironmentalReports/2022/ENVReport2022_Art38.pdf",
+      "locator": "Environmental Report 2022, pp. 149–152; coefficient on p. 150, quoting Doc 10013 §4.1.2"
+    },
+    {
+      "id": "2",
+      "author": "ICAO",
+      "year": "undated",
+      "title": "CORSIA frequently asked questions",
+      "url": "https://www.icao.int/sites/default/files/environmental-protection/CORSIA/CORSIA-FAQ.html",
+      "locator": "§3.59, Jet A / Jet A-1 combustion conversion factor; accessed 12 November 2026"
+    },
+    {
+      "id": "3",
+      "author": "OurAirports",
+      "year": "2026 snapshot",
+      "title": "Open airport data",
+      "url": "https://ourairports.com/data/",
+      "locator": "Public-domain airport coordinates; project snapshot fetched 12 November 2026 at 03:25:48 UTC. Upstream: github.com/davidmegginson/ourairports-data"
+    },
+    {
+      "id": "4",
+      "author": "US Energy Information Administration",
+      "year": "2026",
+      "title": "World Oil Transit Chokepoints",
+      "url": "https://www.eia.gov/international/content/analysis/special_topics/World_Oil_Transit_Chokepoints/",
+      "locator": "Updated 3 March 2026; historical flow observations refer to first-half 2025, including Hormuz and Malacca"
+    },
+    {
+      "id": "5",
+      "author": "International Energy Agency",
+      "year": "2026",
+      "title": "Southeast Asia Energy Outlook 2026: Executive summary",
+      "url": "https://www.iea.org/reports/southeast-asia-energy-outlook-2026/executive-summary",
+      "locator": "Published 16 June 2026; pre-crisis import exposure and refinery substitution constraints; projections are scenarios"
+    },
+    {
+      "id": "6",
+      "author": "Aviation Fuel Supply Company",
+      "year": "undated",
+      "title": "AFSC facilities",
+      "url": "https://www.afsc.com.hk/en/facility.html",
+      "locator": "HKIA storage, hydrant system and Sha Chau emergency backup; accessed 12 November 2026"
+    },
+    {
+      "id": "7",
+      "author": "Civil Aviation Authority of Singapore",
+      "year": "2026",
+      "title": "CAAS sets out criteria for sustainable aviation fuel to be procured and uplifted on flights from Singapore",
+      "url": "https://www.caas.gov.sg/resources/media-and-publication/newsroom/caas-sets-out-criteria-for-sustainable-aviation-fuel-to-be-procured-and-uplifted-on-flights-from-singapore/",
+      "locator": "Published 5 November 2026; prospective tender and delivery arrangements. Accessed 12 November 2026; the site's 10 November footer update is not treated as an article revision."
+    },
+    {
+      "id": "8",
+      "author": "International Energy Agency",
+      "year": "undated",
+      "title": "Oil security and emergency response",
+      "url": "https://www.iea.org/about/oil-security-and-emergency-response",
+      "locator": "Net-importing member stockholding obligations; accessed 12 November 2026"
+    },
+    {
+      "id": "9",
+      "author": "International Energy Agency",
+      "year": "2026",
+      "title": "IEA confirms member country contributions to collective action to release oil stocks in response to Middle East disruptions",
+      "url": "https://www.iea.org/news/iea-confirms-member-country-contributions-to-collective-action-to-release-oil-stocks-in-response-to-middle-east-disruptions",
+      "locator": "19 March 2026; commitments and initial volumes at that date, not a November airport inventory assessment"
+    },
+    {
+      "id": "10",
+      "author": "European Parliament and Council",
+      "year": "2023",
+      "title": "Regulation (EU) 2023/2405: ReFuelEU Aviation",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/2405/oj/eng",
+      "locator": "Article 5; annual operator-by-Union-airport uplift obligation and exemptions"
+    },
+    {
+      "id": "11",
+      "author": "European Commission",
+      "year": "2026",
+      "title": "Commission Notice C/2026/2669",
+      "url": "https://eur-lex.europa.eu/eli/C/2026/2669/oj/eng",
+      "locator": "12 May 2026, §3(b); documented shortages and the Article 5 obligation; higher price alone is insufficient"
+    },
+    {
+      "id": "12",
+      "author": "US Energy Information Administration",
+      "year": "undated",
+      "title": "Spot prices: definitions, sources and explanatory notes",
+      "url": "https://www.eia.gov/dnav/pet/tbldefs/pet_pri_spt_tbldef2.asp",
+      "locator": "Location- and quantity-specific wholesale spot transactions; accessed 12 November 2026"
+    },
+    {
+      "id": "13",
+      "author": "EUROCONTROL",
+      "year": "2019",
+      "title": "Fuel tankering: economic benefits and environmental impact",
+      "url": "https://www.eurocontrol.int/sites/default/files/2020-01/eurocontrol-think-paper-1-fuel-tankering.pdf",
+      "locator": "Think Paper 1, 21 June 2019; June 2018 ECAC traffic sample and model-based annual extrapolation"
+    },
+    {
+      "id": "14",
+      "author": "Hubert, T., Guo, C., Mouton, C. A. and Powers, J. D.",
+      "year": "2015",
+      "title": "Tankering Fuel on U.S. Air Force Transport Aircraft: An Assessment of Cost Savings",
+      "url": "https://www.rand.org/content/dam/rand/pubs/research_reports/RR800/RR837/RAND_RR837.pdf",
+      "locator": "RAND Corporation, report RR-837; transport/burn-factor accounting on pp. 12–14; military context, not Asian commercial calibration"
+    }
+  ],
+  "reviewSummary": [
+    {
+      "round": 1,
+      "focus": "Research framing and measurable claims",
+      "critique": "The initial concept risked confusing fuel-price arbitrage, flight continuity and national security; the counterfactual and geographic scope were insufficiently defined.",
+      "revision": "Narrowed the question to price thresholds and destination uplift displaced; fixed the matched fuel state; distinguished local and regional shocks and added comparative Asian institutions.",
+      "verification": "Saved the initial design, reviewer critique and point-by-point response; the revised inputs explicitly classify unknown prices and operational constraints."
+    },
+    {
+      "round": 2,
+      "focus": "Numerical validity and interpretation",
+      "critique": "The numerical core reproduced, but the two quantity bases needed paired presentation, CSV audit fields and a clearer distinction between ordinary purchases and shortage response. A concurrent finite-value guard changed one model hash.",
+      "revision": "Paired one-tonne-loaded and one-tonne-delivered results; added local burn/emissions fields; separated available-supply price comparisons from physical shortage displacement. Preserved the original manifest and recorded the guard change.",
+      "verification": "21 numerical tests and deterministic output reproduction passed. An independent audit checked all 522 case rows and formula, geometry, monotonicity and boundary behavior. Revised manifests identify the exact final reviewed files."
+    },
+    {
+      "round": 3,
+      "focus": "Evidence, policy interpretation and Asian relevance",
+      "critique": "Route sensitivity ranges overlap, so a distance ranking needs matched assumptions. The RAND title was incorrect; a website footer date was mistaken for a CAAS article update. EIA spot definitions did not support every proposed airport quote field.",
+      "revision": "Qualified the route ranking; corrected RAND authors/title and CAAS date attribution; separated the proposed quote schema from sourced facts and added the relevant EUROCONTROL price discussion. Clarified that operational-exception documentation is conditional on adopting relevant rules and does not impose new prior dispatch approval.",
+      "verification": "Reviewed the revised 919-word reflection and full report against the primary evidence register; retained the original draft and input manifest. Numerical results and the distinction between gross uplift and net delivery remain unchanged."
+    }
+  ],
+  "figures": [
+    {
+      "title": "Carrying fuel raises the destination-price hurdle",
+      "path": "figures/time-threshold.png",
+      "section": "4. Quantitative findings and sensitivity",
+      "caption": "Author calculations. Main linear model and exponential comparator at k = 0.035/h; shaded linear range varies k from 0.025 to 0.045/h. Carbon sensitivity assumes USD 1,000/t fuel and USD 100/tCO₂. Other fees are zero. All lines are scenarios, not measured airport prices."
+    },
+    {
+      "title": "Geography matters, but performance uncertainty is material",
+      "path": "figures/route-threshold.png",
+      "section": "4. Quantitative findings and sensitivity",
+      "caption": "Author calculations using public coordinates and scenario timing. Dots show central assumptions; bars show the full designed no-carbon envelope over burn, speed and routing. They are not confidence intervals."
+    },
+    {
+      "title": "Two denominators, one mass balance",
+      "path": "figures/fuel-balance.png",
+      "section": "5. From local flexibility to regional security",
+      "caption": "Four-hour linear scenario, k = 0.035/h. Gross extra uplift divides into useful fuel delivered and additional burn. CO₂ is additional direct combustion only. The headroom case does not imply a flight can operate."
+    }
+  ],
+  "acknowledgements": [
+    "Prepared for the Fuel Atlas student project with AI-assisted research, coding, drafting and independent critique. The package records sources, assumptions and tests for human verification. No interviews, supplier quotations or empirical aircraft trials were conducted. The listed project team should review the final interpretation and any course-specific disclosure requirements before submission."
+  ]
+}

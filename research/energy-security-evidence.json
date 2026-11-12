@@ -1,0 +1,263 @@
+{
+  "researchCutoff": "2026-11-12",
+  "accessedAt": "2026-11-12",
+  "purpose": "Primary-source evidence register for Asian aviation-fuel resilience research. All evidence is separated from model assumptions and inferred policy implications.",
+  "sources": [
+    {
+      "id": "IEA_SEA_2026",
+      "publisher": "International Energy Agency",
+      "title": "Southeast Asia Energy Outlook 2026 — Executive summary",
+      "url": "https://www.iea.org/reports/southeast-asia-energy-outlook-2026/executive-summary",
+      "publicationUrl": "https://www.iea.org/reports/southeast-asia-energy-outlook-2026",
+      "publishedAt": "2026-06-16",
+      "measurementPeriod": "Pre-crisis exposure described in the 2026 report; exact exposure measurement year not specified in executive summary.",
+      "claims": [
+        "Before the 2026 crisis, roughly 60% of Southeast Asian crude imports came from the Middle East; 45% of oil-product supply depended on Middle Eastern crude.",
+        "Many regional refineries process medium/heavy Gulf crudes, limiting rapid feedstock substitution.",
+        "The report recommends coordinated stockholding and emergency responses."
+      ],
+      "limitations": [
+        "Regional oil-system evidence, not airport Jet A-1 inventory, contract-price or airline-specific data.",
+        "Scenarios reflect pre-crisis policy settings and are exploratory, not forecasts.",
+        "Do not label these regional exposure percentages as each airport's vulnerability."
+      ],
+      "analyticalImplication": "Changing airport or regional fuel seller may leave an airline exposed to the same upstream supply shock.",
+      "verified": "Full official HTML, executive-summary lines 65–81; publication date from report landing page."
+    },
+    {
+      "id": "EIA_CHOKEPOINTS_2026",
+      "publisher": "U.S. Energy Information Administration",
+      "title": "World Oil Transit Chokepoints",
+      "url": "https://www.eia.gov/international/content/analysis/special_topics/World_Oil_Transit_Chokepoints/",
+      "publishedAt": "2026-03-03",
+      "measurementPeriod": "2020–first half of 2025; selected claims concern 1H2025.",
+      "claims": [
+        "Hormuz carried 20.9 million barrels/day of oil in 1H2025; 89% of its crude-and-condensate flows went to Asian markets.",
+        "China, India, Japan and South Korea together received 74% of Hormuz crude-and-condensate flows in 1H2025.",
+        "Malacca carried 23.2 million barrels/day of oil in 1H2025, 29% of global maritime oil flows.",
+        "Malacca links Middle Eastern suppliers to East/Southeast Asia; Gulf OPEC producers provided nearly 60% of its crude flows."
+      ],
+      "limitations": [
+        "Historical tanker-tracking estimates; not current traffic, jet-fuel flows or probabilities of disruption.",
+        "Asia includes South Asia; 89% applies to crude plus condensate, not all petroleum.",
+        "Flow estimates were revised: use this March 2026 edition consistently rather than mixing it with June 2025 figures."
+      ],
+      "analyticalImplication": "Analyse Gulf chokepoints through Asian importer exposure; scenarios at connected airports should allow correlated shocks.",
+      "verified": "Full official HTML, updated date and tables; EIA calculations using Vortexa and February 2026 STEO."
+    },
+    {
+      "id": "EUROCONTROL_TANKERING_2019",
+      "publisher": "EUROCONTROL",
+      "title": "Think Paper #1 — Fuel Tankering: economic benefits and environmental impact",
+      "url": "https://www.eurocontrol.int/sites/default/files/2020-01/eurocontrol-think-paper-1-fuel-tankering.pdf",
+      "publicationUrl": "https://www.eurocontrol.int/publication/fuel-tankering-european-skies-economic-benefits-and-environmental-impact",
+      "publishedAt": "2019-06-21",
+      "measurementPeriod": "June 2018 ECAC traffic sample, annualised; February 2019 fuel-price reference.",
+      "claims": [
+        "BADA simulations estimated annual ECAC tankering could burn 286,000 additional tonnes of fuel, emit 901,000 tonnes of CO2, and generate EUR265 million net airline savings.",
+        "The simulation incorporated aircraft performance, maximum takeoff/landing weights, tank capacity and legal fuel minima.",
+        "Price variation reflects negotiated contracts, geography, distribution, quantities and supplier competition."
+      ],
+      "limitations": [
+        "European model estimates, not observed Asia-wide behaviour or a current savings forecast.",
+        "Only two airlines' negotiated prices at 140 airports; aircraft models covered 66% of ECAC traffic before extrapolation.",
+        "Excluded multi-leg tankering and non-price motivations; do not transfer its parameter calibration mechanically to an Asian route."
+      ],
+      "analyticalImplication": "Cost-minimising tankering can increase physical fuel consumption; model mass-dependent burn and report emissions beside savings.",
+      "verified": "Full official eight-page PDF and dated publication landing page; pp.1–5."
+    },
+    {
+      "id": "AFSC_HKG_FACILITY",
+      "publisher": "AFSC Operations Limited / AFSC Refuelling Limited",
+      "title": "The Facility",
+      "url": "https://www.afsc.com.hk/en/facility.html",
+      "publishedAt": null,
+      "publicationDateNote": "Undated operator page; copyright range is not a publication date.",
+      "measurementPeriod": "Facility specification on page accessed 12 November 2026; specification effective date not given.",
+      "claims": [
+        "The on-airport system lists 12 tanks with aggregate capacity 220,000 cubic metres.",
+        "Sha Chau's twin berth can accommodate barges up to 6,000 dwt and serves as emergency backup to the Permanent Aviation Fuel Facility.",
+        "The airport system includes apron hydrants; Airport Authority franchises operations to AFSC."
+      ],
+      "limitations": [
+        "Installed capacity is not current stock, usable inventory or days of cover.",
+        "Do not infer a single point of failure: the source explicitly identifies an emergency backup.",
+        "No current throughput, replenishment time, vendor-specific inventory or prices are disclosed."
+      ],
+      "analyticalImplication": "Airport resilience depends on certified storage, receipt routes and hydrant delivery, not solely national aggregate oil reserves.",
+      "verified": "Full operator HTML, facility section, lines 15–29."
+    },
+    {
+      "id": "CAAS_SAF_PROCUREMENT_2026",
+      "publisher": "Civil Aviation Authority of Singapore",
+      "title": "CAAS Sets Out Criteria for Sustainable Aviation Fuel to be Procured and Uplifted on Flights from Singapore",
+      "url": "https://www.caas.gov.sg/resources/media-and-publication/newsroom/caas-sets-out-criteria-for-sustainable-aviation-fuel-to-be-procured-and-uplifted-on-flights-from-singapore/",
+      "publishedAt": "2026-11-05",
+      "measurementPeriod": "Policy announcement: initial tender planned by mid-December 2026; deliveries from June 2027.",
+      "claims": [
+        "SAFCo's first levy-funded tender is planned for 20–30 kilotonnes, using a portfolio of term contracts and spot purchases.",
+        "Bid assessment includes price, supply-chain resilience, delivery certainty and sustainability documentation.",
+        "Qualifying fuel must meet CORSIA eligibility and at least 40% lifecycle emissions reduction; deliveries must use Changi's existing fuel hydrant infrastructure."
+      ],
+      "limitations": [
+        "Future tender and deliveries, not fuel already procured or uplifted by the research cutoff.",
+        "SAF lifecycle reduction is not zero tailpipe emissions.",
+        "This is SAF procurement governance, not public conventional Jet A-1 airport pricing."
+      ],
+      "analyticalImplication": "A credible security recommendation already has a regional precedent: assess delivery resilience alongside price, with traceable certification.",
+      "verified": "Full official media release, paragraphs 1–5.",
+      "websiteFooterUpdatedAt": "2026-11-10",
+      "dateClarification": "The footer update date is not established as the article revision date; article publication is 5 November 2026."
+    },
+    {
+      "id": "IEA_OIL_SECURITY",
+      "publisher": "International Energy Agency",
+      "title": "Oil security and emergency response",
+      "url": "https://www.iea.org/about/oil-security-and-emergency-response",
+      "publishedAt": null,
+      "publicationDateNote": "Undated living institutional page; includes March 2026 collective action.",
+      "measurementPeriod": "Institutional stockholding rules as accessed 12 November 2026.",
+      "claims": [
+        "IEA countries with a stockholding obligation must maintain stocks equivalent to at least 90 days of net oil imports.",
+        "Stocks may include crude or refined products, public and commercial holdings, and some stocks held abroad under bilateral guarantees.",
+        "IEA recommends sufficient refined-product stocks and timely emergency drawdown/distribution; its minimum does not prescribe crude versus refined shares."
+      ],
+      "limitations": [
+        "Net exporters have no IEP stockholding obligation.",
+        "The 90-day denominator is net oil imports, not total consumption or airport jet demand.",
+        "A national aggregate stockholding figure cannot establish aviation fuel availability at a particular airport."
+      ],
+      "analyticalImplication": "National reserve compliance and local operational fuel resilience require separate indicators and must never be represented by a single interchangeable 'days cover' figure.",
+      "verified": "Full official HTML, stockholding FAQ and policy sections."
+    },
+    {
+      "id": "IEA_COLLECTIVE_ACTION_2026",
+      "publisher": "International Energy Agency",
+      "title": "IEA confirms Member country contributions to collective action to release oil stocks in response to Middle East disruptions",
+      "url": "https://www.iea.org/news/iea-confirms-member-country-contributions-to-collective-action-to-release-oil-stocks-in-response-to-middle-east-disruptions",
+      "publishedAt": "2026-03-19",
+      "measurementPeriod": "Commitments to collective action agreed 11 March 2026, reported as of 19 March 2026.",
+      "claims": [
+        "Members agreed on 11 March to make 400 million barrels available; initial volumes had begun to reach the market by the 19 March announcement.",
+        "The provisional country table totals 426 million barrels including production increases; Japan's contribution is 79.8 million barrels and Korea's 22.5 million.",
+        "Most contributions are crude; European contributions are mainly refined products."
+      ],
+      "limitations": [
+        "Commitments and initial availability are not cumulative delivered volumes.",
+        "Provisional composition is explicitly subject to change.",
+        "Refined products are not synonymous with jet fuel; source cannot establish current November 2026 shipping status."
+      ],
+      "analyticalImplication": "The 2026 research context includes an actual supply disruption and coordinated intervention. Model scenarios must be labelled counterfactual severity tests, not falsely presented as the first hypothetical instance of disruption.",
+      "verified": "Full official media release, date and country table."
+    },
+    {
+      "id": "EU_TANKERING_POLICY_2023",
+      "publisher": "Council of the European Union",
+      "title": "RefuelEU aviation initiative: Council adopts new law to decarbonise the aviation sector",
+      "url": "https://www.consilium.europa.eu/en/press/press-releases/2023/10/09/refueleu-aviation-initiative-council-adopts-new-law-to-decarbonise-the-aviation-sector/",
+      "publishedAt": "2023-10-09",
+      "measurementPeriod": "Regulatory design adopted 2023; core uplift obligation applies from 1 January 2025.",
+      "claims": [
+        "The operator's yearly fuel uplift at a given Union airport must be at least 90% of yearly fuel required, targeting emissions from tankering extra weight.",
+        "The legislation combines this demand-side rule with SAF supply requirements and reporting."
+      ],
+      "limitations": [
+        "Annual operator-by-airport measure, not 90% on each flight.",
+        "Applies within defined EU scope; it is not an Asian legal requirement.",
+        "For detailed safety and supply exemptions consult Regulation (EU) 2023/2405 Article 5 and Commission guidance; the press release is an official summary, not the operative legal text."
+      ],
+      "analyticalImplication": "Policy should distinguish economic tankering from justified contingency fuel and identify the scale at which incentives and exemptions operate.",
+      "verified": "Full Council press release; current scope corroborated by official Commission FAQ.",
+      "supportingUrl": "https://transport.ec.europa.eu/transport-modes/air/environment/refueleu-aviation/faq-refueleu-aviation_en"
+    },
+    {
+      "id": "ICAO_FUEL_CO2",
+      "publisher": "International Civil Aviation Organization",
+      "title": "CORSIA frequently asked questions — 3.59–3.62",
+      "url": "https://www.icao.int/sites/default/files/environmental-protection/CORSIA/CORSIA-FAQ.html",
+      "publishedAt": null,
+      "publicationDateNote": "Undated living FAQ; date of individual conversion-factor passage not provided.",
+      "measurementPeriod": "Accounting method, not an empirical observation period.",
+      "claims": [
+        "Jet A and Jet A-1 fuel mass is converted to combustion CO2 using 3.16 kg CO2 per kg fuel.",
+        "CORSIA permits actual density or standard 0.8 kg/litre when converting fuel volume to mass, with method documented."
+      ],
+      "limitations": [
+        "Combustion CO2 excludes fuel-production lifecycle emissions and aviation non-CO2 warming effects.",
+        "Standard density is an accounting convention, not a measurement of a particular fuel batch.",
+        "A carbon-price sensitivity is a model assumption unless linked to the operator's applicable real compliance cost."
+      ],
+      "analyticalImplication": "Expose unit conversions and label emissions as combustion CO2; do not mix tonnes, litres, US gallons and CO2-equivalent.",
+      "verified": "Full official HTML, questions 3.59–3.62."
+    },
+    {
+      "id": "EIA_SPOT_DEFINITION",
+      "publisher": "U.S. Energy Information Administration",
+      "title": "Petroleum spot-price definitions, sources and explanatory notes",
+      "url": "https://www.eia.gov/dnav/pet/tbldefs/pet_pri_spt_tbldef2.asp",
+      "publishedAt": null,
+      "publicationDateNote": "Undated living definitions page.",
+      "measurementPeriod": "Market-series definition, not a current price observation.",
+      "claims": [
+        "A spot price concerns one immediate-delivery transaction at a specified quantity and location.",
+        "EIA's U.S. Gulf Coast geography refers to ports on the Texas/Louisiana coast.",
+        "Kerosene-type jet fuel is a defined aviation petroleum product; a crude marker is a different commodity."
+      ],
+      "limitations": [
+        "A U.S. Gulf Coast benchmark is not a Singapore, Hong Kong or Tokyo into-plane quotation.",
+        "No airport premium, handling, tax, credit, contract discount or fuel availability is disclosed by this series definition.",
+        "Refresh time must be distinct from observation date; latest available daily data are delayed, not tick-by-tick executable prices."
+      ],
+      "analyticalImplication": "Public prices may anchor a market-monitoring panel. Airline decisions require comparable, timestamped airport-specific contract quotes; otherwise show scenario prices and no trade recommendation.",
+      "verified": "Full official definitions HTML, spot-price and geography entries."
+    },
+    {
+      "id": "EASA_SAF_2026",
+      "publisher": "European Union Aviation Safety Agency",
+      "title": "ReFuelEU Aviation Annual Technical Report 2026 — 2025 in review",
+      "url": "https://www.easa.europa.eu/en/document-library/general-publications/refueleu-aviation-annual-technical-report-2026",
+      "publishedAt": "2026-09-17",
+      "lastUpdatedAt": "2026-11-02",
+      "measurementPeriod": "2025 reported EU fuel supply and SAF; 2026 publication with corrigendum.",
+      "claims": [
+        "Reported 2025 supply includes 1.1 million tonnes SAF within 39.3 million tonnes aviation fuel; 90% of suppliers reported.",
+        "EASA reports 85% of SAF feedstocks imported, with China, Malaysia and Indonesia prominent.",
+        "Published annual reference prices are EUR1,925/tonne SAF versus EUR640/tonne conventional jet fuel."
+      ],
+      "limitations": [
+        "EU reporting sample and annual reference prices, not Asian airport quotes.",
+        "November 2026 corrigendum clarifies production and import-statistics interpretation; use the updated report.",
+        "Feedstock origin is distinct from fuel production location and procurement seller; do not treat these as interchangeable concentration measures."
+      ],
+      "analyticalImplication": "SAF can change the geography of import dependence rather than eliminate it. Security assessment should trace feedstock, production, certification and delivery constraints separately.",
+      "verified": "Full official publication landing page, dated summary and corrigendum; full report not needed for these explicitly listed facts."
+    }
+  ],
+  "keyFindings": [
+    "Tankering reallocates the place/time of an airline's purchases; it does not create fuel. Extra carried mass increases total consumption.",
+    "Private cost reduction, airline continuity, airport system resilience and national energy security are different outcomes and need separate metrics.",
+    "Upstream Gulf crude exposure can correlate shortages across otherwise diverse Asian refuelling locations.",
+    "Crude-stock barrels, installed airport capacity and certified usable Jet A-1 inventory are not interchangeable.",
+    "Public benchmark freshness does not establish airport price comparability or executability.",
+    "SAF procurement and emissions policy interact with security; resilience criteria, lifecycle accounting and imported feedstock dependence all matter.",
+    "Use 2026 primary-source updates and clearly date historical exposures. Current disruption status cannot be inferred from a March announcement."
+  ],
+  "excludedOrLimitedEvidence": [
+    {
+      "url": "https://www.enecho.meti.go.jp/en/category/brochures/pdf/japan_energy_2025.pdf",
+      "reason": "Official METI/ANRE page was found via search but full retrieval returned 403. Search snippets suggest 95.1% Middle East crude dependence in 2024 and FY2024 energy self-sufficiency 16.4%; excluded from load-bearing quantified claims until full-document verification and calendar/fiscal-year reconciliation."
+    },
+    {
+      "url": "https://www.meti.go.jp/english/press/2026/0324_001.html",
+      "reason": "Official national stock-release announcement identified but full retrieval returned 403; use fully retrieved 19 March IEA contribution table for verified current-context claims."
+    },
+    {
+      "url": "https://www.eia.gov/TodayinEnergy/detail.php?id=65504",
+      "reason": "June 2025 article is verified but older estimates differ from March 2026 revised chokepoint series. Prefer newer source consistently."
+    },
+    {
+      "url": "https://eur-lex.europa.eu/eli/C/2024/5997/oj/eng",
+      "reason": "Official interpretative guidance identified; direct HTML/PDF retrieval triggered robot challenge. Detailed exemption wording not relied upon; Council summary and Commission FAQ were fully retrieved."
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+Initial design provided to the independent reviewer, before numerical implementation:
+Digital research atlas plus 800–1,000-word essay on when airline fuel tankering improves operational resilience in East Asia and when it shifts cost, emissions and scarcity. Proposed geographic frame: Singapore–Hong Kong–Tokyo. Airport prices are unavailable, so analyse break-even price ratios using source geometry and literature-informed carrying penalties; public regional data remain contextual.
+
+Round 1 identified missing security units, a not-yet-explicit matched counterfactual, risk of confusing local with regional shortages, and the need for input classification and an auditable numerical result. See round-1-critique.txt and the revised design in research/README.md.
