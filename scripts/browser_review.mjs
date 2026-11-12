@@ -119,7 +119,46 @@ const translationCandidates = async (page, locale) => page.evaluate(locale => {
   }
   return candidates;
 }, locale);
+const reviewGlobalMap = async page => {
+  await tab(page, 'calculations');
+  await page.locator('#scenario-preset').selectOption('global');
+  await page.locator('#load-example').click();
+  assert.deepEqual(await routeCodes(page), ['SIN','DXB','LHR','JFK','LAX']);
+  await page.locator('#calculate').click();
+  assert.equal(await page.locator('#model-error').isVisible(), false);
+  await pauseAt(page, 55);
+  assert.equal(await page.locator('#animated-plane').count(), 1);
+  await page.setViewportSize({width:1440,height:1000});
+  for (const locale of ['zh','en']) {
+    await language(page, locale);
+    await page.locator('.map-card').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(150);
+    const clipped = await page.evaluate(() => {
+      const card = document.querySelector('.map-card').getBoundingClientRect();
+      return [...document.querySelectorAll('#motion-leg-buttons button,.motion-controls button,.map-support > *')].flatMap(item => {
+        const box = item.getBoundingClientRect();
+        return box.left < card.left || box.right > card.right ? [{element:item.id || item.className,left:box.left,right:box.right,cardLeft:card.left,cardRight:card.right}] : [];
+      });
+    });
+    assert.deepEqual(clipped, [], 'Global-route controls must stay inside the map card');
+    await page.screenshot({path:path.join(output,`global-map-${locale}-1440.png`)});
+    await page.locator('.map-bottom').screenshot({path:path.join(output,`global-map-footer-${locale}.png`)});
+  }
+  // Exercise the rightmost playback control as well as recording its painted text.
+  await page.locator('#play-route').click();
+  assert.ok(Number(await page.locator('#motion-progress').inputValue()) < 55);
+  await pauseAt(page,55);
+  await language(page,'zh');
+  await page.locator('#reset-plan').click();
+  record('Explicit global example calculates four legs with visible, operable map controls', {visualEvidence:'global-map-*-1440.png and global-map-footer-*.png; manually inspect for paint clipping'});
+};
+const reviewCase = process.env.FUEL_BROWSER_CASE || 'full';
+assert.ok(['full','global-map'].includes(reviewCase), 'Unknown FUEL_BROWSER_CASE');
 try {
+  if (reviewCase === 'global-map') {
+    const page = await makePage(); await load(page); await reviewGlobalMap(page); await page.close();
+    assert.deepEqual(errors, []); assert.deepEqual(localFailures, []); assert.deepEqual(forbiddenMarketRequests, []);
+  } else {
   const page = await makePage();
   await load(page);
   assert.equal(await page.locator('html').getAttribute('lang'), 'zh-CN');
@@ -152,6 +191,7 @@ try {
   await page.locator('#reset-plan').click();
   assert.deepEqual(await routeCodes(page), ['', '']);
   record('Examples require an explicit load action and never calculate automatically; reset returns to blank');
+  await reviewGlobalMap(page);
 
   assert.equal(await field(page,0,'from').locator('option').evaluateAll(items => items.filter(item => item.value).length), 67);
   await chooseRoute(page, ['SIN','HKG']);
@@ -344,12 +384,13 @@ try {
   assert.deepEqual(errors,[],'Uncaught browser JavaScript errors');
   assert.deepEqual(localFailures,[],'Failed local runtime assets');
   record('No removed provider requests, uncaught JavaScript errors or failed local assets');
+  }
 } catch(error) {
   checks.push({name:'Acceptance run',pass:false,error:error.stack||String(error)});
   console.error(error); process.exitCode=1;
 } finally {
   await browser.close(); ownedServer?.kill();
-  const report={checkedAt:new Date().toISOString(),base,browser:'Chromium through Playwright',checks,errors,localFailures,externalFailures,cancelledRequests,accessibility,translationReview,networkMode:{mode:'controlled-public-feed-snapshots-no-trading-widgets',fixtureSha256:fixtureManifest,fixtureRequests,forbiddenMarketRequests,note:'Repository public-feed requests, if made, use checked-in snapshots. TradingView/OANDA requests are blocked and treated as failures. Application production fetching is unchanged.'},limits:['Local static application; production authentication and live supplier/service availability are outside this run.','Translation heuristics complement a human wording review; original source titles, proper names, units, codes and English download artifacts are allowed.','Targeted keyboard/automated checks are not a screen-reader or complete accessibility certification.']};
+  const report={checkedAt:new Date().toISOString(),reviewCase,base,browser:'Chromium through Playwright',checks,errors,localFailures,externalFailures,cancelledRequests,accessibility,translationReview,networkMode:{mode:'controlled-public-feed-snapshots-no-trading-widgets',fixtureSha256:fixtureManifest,fixtureRequests,forbiddenMarketRequests,note:'Repository public-feed requests, if made, use checked-in snapshots. TradingView/OANDA requests are blocked and treated as failures. Application production fetching is unchanged.'},limits:['Local static application; production authentication and live supplier/service availability are outside this run.','Translation heuristics complement a human wording review; original source titles, proper names, units, codes and English download artifacts are allowed.','Targeted keyboard/automated checks are not a screen-reader or complete accessibility certification.']};
   await fs.writeFile(path.join(output,'browser-review.json'),JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify({passed:checks.filter(item=>item.pass).length,failed:checks.filter(item=>!item.pass).length,errors:errors.length,localFailures:localFailures.length,report:path.join(output,'browser-review.json')}));
 }

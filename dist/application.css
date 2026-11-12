@@ -39,7 +39,7 @@ body.institutional { --blue: #0057b8; --surface: #f3f6fa; }
 .institutional .leg-table select { min-width:140px; }
 .institutional .flight-planner .map-top h2 { font-size: 22px; }
 .institutional .flight-planner .map-tag { font-size: 11px; padding: 5px 8px; }
-.institutional .flight-planner .map-bottom { border-top: 1px solid #d9e1ea; }
+.institutional .flight-planner .map-bottom { border-top: 1px solid #d9e1ea; backdrop-filter:none; }
 .institutional #motion-leg-buttons button > span,
 .institutional #motion-leg-buttons button > small { color: #405c78; opacity: 1; font-size: 11px; line-height: 1.45; }
 .institutional #motion-leg-buttons button > strong { font-size: 12px; line-height: 1.45; }
