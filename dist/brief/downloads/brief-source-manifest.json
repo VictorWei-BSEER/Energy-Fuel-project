@@ -7,11 +7,11 @@
   ],
   "type": "model_guide",
   "sourceFiles": {
-    "dist/brief/brief.html": "b6ba9e6e6697e9cc90132919e05a5d7852077758cb0ea4e9f34a6c7300600f38",
+    "dist/brief/brief.html": "a67d29f05b69e9ee9b552a01b9f2e91ad519e50f6e402a73074eb3f485955c35",
     "dist/brief/brief.css": "cf3745b7268753b1f8aaa3e9a57425752b87eb12867651a1147c358a1cc29ff8",
-    "dist/locales/guide.js": "0acd2a8e0225df1f65bb9cbb8fa0ad1aa59305f21826e9ed3ceb5025242a5cb1",
-    "docs/decision-brief.md": "ca39f81d2a79cd3b67abdfc1abd210c0249f10c7784e1ddc729e998262215050",
-    "scripts/build_brief.py": "601617c1c5455122d1406b718c528479ba1d9ef51194000679576c27fee2fb29"
+    "dist/locales/guide.js": "22552691fcca70c9ea64d17ea01209e6b83e325bc9466cf9e29f3c56cd33ae1d",
+    "docs/decision-brief.md": "fa9503174706a0afdef49a2a5d2723f0cb20db54f806dde89e8ce50d5d8fcf6a",
+    "scripts/build_brief.py": "39b3c712fa216ab1aa413ff0de8e2ef35f05c0ad78797376a719b3d206c22fd5"
   },
   "printViews": [
     "print.html",

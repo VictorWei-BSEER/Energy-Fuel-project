@@ -6,25 +6,27 @@
     <meta name="theme-color" content="#ffffff" />
     <meta
       name="description"
-      content="Fuel Atlas: global fixed-route fuel optimization, traceable market data and aviation energy-security research."
+      content="Fuel Atlas connects fuel supply, transport, airport stocks and aircraft uplift in one planning model."
     />
-    <title>Fuel Atlas — Build your fuel plan</title>
+    <title>Fuel Atlas — Model</title>
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./dashboard.css?v=20261102-header-2" />
-    <script type="module" src="./i18n.js?v=20261113-bilingual"></script>
-    <script type="module" src="./workspace.js?v=20261113-bilingual"></script>
-    <script type="module" src="./data-view.js?v=20261113-bilingual"></script>
+    <script type="module" src="./i18n.js?v=20261113-integrated"></script>
+    <script type="module" src="./workspace.js?v=20261113-integrated"></script>
+    <script type="module" src="./data-view.js?v=20261113-integrated"></script>
 
     <link href="./flight.css" rel="stylesheet" />
     <link href="./workspace-flight.css" rel="stylesheet" />
     <link href="./flight-motion.css" rel="stylesheet" />
     <link href="./institutional.css?v=20261113" rel="stylesheet" />
-    <link href="./research/research-embedded.css?v=20261113-bilingual" rel="stylesheet" />
-    <link href="./brief/brief.css?v=20261113-bilingual" rel="stylesheet" />
-    <link href="./data-view.css?v=20261113-bilingual" rel="stylesheet" />
-    <link href="./application.css?v=20261113-bilingual" rel="stylesheet" />
-    <script defer src="./research/research.js?v=20261113-bilingual"></script>
-    <script src="./flight-app.js?v=20261113-bilingual" type="module"></script>
+    <link href="./research/research-embedded.css?v=20261113-integrated" rel="stylesheet" />
+    <link href="./brief/brief.css?v=20261113-integrated" rel="stylesheet" />
+    <link href="./data-view.css?v=20261113-integrated" rel="stylesheet" />
+    <link href="./application.css?v=20261113-integrated" rel="stylesheet" />
+    <link href="./integrated-view.css?v=20261113-integrated" rel="stylesheet" />
+    <script defer src="./research/research.js?v=20261113-integrated"></script>
+    <script src="./integrated-view.js?v=20261113-integrated" type="module"></script>
+    <script src="./flight-app.js?v=20261113-integrated" type="module"></script>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22%3E%3Cpath fill=%22%230057b8%22 d=%22M4 29 17 5h13L17 29z%22/%3E%3C/svg%3E"
@@ -34,7 +36,7 @@
     <a class="skip-link" href="#main">Skip to workspace</a>
     <div class="workspace">
       <header class="topbar">
-        <a href="#calculations" class="wordmark"
+        <a href="#model" class="wordmark"
           ><svg
             class="brand-icon"
             viewBox="0 0 36 36"
@@ -67,11 +69,10 @@
       </header>
       <nav class="workspace-navigation" aria-label="Main workspace">
         <div class="workspace-tabs" role="tablist" aria-label="Fuel Atlas sections">
-          <button type="button" role="tab" id="workspace-tab-calculations" data-workspace="calculations" aria-controls="workspace-calculations" aria-selected="true">Route model</button>
-          <button type="button" role="tab" id="workspace-tab-oil-markets" data-workspace="oil-markets" aria-controls="workspace-oil-markets" aria-selected="false" tabindex="-1">Fuel data</button>
-          <button type="button" role="tab" id="workspace-tab-research" data-workspace="research" aria-controls="workspace-research" aria-selected="false" tabindex="-1">Research</button>
-          <button type="button" role="tab" id="workspace-tab-briefing" data-workspace="briefing" aria-controls="workspace-briefing" aria-selected="false" tabindex="-1">How it works</button>
-          <button type="button" role="tab" id="workspace-tab-sources" data-workspace="sources" aria-controls="workspace-sources" aria-selected="false" tabindex="-1">Sources</button>
+          <button type="button" role="tab" id="workspace-tab-calculations" data-workspace="calculations" aria-controls="workspace-calculations" aria-selected="true" data-i18n="nav.model">Model</button>
+          <button type="button" role="tab" id="workspace-tab-oil-markets" data-workspace="oil-markets" aria-controls="workspace-oil-markets" aria-selected="false" tabindex="-1" data-i18n="nav.data">Data</button>
+          <button type="button" role="tab" id="workspace-tab-research" data-workspace="research" aria-controls="workspace-research" aria-selected="false" tabindex="-1" data-i18n="nav.research">Research</button>
+          <button type="button" role="tab" id="workspace-tab-briefing" data-workspace="briefing" aria-controls="workspace-briefing" aria-selected="false" tabindex="-1" data-i18n="nav.method">Method</button>
         </div>
       </nav>
       <main id="main">
@@ -91,15 +92,12 @@
                 Build your fuel plan
               </h1>
               <p class="workspace-intro">
-                Choose your airports in order, generate the route inputs, then compare where to refuel and how much to carry.
+                Choose your route and supply conditions, then calculate procurement, transport, airport stocks and aircraft uplift together.
               </p>
             </div>
             <div class="overview-actions">
               <button class="outline-button" type="button" data-import="">
-                Import supplier quotes <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg></button
-              ><a class="outline-button" href="./network.html#calculations"
-                >Supply-chain model <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg></a
-              >
+                Import supplier quotes <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg></button>
             </div>
           </section>
           <section id="planner" class="flight-planner">
@@ -165,7 +163,7 @@
                       <tr>
                         <th>Leg</th>
                         <th>Origin → destination</th>
-                        <th>Origin fuel price <small>USD/t</small></th>
+                        <th>Delivered fuel reference <small>USD/t</small></th>
                         <th>Base flight burn <small>t</small></th>
                         <th>Recommended uplift <small>t</small></th>
                         <th>Landing fuel <small>t</small></th>
@@ -220,6 +218,21 @@
                     </table>
                   </div>
                 </details>
+                <section class="integrated-network" aria-labelledby="integrated-heading">
+  <div class="integrated-heading"><div><p class="eyebrow" data-i18n="chain.eyebrow">SUPPLY TO FLIGHT</p><h3 id="integrated-heading" data-i18n="chain.title">Connect the fuel supply</h3></div><button type="button" class="outline-button" id="chain-reset" data-i18n="chain.reset">Reset supply assumptions</button></div>
+  <p class="integrated-intro" data-i18n="chain.intro">The same calculation chooses purchases, deliveries, airport stocks and aircraft uplift. Each airport can only put fuel on board when its supply and inventory allow it.</p>
+  <ol class="chain-flow" aria-label="Fuel supply flow"><li data-i18n="chain.sourcing">Purchase</li><li data-i18n="chain.delivery">Delivery</li><li data-i18n="chain.stock">Airport stock</li><li data-i18n="chain.uplift">Aircraft uplift</li></ol>
+  <p id="chain-empty" class="integrated-empty" data-i18n="chain.empty">Choose your airports to generate the connected supply network.</p>
+  <div id="chain-inputs" hidden>
+    <p id="chain-mode-description" class="integrated-mode"></p>
+    <p class="integrated-timing" data-i18n="chain.timing">Each departure is one supply window. Deliveries arrive before uplift. A lead time of one window means fuel dispatched now is available at the next departure.</p>
+    <details class="chain-editor" id="chain-supplier-editor"><summary data-i18n="chain.suppliersTitle">Suppliers and purchase limits</summary><div class="chain-scroll"><table class="chain-table"><thead><tr><th data-i18n="chain.supplier">Supplier</th><th data-i18n="chain.purchaseRate">Product · USD/t</th><th data-i18n="chain.stageCap">Limit · t/window</th><th data-i18n="chain.totalCap">Limit · t/rotation</th></tr></thead><tbody id="chain-supplier-rows"></tbody></table></div></details>
+    <details class="chain-editor" id="chain-route-editor"><summary data-i18n="chain.routesTitle">Deliveries and lead times</summary><div class="chain-scroll"><table class="chain-table"><thead><tr><th data-i18n="chain.route">Supply route</th><th data-i18n="chain.freight">Freight · USD/t</th><th data-i18n="chain.handling">Handling · USD/t</th><th data-i18n="chain.basis">Price adjustment · USD/t</th><th data-i18n="chain.stageCap">Limit · t/window</th><th data-i18n="chain.totalCap">Limit · t/rotation</th><th data-i18n="chain.lead">Lead time · windows</th></tr></thead><tbody id="chain-route-rows"></tbody></table></div></details>
+    <details class="chain-editor" id="chain-offer-editor" hidden><summary data-i18n="chain.offersTitle">Delivered supplier offers</summary><div class="chain-scroll"><table class="chain-table"><thead><tr><th data-i18n="chain.airport">Airport</th><th data-i18n="chain.quotedPrice">All-in offer · USD/t</th><th data-i18n="chain.stageCap">Limit · t/window</th><th data-i18n="chain.totalCap">Limit · t/rotation</th></tr></thead><tbody id="chain-offer-rows"></tbody></table></div></details>
+    <details class="chain-editor" id="chain-stock-editor"><summary data-i18n="chain.stockTitle">Airport stocks and into-plane costs</summary><div class="chain-scroll"><table class="chain-table"><thead><tr><th data-i18n="chain.airport">Airport</th><th data-i18n="chain.opening">Opening · t</th><th data-i18n="chain.terminal">Final target · t</th><th data-i18n="chain.capacity">Storage · t</th><th data-i18n="chain.reserve">Stock floor · t</th><th data-i18n="chain.service">Into-plane · USD/t</th><th data-i18n="chain.tax">Tax adjustment · USD/t</th><th data-i18n="chain.holding">Holding · USD/t/window</th></tr></thead><tbody id="chain-stock-rows"></tbody></table></div></details>
+    <p id="chain-edit-status" class="chain-status" role="status" aria-live="polite"></p>
+  </div>
+</section>
                 <div class="form-bottom">
                   <p id="plan-status" role="status">
                     <span class="live-dot"></span> Ready to build your route
@@ -277,7 +290,7 @@
                         ><strong id="motion-fuel">— <small>t</small></strong>
                       </div>
                       <div>
-                        <span>Cumulative fuel cost</span
+                        <span>Allocated supply cost</span
                         ><strong id="motion-cost">—</strong>
                       </div>
                     </div>
@@ -357,7 +370,7 @@
                     <path d="m4 17 6-6 4 3 6-9M15 5h5v5" />
                   </svg>
                 </div>
-                <h2 id="decision-title">Uplift strategy & cost</h2>
+                <h2 id="decision-title">Total supply cost</h2>
                 <p class="decision-sub" id="result-state">
                   Compare the same route and terminal fuel
                 </p>
@@ -402,6 +415,14 @@
                 </p>
               </aside>
             </div>
+            <section class="chain-results" id="chain-results" aria-labelledby="chain-result-heading" hidden>
+  <div class="chain-section-head"><div><p class="eyebrow" data-i18n="chain.resultEyebrow">ONE PLAN, FROM PURCHASE TO FLIGHT</p><h2 id="chain-result-heading" data-i18n="chain.resultTitle">Follow the fuel through the system</h2></div><span id="chain-result-strategy"></span></div>
+  <p data-i18n="chain.resultIntro">Purchases and deliveries feed the same airport stocks used by the aircraft. The cost below includes each charge once.</p>
+  <div class="chain-cost-grid" id="chain-cost-breakdown"></div>
+  <details class="chain-editor" open><summary data-i18n="chain.flowsTitle">Purchases and deliveries</summary><div class="chain-scroll"><table class="chain-table"><thead><tr><th data-i18n="chain.supplier">Supplier</th><th data-i18n="chain.airport">Airport</th><th data-i18n="chain.dispatch">Dispatch window</th><th data-i18n="chain.arrival">Arrival window</th><th data-i18n="chain.quantity">Delivered · t</th><th data-i18n="chain.flowCost">Supply cost · USD</th></tr></thead><tbody id="chain-flow-rows"></tbody></table></div></details>
+  <details class="chain-editor"><summary data-i18n="chain.inventoryTitle">Airport fuel balance at every departure</summary><div class="chain-scroll"><table class="chain-table"><thead><tr><th data-i18n="chain.airport">Airport</th><th data-i18n="chain.window">Window</th><th data-i18n="chain.opening">Opening · t</th><th data-i18n="chain.receipts">Receipts · t</th><th data-i18n="chain.flightUplift">Aircraft uplift · t</th><th data-i18n="chain.closing">Closing · t</th></tr></thead><tbody id="chain-inventory-rows"></tbody></table></div></details>
+  <p class="chain-conservation" data-i18n="chain.balance">Opening stock + receipts − aircraft uplift = closing stock. Both plans use the same opening stocks and final stock targets.</p>
+</section>
             <section class="strategy-section">
               <div class="section-top">
                 <div>
@@ -472,32 +493,25 @@
     <details class="data-method"><summary data-i18n="data.methodTitle">Calculation and calibration</summary><div id="data-performance-method"></div></details>
   </section>
 </div>
-        </section>
-        <section
-          id="workspace-sources"
-          class="workspace-panel observed-monitor"
-          role="tabpanel"
-          aria-labelledby="workspace-tab-sources"
-          tabindex="0"
-          hidden
-        >
-          <div class="sources-view fuel-data-view">
-  <header class="data-page-head"><div><p class="eyebrow" data-i18n="sources.eyebrow">From scenario to evidence</p><h1 data-i18n="sources.title">Connect the right data</h1></div><p data-i18n="sources.intro">Each input has a clear replacement path. Start with a route and a set of assumptions, then bring in dated supplier prices, flight performance and confirmed supply limits as they become available.</p></header>
-  <section class="data-card" aria-labelledby="sources-plan-title"><div class="data-section-head"><h2 id="sources-plan-title" data-i18n="sources.planTitle">What to collect and where to get it</h2><button class="primary-button" type="button" data-import data-i18n="sources.import">Import fuel quotations</button></div>
+          <section id="data-source-plan" class="source-plan-section" aria-labelledby="data-source-plan-title">
+            <div class="sources-view fuel-data-view">
+  <header class="data-page-head"><div><p class="eyebrow" data-i18n="sources.eyebrow">From scenario to evidence</p><h2 id="data-source-plan-title" data-i18n="sources.title">Connect the right data</h2></div><p data-i18n="sources.intro">Each input has a clear replacement path. Start with a route and a set of assumptions, then bring in dated supplier prices, flight performance and confirmed supply limits as they become available.</p></header>
+  <section class="data-card" aria-labelledby="sources-plan-title"><div class="data-section-head"><h3 data-i18n="sources.planTitle" id="sources-plan-title">What to collect and where to get it</h3><button class="primary-button" type="button" data-import="" data-i18n="sources.import">Import fuel quotations</button></div>
     <div class="data-table-scroll"><table class="data-table data-source-table"><thead><tr><th data-i18n="sources.input">Model input</th><th data-i18n="sources.current">Available now</th><th data-i18n="sources.next">Replacement data</th></tr></thead><tbody>
       <tr><th data-i18n="sources.geo">Airport geography</th><td data-i18n="sources.geoNow">Coordinates for 67 airports, sourced from OurAirports. The map uses Natural Earth boundaries.</td><td><a href="https://ourairports.com/data/" target="_blank" rel="noopener noreferrer">OurAirports</a><span data-i18n="sources.geoNext"> provides a public starting point. Confirm the airport and operational routing against the flight plan.</span></td></tr>
       <tr><th data-i18n="sources.price">Delivered jet-fuel price</th><td data-i18n="sources.priceNow">A common jet-fuel base plus regional, distance, service and tax adjustments.</td><td data-i18n="sources.priceNext">Request dated into-plane offers from airport fuel suppliers, airlines or fuel brokers. Record airport, currency, unit, fees, tax treatment, validity and supplier. Import comparable prices in USD/t.</td></tr>
       <tr><th data-i18n="sources.flight">Flight performance</th><td data-i18n="sources.flightNow">Two generic aircraft profiles derive fuel use from distance and time.</td><td><span data-i18n="sources.flightNext">Use operator flight-planning outputs for the chosen aircraft, payload, weather and routing. </span><a href="https://openap.dev/" target="_blank" rel="noopener noreferrer">OpenAP</a><span data-i18n="sources.openap"> can support an initial research calibration.</span></td></tr>
-      <tr><th data-i18n="sources.reserve">Fuel reserve and weight limits</th><td data-i18n="sources.reserveNow">Explicit reserve, tank, takeoff and landing assumptions.</td><td data-i18n="sources.reserveNext">Use the operator's approved reserve policy, aircraft limits, payload plan and airport-specific performance restrictions.</td></tr>
-      <tr><th data-i18n="sources.supply">Available uplift</th><td data-i18n="sources.supplyNow">An adjustable supply cap for each visit, with individual leg overrides.</td><td data-i18n="sources.supplyNext">Confirm allocated tonnes and the uplift window with each supplier. Add delivery-rate, slot or storage constraints when the operation requires them.</td></tr>
+      <tr><th data-i18n="sources.reserve">Fuel reserve and weight limits</th><td data-i18n="sources.reserveNow">Explicit aircraft reserves and weight limits, plus opening stock, storage capacity and final stock targets at each airport.</td><td data-i18n="sources.reserveNext">Use the operator's approved reserve policy, aircraft limits, payload plan and airport-specific performance restrictions.</td></tr>
+      <tr><th data-i18n="sources.supply">Available uplift</th><td data-i18n="sources.supplyNow">Shared supplier allocations, delivery limits and airport stocks, together with the uplift cap at each visit.</td><td data-i18n="sources.supplyNext">Confirm allocated tonnes and the uplift window with each supplier. Add delivery-rate, slot or storage constraints when the operation requires them.</td></tr>
       <tr><th data-i18n="sources.benchmark">Jet-fuel market context</th><td data-i18n="sources.benchmarkNow">The common scenario base is transparent and editable.</td><td><a href="https://www.eia.gov/dnav/pet/hist/EER_EPJK_PF4_RGC_DPGD.htm" target="_blank" rel="noopener noreferrer" data-i18n="sources.eia">EIA's US Gulf Coast jet-fuel series</a><span data-i18n="sources.benchmarkNext"> gives public wholesale context with its own reporting lag. Regional assessments from Platts or Argus require the relevant access. Airport prices still need local delivery terms.</span></td></tr>
     </tbody></table></div>
   </section>
   <section class="data-source-grid">
-    <article class="data-card"><p class="eyebrow" data-i18n="sources.modelEyebrow">The decision</p><h2 data-i18n="sources.modelTitle">Where should this rotation buy fuel?</h2><p data-i18n="sources.modelText">You choose the airports and their order. The model chooses how much fuel to buy at each stop while meeting fuel balance, reserve, tank, weight and supply constraints. It compares that plan with buying the minimum needed on each leg, using the same final fuel target.</p><p data-i18n="sources.modelNext">A single leg checks feasibility and cost. Several legs reveal whether a lower price at an earlier stop justifies carrying extra fuel.</p></article>
-    <article class="data-card"><p class="eyebrow" data-i18n="sources.packageEyebrow">Reproducible inputs</p><h2 data-i18n="sources.packageTitle">Keep the assumptions with the result</h2><p data-i18n="sources.packageText">The dataset download includes all 67 airport records, price components, aircraft profiles, formulas and replacement sources. The model export records the route, inputs and calculated fuel plan so the result can be rerun.</p><div class="data-actions"><a class="outline-button" href="#oil-markets" data-i18n="sources.inspect">Inspect the dataset</a><a class="outline-button" href="#briefing" data-i18n="sources.guide">Read the model guide</a></div></article>
+    <article class="data-card"><p class="eyebrow" data-i18n="sources.modelEyebrow">The decision</p><h3 data-i18n="sources.modelTitle">Where should this rotation buy fuel?</h3><p data-i18n="sources.modelText">You choose the airports and their order. One calculation chooses upstream purchases, deliveries, airport inventory and aircraft uplift while meeting supply, timing, storage and flight constraints. The comparison holds minimum aircraft uplift fixed and optimizes upstream supply under the same final stock targets.</p><p data-i18n="sources.modelNext">A single leg checks feasibility and cost. Several legs reveal whether a lower price at an earlier stop justifies carrying extra fuel.</p></article>
+    <article class="data-card"><p class="eyebrow" data-i18n="sources.packageEyebrow">Reproducible inputs</p><h3 data-i18n="sources.packageTitle">Keep the assumptions with the result</h3><p data-i18n="sources.packageText">The dataset download includes all 67 airport records, price components, aircraft profiles, formulas and replacement sources. The model export records the route, inputs and calculated fuel plan so the result can be rerun.</p><div class="data-actions"><a class="outline-button" href="#oil-markets" data-i18n="sources.inspect">Inspect the dataset</a><a class="outline-button" href="#briefing" data-i18n="sources.guide">Read the model guide</a></div></article>
   </section>
 </div>
+          </section>
         </section>
         <section id="workspace-research" class="workspace-panel research-workspace research-exhibit" role="tabpanel" aria-labelledby="workspace-tab-research" tabindex="0" hidden>
           <div class="research-content"><nav class="section-nav" aria-label="Research sections"><span>In this analysis</span><a href="#research/question">Overview</a><a href="#research/experiment">Interactive model</a><a href="#research/geography">Geography</a><a href="#research/security">Security</a><a href="#research/essay">Reflection</a><a href="#research/methods">Method</a><a href="#research/downloads">Downloads</a></nav>
@@ -844,25 +858,25 @@
         </section>
         <section id="workspace-briefing" class="workspace-panel briefing-workspace" role="tabpanel" aria-labelledby="workspace-tab-briefing" tabindex="0" hidden>
           <div class="project-brief-content model-guide-content">
-<header class="brief-heading"><div><p data-i18n="guide.eyebrow" class="brief-eyebrow">Model guide</p><h1 data-i18n="guide.title">How it works</h1><p data-i18n="guide.deck" class="brief-deck">Choose a route, generate a scenario and compare the fuel plan at each stop.</p></div></header>
+<header class="brief-heading"><div><p data-i18n="guide.eyebrow" class="brief-eyebrow">Method</p><h1 data-i18n="guide.title">One fuel plan, from supply to flight</h1><p data-i18n="guide.deck" class="brief-deck">Choose your route and solve procurement, transport, airport stocks and aircraft uplift in one calculation.</p></div></header>
 <nav class="brief-actions" aria-label="Model guide downloads"><a href="./brief/downloads/Fuel_Atlas_Model_Guide_EN.pdf" download><span data-i18n="guide.pdf.en">English PDF</span></a><a href="./brief/downloads/Fuel_Atlas_Model_Guide_ZH.pdf" download><span data-i18n="guide.pdf.zh">Chinese PDF</span></a><a href="./brief/downloads/Fuel_Atlas_Model_Guide.md" download><span data-i18n="guide.notes">Guide and data plan</span></a><a href="./brief/print.html" data-i18n-href="guide.print.href"><span data-i18n="guide.print">Print view</span></a></nav>
-<section class="brief-thesis guide-scenario" aria-labelledby="guide-scenario-title"><h2 data-i18n="guide.scenario.title" id="guide-scenario-title">Scenario data</h2><p data-i18n="guide.scenario.text">Airport coordinates come from public geographic data. Prices, supply limits and aircraft parameters are generated assumptions for exploring the model. The same settings produce the same inputs. Replace them with your own data when available.</p></section>
+<section class="brief-thesis guide-scenario" aria-labelledby="guide-scenario-title"><h2 data-i18n="guide.scenario.title" id="guide-scenario-title">Scenario data</h2><p data-i18n="guide.scenario.text">Airport coordinates come from public data. Prices, supplier and transport capacities, stocks and aircraft inputs are generated assumptions that you can edit. Imported quotations provide another price input to the same model.</p></section>
 <ol class="guide-steps">
-<li><div class="guide-step-number" aria-hidden="true">1</div><div><h2 data-i18n="guide.step1.title">Choose the route</h2><p data-i18n="guide.step1.text">Choose the departure and destination, then add stops to build a continuous route of 1–5 legs. The map follows your choices. The model keeps this route fixed and chooses how much fuel to buy at each stop. An example route is available separately.</p></div></li>
-<li><div class="guide-step-number" aria-hidden="true">2</div><div><h2 data-i18n="guide.step2.title">Generate the inputs</h2><p data-i18n="guide.step2.text">Generate a complete scenario for the route. Airport prices and supply limits come from the scenario rules. Distance and the selected aircraft profile give flight time, fuel burn and reserves. You can then edit the values you want to test.</p></div></li>
-<li><div class="guide-step-number" aria-hidden="true">3</div><div><h2 data-i18n="guide.step3.title">Run the calculation</h2><p data-i18n="guide.step3.text">Run the optimizer after editing. It checks fuel balance, tank capacity, takeoff weight, landing weight, reserves and each airport’s uplift limit. If the route cannot be served with those inputs, the result shows which limits need attention.</p></div></li>
-<li><div class="guide-step-number" aria-hidden="true">4</div><div><h2 data-i18n="guide.step4.title">Compare both plans</h2><p data-i18n="guide.step4.text">Compare buying as needed at every stop with buying extra fuel earlier. Both plans start and finish with the same fuel. Read the purchase cost alongside extra burn, uplift by airport and remaining fuel. Playback shows how those values change along the route.</p></div></li>
-<li><div class="guide-step-number" aria-hidden="true">5</div><div><h2 data-i18n="guide.step5.title">Bring in your own data</h2><p data-i18n="guide.step5.text">Import dated airport quotes, choose the flight date and update the aircraft and supply inputs. Prices use USD per metric tonne with into-plane fees included. Missing or overlapping quotes are shown for correction. Export the inputs and results to keep a copy of the comparison.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">1</div><div><h2 data-i18n="guide.step1.title">Choose your route</h2><p data-i18n="guide.step1.text">Choose the departure and destination, then add stops for a continuous route of 1–5 legs. Each departure is one planning stage. The airport order stays fixed while the model decides how fuel moves through the whole chain. An example route is available separately.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">2</div><div><h2 data-i18n="guide.step2.title">Set the supply conditions</h2><p data-i18n="guide.step2.text">Generate the route inputs, then adjust supplier capacity, transport cost and lead stages, opening airport stock and storage limits. Set the aircraft profile, starting fuel and reserves in the same form. Repeated visits to an airport draw on the same stock pool.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">3</div><div><h2 data-i18n="guide.step3.title">Calculate once</h2><p data-i18n="guide.step3.text">The calculation connects supplier purchases to transport arrivals, airport stock and aircraft uplift. Fuel must arrive before it can be loaded. Supplier and route capacities, storage, airport reserves and aircraft fuel and weight limits are enforced together. Transport lead times are counted in departure stages.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">4</div><div><h2 data-i18n="guide.step4.title">Read the complete plan</h2><p data-i18n="guide.step4.text">Follow quantities from each supplier to each airport and flight leg. The cost breakdown separates procurement, freight, handling, stock holding, into-plane service and applicable adjustments. Compare aircraft uplift and extra burn with a minimum-uplift baseline that uses the same supply network and starting and final stocks.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">5</div><div><h2 data-i18n="guide.step5.title">Use your own quotations</h2><p data-i18n="guide.step5.text">Import dated, fee-inclusive into-plane offers in USD per metric tonne and choose the flight date. The quoted price enters procurement directly, so modeled upstream and service fees are not added again. Supply, storage and aircraft constraints still apply. Export the complete inputs and plan to keep the calculation.</p></div></li>
 </ol>
-<section class="brief-value" aria-labelledby="guide-read-title"><h2 data-i18n="guide.read.title" id="guide-read-title">How to read a lower cost</h2><p data-i18n="guide.read.text">A lower purchase cost can come with more fuel burned in flight. That extra fuel is already included in the purchase calculation. Add any separate carbon charges, handling costs or payload effects when assessing the final benefit.</p></section>
-<section class="brief-section" aria-labelledby="guide-data-title"><h2 data-i18n="guide.data.title" id="guide-data-title">Data to connect next</h2><div class="brief-table-wrap"><table><caption data-i18n="guide.data.caption">Where each input comes from and what it changes</caption><thead><tr><th data-i18n="guide.data.input" scope="col">Input</th><th data-i18n="guide.data.source" scope="col">Source</th><th data-i18n="guide.data.use" scope="col">Use in the model</th></tr></thead><tbody>
-<tr><th data-i18n="guide.data.quote" scope="row">Airport fuel prices</th><td data-i18n="guide.data.quote.source">Supplier quotes, airline contracts and invoices</td><td data-i18n="guide.data.quote.use">Replace generated prices. Keep validity, currency, units, fees and buyer terms together.</td></tr>
-<tr><th data-i18n="guide.data.performance" scope="row">Aircraft performance</th><td data-i18n="guide.data.performance.source">Airline-approved performance and flight-planning data</td><td data-i18n="guide.data.performance.use">Replace burn rates, weight limits, reserves and the extra-weight fuel penalty.</td></tr>
-<tr><th data-i18n="guide.data.supply" scope="row">Fuel availability</th><td data-i18n="guide.data.supply.source">Suppliers, airport fuel operators and contracted delivery rights</td><td data-i18n="guide.data.supply.use">Set usable uplift limits for each visit and test a supply interruption.</td></tr>
-<tr><th data-i18n="guide.data.benchmark" scope="row">Market benchmarks</th><td data-i18n="guide.data.benchmark.source">Public energy prices, exchange rates and national fuel balances</td><td data-i18n="guide.data.benchmark.use">Track the market background and set scenarios. Airport contract prices remain separate inputs.</td></tr>
+<section class="brief-value" aria-labelledby="guide-read-title"><h2 data-i18n="guide.read.title" id="guide-read-title">Compare like with like</h2><p data-i18n="guide.read.text">The baseline loads only the fuel needed for each flight leg while optimizing upstream supply under the same constraints. Both plans use the same final aircraft fuel and airport-stock targets. If the baseline cannot be served, inspect the limiting conditions first. Extra carriage fuel is already included in the purchase quantities.</p></section>
+<section class="brief-section" aria-labelledby="guide-data-title"><h2 data-i18n="guide.data.title" id="guide-data-title">Replace inputs with operational data</h2><div class="brief-table-wrap"><table><caption data-i18n="guide.data.caption">Data used by the connected model</caption><thead><tr><th data-i18n="guide.data.input" scope="col">Input</th><th data-i18n="guide.data.source" scope="col">Source</th><th data-i18n="guide.data.use" scope="col">Use in the model</th></tr></thead><tbody>
+<tr><th data-i18n="guide.data.quote" scope="row">Prices and supply rights</th><td data-i18n="guide.data.quote.source">Supplier offers, contracts and invoices</td><td data-i18n="guide.data.quote.use">Set procurement prices, valid dates, fee coverage and allocated volumes.</td></tr>
+<tr><th data-i18n="guide.data.performance" scope="row">Aircraft performance</th><td data-i18n="guide.data.performance.source">Operator flight-planning and performance data</td><td data-i18n="guide.data.performance.use">Set burn, reserves, payload, weight limits and the extra-weight fuel penalty.</td></tr>
+<tr><th data-i18n="guide.data.supply" scope="row">Transport and airport stocks</th><td data-i18n="guide.data.supply.source">Logistics operators, fuel operators and delivery schedules</td><td data-i18n="guide.data.supply.use">Set delivery capacity and lead stages, usable opening stock, storage space and stock targets.</td></tr>
+<tr><th data-i18n="guide.data.benchmark" scope="row">Market background</th><td data-i18n="guide.data.benchmark.source">Public energy prices, exchange rates and national balances</td><td data-i18n="guide.data.benchmark.use">Inform scenario assumptions and market comparisons in the Data tab.</td></tr>
 </tbody></table></div></section>
-<section class="brief-section" aria-labelledby="guide-next-title"><h2 data-i18n="guide.next.title" id="guide-next-title">Try one change at a time</h2><p data-i18n="guide.next.text">Change one airport price or supply limit, recalculate and compare. Then vary the aircraft or route. This makes it easier to see what is driving the result. The research tab explains the fuel-carriage trade-off in more detail.</p></section>
-<footer class="brief-footer"><p data-i18n="guide.updated">Updated 13 November 2026</p><p><a href="#calculations"><span data-i18n="guide.model">Open the model</span></a><a href="#research"><span data-i18n="guide.research">Read the research</span></a><a href="#sources"><span data-i18n="guide.sources">View data sources</span></a></p></footer>
+<section class="brief-section" aria-labelledby="guide-next-title"><h2 data-i18n="guide.next.title" id="guide-next-title">Change one constraint and compare</h2><p data-i18n="guide.next.text">Reduce one supplier’s capacity, delay a delivery or raise an airport’s reserve target. Calculate again and see how procurement, stock and uplift change together. The same result also shows the fuel burned to carry extra fuel.</p></section>
+<footer class="brief-footer"><p data-i18n="guide.updated">Updated 13 November 2026</p><p><a href="#model"><span data-i18n="guide.model">Open the model</span></a><a href="#research"><span data-i18n="guide.research">Read the research</span></a><a href="#data/data-source-plan"><span data-i18n="guide.sources">View data and sources</span></a></p></footer>
 </div>
         </section>
         <footer class="site-footer">

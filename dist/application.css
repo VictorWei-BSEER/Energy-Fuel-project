@@ -36,7 +36,7 @@ body.institutional { --blue: #0057b8; --surface: #f3f6fa; }
 .institutional .route-row-actions button { border:1px solid #bdcddd; color:#174f88; background:#fff; min-width:29px; min-height:30px; padding:4px; border-radius:2px; cursor:pointer; }
 .institutional .route-row-actions button:disabled { color:#8192a3; border-color:#e0e6ed; cursor:default; }
 .institutional .leg-derivation { color:#52677c; font-size:11px; line-height:1.5; margin-top:6px; }
-.institutional .leg-table select { min-width:140px; }
+.institutional .flight-planner .leg-table .leg-route select { min-width:140px; }
 .institutional .flight-planner .map-top h2 { font-size: 22px; }
 .institutional .flight-planner .map-tag { font-size: 11px; padding: 5px 8px; }
 .institutional .flight-planner .map-bottom { border-top: 1px solid #d9e1ea; backdrop-filter:none; }

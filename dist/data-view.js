@@ -1,5 +1,5 @@
 import { airportLabel } from './airport-labels.js';
-import { t, getLanguage } from './i18n.js?v=20261113-bilingual';
+import { t, getLanguage } from './i18n.js?v=20261113-integrated';
 import { buildScenarioDataset, AIRCRAFT_PROFILES } from './scenario-data.js';
 import { getScenarioOptions, setScenarioOptions, resetScenarioOptions } from './scenario-settings.js';
 

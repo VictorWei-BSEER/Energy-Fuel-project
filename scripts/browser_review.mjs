@@ -34,7 +34,7 @@ const fixtureManifest = Object.fromEntries([...feedFixtures].map(([name, data]) 
 const fixtureRequests = [], forbiddenMarketRequests = [];
 const executablePath = process.env.FUEL_BROWSER_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined);
 const browser = await chromium.launch({ executablePath, headless: true, args: ['--no-sandbox'] });
-const panelNames = ['calculations', 'oil-markets', 'research', 'briefing', 'sources'];
+const panelNames = ['calculations', 'oil-markets', 'research', 'briefing'];
 const record = (name, details = {}) => checks.push({ name, pass: true, ...details });
 const makePage = async (options = {}) => {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, ...options });
@@ -92,11 +92,12 @@ const downloadText = async (page, selector) => {
   return fs.readFile(await (await event).path(), 'utf8');
 };
 const snapshot = page => page.evaluate(() => ({
-  fields: [...document.querySelectorAll('#leg-rows input,#leg-rows select,#performance-rows input')].map(el => [el.dataset.leg, el.dataset.key, el.value]),
+  fields: [...document.querySelectorAll('#leg-rows input,#leg-rows select,#performance-rows input,#chain-inputs input,#chain-inputs select')].map(el => [el.dataset.leg, el.dataset.key, el.value]),
   date: document.querySelector('#flight-date').value,
   progress: document.querySelector('#motion-progress').value,
   quoteCount: document.querySelector('#quote-count').textContent,
   quoteMode: document.querySelector('#mode-quotes').getAttribute('aria-pressed'),
+  chainCosts: [...document.querySelectorAll('[data-chain-cost]')].map(el=>[el.dataset.chainCost,el.querySelector('strong').textContent.replace(/[^\d.\-]/g,'')]),
   result: ['savings','baseline-cost','optimized-cost'].map(id => document.getElementById(id).textContent.replace(/[^\d.\-]/g,'')),
 }));
 const translationCandidates = async (page, locale) => page.evaluate(locale => {
@@ -152,10 +153,140 @@ const reviewGlobalMap = async page => {
   await page.locator('#reset-plan').click();
   record('Explicit global example calculates four legs with visible, operable map controls', {visualEvidence:'global-map-*-1440.png and global-map-footer-*.png; manually inspect for paint clipping'});
 };
+const COST_COMPONENTS = ['procurementUsd','freightUsd','handlingUsd','basisAdjustmentUsd','holdingUsd','intoPlaneUsd','taxAdjustmentUsd','deliveredQuoteUsd'];
+const approximately = (actual, expected, description, tolerance = 1e-5) => assert.ok(Number.isFinite(actual) && Number.isFinite(expected) && Math.abs(actual-expected) <= tolerance, `${description}: ${actual} versus ${expected}`);
+function validateConnectedExport(exported) {
+  assert.ok(exported.schemaVersion >= 3);
+  const {input,result} = exported, network=input.supplyChain, chain=result.supplyChain;
+  assert.equal(result.feasible,true); assert.ok(network && chain);
+  assert.equal(chain.stages,input.legs.length);
+  assert.equal(chain.mode,network.mode);
+  for (const key of COST_COMPONENTS) assert.ok(Number.isFinite(chain.costBreakdown[key]), `Missing finite cost component ${key}`);
+  approximately(COST_COMPONENTS.reduce((sum,key)=>sum+chain.costBreakdown[key],0),result.totalCostUsd,'Component cost total');
+  approximately(chain.costBreakdown.totalUsd,result.totalCostUsd,'Reported chain total');
+  approximately(result.legs.reduce((sum,leg)=>sum+leg.costUsd,0),result.totalCostUsd,'Allocated leg costs');
+  assert.equal(chain.airportInventory.length,network.airports.length*input.legs.length);
+  for (const airport of network.airports) {
+    const rows=chain.airportInventory.filter(row=>row.airport===airport.code).sort((a,b)=>a.stage-b.stage);
+    approximately(rows[0].openingT,airport.initialInventoryT,'Initial airport stock');
+    approximately(rows.at(-1).closingT,airport.terminalInventoryT,'Final airport stock');
+    for (const [index,row] of rows.entries()) {
+      assert.equal(row.stage,index+1);
+      approximately(row.openingT+row.arrivalsT-row.upliftT,row.closingT,'Airport mass balance');
+      approximately(chain.shipments.filter(shipment=>shipment.airport===row.airport&&shipment.arrivalStage===row.stage).reduce((sum,shipment)=>sum+shipment.quantityT,0),row.arrivalsT,'Shipments reaching airport stock');
+      approximately(input.legs[index].from===airport.code?result.legs[index].upliftT:0,row.upliftT,'Airport withdrawal equals aircraft uplift');
+      if(index) approximately(row.openingT,rows[index-1].closingT,'Shared stock between departures');
+    }
+  }
+  for (const supplier of network.suppliers) {
+    const shipments=chain.shipments.filter(shipment=>shipment.supplierId===supplier.id);
+    const quantity=shipments.reduce((sum,shipment)=>sum+shipment.quantityT,0);
+    approximately(chain.suppliers.find(item=>item.id===supplier.id).purchasedT,quantity,'Supplier purchases feed its shipments');
+    assert.ok(quantity<=supplier.totalCapacityT+1e-5,'Supplier horizon capacity is shared');
+    for(let index=0;index<input.legs.length;index++) {
+      const capacity=Array.isArray(supplier.capacityT)?supplier.capacityT[index]:supplier.capacityT;
+      assert.ok(shipments.filter(shipment=>shipment.departureStage===index+1).reduce((sum,shipment)=>sum+shipment.quantityT,0)<=capacity+1e-5,'Supplier stage capacity is shared');
+    }
+  }
+  let onboard=input.initialFuelT;
+  for(const leg of result.legs) {
+    approximately(onboard+leg.upliftT,leg.departureFuelT,'Aircraft departure balance');
+    approximately(leg.departureFuelT-leg.burnT,leg.landingFuelT,'Aircraft landing balance');
+    onboard=leg.landingFuelT;
+  }
+  approximately(onboard,result.finalFuelT,'Aircraft final fuel');
+  return chain;
+}
+const chainField = (page,group,id,key) => page.locator(`[data-chain-group="${group}"][data-chain-id="${id}"][data-chain-key="${key}"]`);
+const setChainField = async (page,group,id,key,value) => {
+  const control=chainField(page,group,id,key);
+  if(!await control.evaluate(el=>el.closest('details').open)) {
+    const editor={suppliers:'supplier',routes:'route',airports:'stock',deliveredOffers:'offer'}[group];
+    await page.locator(`#chain-${editor}-editor > summary`).click();
+  }
+  await control.fill(String(value)); await control.press('Tab');
+};
+const solveAndExport = async page => {
+  await page.locator('#calculate').click();
+  assert.equal(await page.locator('#model-error').isVisible(),false);
+  assert.equal(await page.locator('#chain-results').isVisible(),true);
+  const exported=JSON.parse(await downloadText(page,'#download-plan'));
+  const chain=validateConnectedExport(exported);
+  assert.equal(await page.locator('#chain-flow-rows tr').count(),chain.shipments.length);
+  assert.equal(await page.locator('#chain-inventory-rows tr').count(),chain.airportInventory.length);
+  if(chain.shipments.length) {
+    const cells=await page.locator('#chain-flow-rows tr').first().locator('td').allTextContents();
+    assert.equal(Number(cells[2]),chain.shipments[0].departureStage);
+    assert.equal(Number(cells[3]),chain.shipments[0].arrivalStage);
+  }
+  approximately(Number((await page.locator('[data-chain-cost="totalCost"] strong').textContent()).replace(/[^0-9.-]/g,'')),exported.result.totalCostUsd,'Visible cost agrees with export',.011);
+  return exported;
+};
+const reviewIntegratedModel = async () => {
+  const page=await makePage({reducedMotion:'reduce'}); await load(page);
+  await chooseRoute(page,['SIN','HKG','NRT']);
+  const original=await solveAndExport(page);
+  const hkgRoute=original.input.supplyChain.routes.find(route=>route.airport==='HKG');
+  assert.ok(hkgRoute,'Generated route must include a supply path to HKG');
+  await setChainField(page,'suppliers',hkgRoute.supplierId,'priceUsdPerT',500);
+  assert.deepEqual(await page.evaluate(()=>[document.activeElement.dataset.chainId,document.activeElement.dataset.chainKey]),[hkgRoute.supplierId,'capacityT'],'Committing a supply field must let Tab move to the next field');
+  assert.equal(await page.locator('#download-plan').isDisabled(),true);
+  assert.equal(await page.locator('#chain-results').isVisible(),false);
+  const normal=await solveAndExport(page);
+  assert.ok(normal.result.legs[1].upliftT>1,'Cheaper HKG supply should serve the second leg');
+  assert.ok(normal.result.totalCostUsd<original.result.totalCostUsd,'Upstream purchase price must affect the joint cost');
+  const routeCapacity=normal.input.supplyChain.routes.find(route=>route.id===hkgRoute.id).capacityT;
+  await setChainField(page,'routes',hkgRoute.id,'capacityT',0);
+  assert.equal(await page.locator('#download-plan').isDisabled(),true);
+  assert.equal(await page.locator('#chain-results').isVisible(),false);
+  const outage=await solveAndExport(page);
+  approximately(outage.result.legs[1].upliftT,0,'Outage blocks HKG uplift');
+  assert.ok(outage.result.legs[0].upliftT>normal.result.legs[0].upliftT+1,'Origin uplift must cover the unavailable downstream fuel');
+  assert.equal(outage.result.baseline.feasible,false);
+  assert.equal(outage.result.savingsUsd,null); assert.equal(outage.result.savingsPercent,null);
+  assert.ok(!outage.result.supplyChain.shipments.some(shipment=>shipment.airport==='HKG'&&shipment.quantityT>1e-5));
+  await fs.writeFile(path.join(output,'joint-normal-plan.json'),JSON.stringify(normal,null,2)+'\n');
+  await fs.writeFile(path.join(output,'joint-outage-plan.json'),JSON.stringify(outage,null,2)+'\n');
+  for(const locale of ['zh','en']) {
+    await language(page,locale);
+    await page.locator('#chain-results').scrollIntoViewIfNeeded();
+    await page.screenshot({path:path.join(output,`joint-outage-${locale}-1440.png`)});
+  }
+  await language(page,'zh');
+  await setChainField(page,'routes',hkgRoute.id,'capacityT',Array.isArray(routeCapacity)?Math.max(...routeCapacity):routeCapacity);
+  const restored=await solveAndExport(page);
+  approximately(restored.result.totalCostUsd,normal.result.totalCostUsd,'Restoring supply restores the cost');
+  const reference=Number(await field(page,0,'priceUsdPerT').inputValue());
+  await field(page,0,'priceUsdPerT').fill(String(reference+25));
+  const manual=await solveAndExport(page);
+  assert.ok(manual.result.totalCostUsd>restored.result.totalCostUsd+1,'Manual delivered reference must change the modeled cost');
+  const before=restored.input.supplyChain.routes.find(route=>route.airport==='SIN').basisAdjustmentUsdPerT;
+  const after=manual.input.supplyChain.routes.find(route=>route.airport==='SIN').basisAdjustmentUsdPerT;
+  approximately(after-before,25,'Manual price contributes one explicit basis adjustment',.011);
+  const supplierCap=manual.input.supplyChain.suppliers.find(supplier=>supplier.id===hkgRoute.supplierId).capacityT;
+  await setChainField(page,'suppliers',hkgRoute.supplierId,'capacityT','');
+  assert.equal(await page.locator('#download-plan').isDisabled(),true);
+  await field(page,0,'from').selectOption('');
+  await field(page,0,'from').selectOption('SIN');
+  assert.equal(await chainField(page,'suppliers',hkgRoute.supplierId,'capacityT').inputValue(),'','Invalid pending supply input must survive temporary route incompleteness');
+  await language(page,'en');
+  assert.equal(await chainField(page,'suppliers',hkgRoute.supplierId,'capacityT').inputValue(),'');
+  await page.locator('#calculate').click();
+  assert.equal(await page.locator('#model-error').isVisible(),true);
+  assert.equal(await page.locator('#chain-results').isVisible(),false);
+  assert.equal(await page.locator('#download-plan').isDisabled(),true);
+  await setChainField(page,'suppliers',hkgRoute.supplierId,'capacityT',Array.isArray(supplierCap)?Math.max(...supplierCap):supplierCap);
+  await solveAndExport(page);
+  await page.close();
+  record('A single connected solve conserves fuel and costs; upstream supply changes aircraft uplift and manual references affect its objective',{normal:{totalCostUsd:normal.result.totalCostUsd,upliftT:normal.result.legs.map(leg=>leg.upliftT)},outage:{totalCostUsd:outage.result.totalCostUsd,upliftT:outage.result.legs.map(leg=>leg.upliftT),baselineFeasible:outage.result.baseline.feasible}});
+};
 const reviewCase = process.env.FUEL_BROWSER_CASE || 'full';
-assert.ok(['full','global-map'].includes(reviewCase), 'Unknown FUEL_BROWSER_CASE');
+assert.ok(['full','global-map','integrated'].includes(reviewCase), 'Unknown FUEL_BROWSER_CASE');
 try {
-  if (reviewCase === 'global-map') {
+  if (reviewCase === 'integrated') {
+    await reviewIntegratedModel();
+    assert.deepEqual(errors, []); assert.deepEqual(localFailures, []); assert.deepEqual(forbiddenMarketRequests, []);
+  } else if (reviewCase === 'global-map') {
     const page = await makePage(); await load(page); await reviewGlobalMap(page); await page.close();
     assert.deepEqual(errors, []); assert.deepEqual(localFailures, []); assert.deepEqual(forbiddenMarketRequests, []);
   } else {
@@ -169,6 +300,8 @@ try {
   assert.deepEqual(await routeCodes(page), ['', '']);
   assert.equal(await page.locator('#animated-plane').count(), 0);
   assert.equal(await page.locator('#download-plan').isDisabled(), true);
+  assert.equal(await page.locator('#chain-results').isVisible(), false);
+  assert.equal(await page.locator('#chain-inputs').isVisible(), false);
   assert.ok(!/[0-9]/.test(await page.locator('#savings').textContent()));
   record('First visit is Chinese, with one empty leg and no invented result or aircraft playback');
   for (const locale of ['zh', 'en']) {
@@ -192,6 +325,7 @@ try {
   assert.deepEqual(await routeCodes(page), ['', '']);
   record('Examples require an explicit load action and never calculate automatically; reset returns to blank');
   await reviewGlobalMap(page);
+  await reviewIntegratedModel();
 
   assert.equal(await field(page,0,'from').locator('option').evaluateAll(items => items.filter(item => item.value).length), 67);
   await chooseRoute(page, ['SIN','HKG']);
@@ -274,7 +408,7 @@ try {
   await tab(page,'calculations');
   assert.equal(await field(page,0,'priceUsdPerT').inputValue(),'975', 'Changing assumptions must preserve a manual price');
   await tab(page,'oil-markets'); await page.locator('#data-reset').click();
-  await tab(page,'sources');
+  await tab(page,'oil-markets');
   assert.ok(await page.locator('.data-source-table tbody tr').count() >= 5);
   record('Fuel data exposes 67 complete component sums, sources and exports; changed assumptions update the entered route');
 
@@ -302,10 +436,15 @@ try {
 
   await page.locator('#workspace-tab-calculations').focus(); await page.keyboard.press('ArrowRight');
   assert.equal(await page.evaluate(()=>document.activeElement.id),'workspace-tab-oil-markets');
-  await page.keyboard.press('End'); assert.equal(await page.evaluate(()=>document.activeElement.id),'workspace-tab-sources');
+  await page.keyboard.press('End'); assert.equal(await page.evaluate(()=>document.activeElement.id),'workspace-tab-briefing');
   await page.keyboard.press('Home'); assert.equal(await page.evaluate(()=>document.activeElement.id),'workspace-tab-calculations');
-  record('Keyboard navigation follows the shared five-tab order');
+  record('Keyboard navigation follows the shared four-tab order');
 
+  for (const id of ['chain-supplier-editor','chain-route-editor','chain-stock-editor']) {
+    if (!await page.locator(`#${id}`).evaluate(el=>el.open)) await page.locator(`#${id} > summary`).click();
+  }
+  const stockResult=page.locator('#chain-results details').filter({has:page.locator('#chain-inventory-rows')});
+  if (!await stockResult.evaluate(el=>el.open)) await stockResult.locator('summary').click();
   const layouts=[];
   await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});
   for(const locale of ['zh','en']) {
@@ -332,7 +471,7 @@ try {
     }
   }
   assert.equal(translationReview.reduce((sum,item)=>sum+item.candidates.length,0),0,'Untranslated visible interface text; see translationReview in browser-review.json');
-  record('Both locales render all five sections coherently at 320, 390, 768 and 1440px without document overflow',{layouts});
+  record('Both locales render all four sections coherently at 320, 390, 768 and 1440px without document overflow',{layouts});
   assert.equal(accessibility.reduce((sum,item)=>sum+item.violations.length,0),0,'Automated accessibility violations; see browser-review.json');
   record('Both-language WCAG 2/2.1 A/AA scans report zero violations; manual candidates remain recorded');
 
@@ -348,7 +487,21 @@ try {
   await load(legacy,'/research/#essay');
   await legacy.waitForFunction(()=>location.hash==='#research/essay'&&!document.querySelector('#workspace-research').hidden);
   assert.ok(await legacy.locator('#essay').isVisible()); await legacy.close();
-  record('Legacy research section URLs still open the shared workspace');
+  for (const entry of [
+    {path:'/network.html',hash:'#model',panel:'calculations'},
+    {path:'/planner.html#sources',hash:'#data/data-source-plan',panel:'oil-markets'},
+    {path:'/#sources',hash:'#sources',panel:'oil-markets'},
+    {path:'/#fuel-data',hash:'#fuel-data',panel:'oil-markets'},
+    {path:'/#briefing',hash:'#briefing',panel:'briefing'},
+  ]) {
+    const redirected=await makePage({reducedMotion:'reduce'});
+    await load(redirected,entry.path);
+    await redirected.waitForFunction(expected=>location.hash===expected.hash&&!document.querySelector(`#workspace-${expected.panel}`).hidden,entry);
+    assert.equal(await redirected.locator('.workspace-tabs [role="tab"]').count(),4);
+    assert.equal(await redirected.locator('a[href$="network.html"],a[href$="planner.html"]').count(),0);
+    await redirected.close();
+  }
+  record('Research, old supply-chain entry points and source aliases resolve to the same four-tab workspace');
 
   const quotePage=await makePage({reducedMotion:'reduce'}); await load(quotePage);
   await chooseRoute(quotePage,['SIN','HKG','NRT']);
@@ -376,8 +529,19 @@ try {
   const quotedBefore=await snapshot(quotePage);
   await language(quotePage,'en'); assert.deepEqual(await snapshot(quotePage),quotedBefore);
   await language(quotePage,'zh'); assert.deepEqual(await snapshot(quotePage),quotedBefore);
+  for(const name of panelNames) await tab(quotePage,name);
+  await tab(quotePage,'calculations'); assert.deepEqual(await snapshot(quotePage),quotedBefore,'Quotation mode, inputs and results must survive all four tabs');
   const exported=JSON.parse(await downloadText(quotePage,'#download-plan'));
   assert.equal(exported.priceMode,'quotes'); assert.equal(exported.quotes.length,2); assert.equal(exported.result.feasible,true);
+  const quotedChain=validateConnectedExport(exported);
+  assert.equal(quotedChain.mode,'delivered');
+  assert.equal(exported.input.supplyChain.suppliers.length,0);
+  assert.equal(exported.input.supplyChain.routes.length,0);
+  assert.equal(exported.input.supplyChain.deliveredOffers.length,2);
+  for(const key of COST_COMPONENTS.filter(key=>key!=='deliveredQuoteUsd')) approximately(quotedChain.costBreakdown[key],0,'No added upstream cost in quote mode');
+  approximately(quotedChain.costBreakdown.deliveredQuoteUsd,exported.result.totalCostUsd,'All-in quotation cost charged once');
+  approximately(exported.result.legs.reduce((sum,leg,index)=>sum+leg.upliftT*exported.input.legs[index].priceUsdPerT,0),exported.result.totalCostUsd,'Delivered quotation accounting');
+  assert.equal(await quotePage.locator('#chain-flow-rows tr').count(),quotedChain.shipments.length);
   record('Missing imported quotes block calculation despite full illustrative coverage; valid quotes and provenance survive locale changes');
   await quotePage.close(); await page.close();
   assert.deepEqual(forbiddenMarketRequests,[],'The main app requested a removed trading/CFD provider');

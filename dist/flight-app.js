@@ -3,7 +3,9 @@ import { airportData } from "./global-airports.js";
 import { airportLabel } from "./airport-labels.js";
 import { MAP_VIEWS, routePath, fitRouteView } from "./flight-geography.js";
 import { createRotationMotion } from "./rotation-motion.js?v=20261113-global";
-import { optimizeRotation } from "./flight-optimizer.js?v=20261113-model";
+import { optimizeIntegratedRotation } from "./integrated-optimizer.js?v=20261113-integrated";
+import { syncIntegratedNetwork, getIntegratedNetwork, getIntegratedOverrides } from "./integrated-state.js";
+import { initIntegratedView, commitPendingIntegratedInputs } from "./integrated-view.js?v=20261113-integrated";
 import {
   parseQuoteCsv,
   quoteForAirport,
@@ -11,11 +13,12 @@ import {
 } from "./fuel-quotes.js?v=20261113-global";
 
 import { AIRCRAFT_PROFILES, airportScenario, deriveLeg } from "./scenario-data.js?v=20261113-model";
-import { t, getLanguage, translateTree, initI18n } from "./i18n.js?v=20261113-bilingual";
+import { t, getLanguage, translateTree, initI18n } from "./i18n.js?v=20261113-integrated";
 
 import { getScenarioOptions } from "./scenario-settings.js";
 
 initI18n(document);
+initIntegratedView(document);
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const escape = (value) =>
@@ -128,6 +131,7 @@ let currentErrors = [];
 let loadedExample = null;
 function routeCodes() { return [input.legs[0]?.from || "", ...input.legs.map(leg => leg.to || "")]; }
 function emitScenario() {
+  syncIntegratedNetwork(input, { scenarioOptions, priceMode: mode });
   document.dispatchEvent(new CustomEvent("scenariodatachange", { detail: {
     aircraftKey, input: structuredClone(input), priceMode: mode,
     airportPriceOverrides: { ...airportPriceOverrides }, options: structuredClone(scenarioOptions), source: "flight-model",
@@ -566,6 +570,7 @@ function setDirty(message = "Inputs changed. Recalculate to update the plan.") {
   stopPlayback();
   dirty = true;
   result = null;
+  emitIntegratedResult();
   $("#plan-status").textContent = t(message);
   $("#savings").textContent = "—";
   $("#baseline-cost").textContent = "—";
@@ -624,17 +629,30 @@ function calculate() {
     }
   }
   if (errors.length) return showError(errors);
-  result = optimizeRotation(input);
-  if (!result.feasible)
-    return showError([...result.errors, ...result.diagnostics]);
+  if (!commitPendingIntegratedInputs()) return showError(["Supply settings contain invalid values. Review the connected inputs."]);
+  const supplyChain = syncIntegratedNetwork(input, {scenarioOptions,priceMode:mode});
+  if (!supplyChain?.airports?.length) return showError(["Complete the route and its prices before calculating the connected plan."]);
+  result = optimizeIntegratedRotation({...input,supplyChain});
+  if (!result.feasible) {
+    const codes = [...(result.errorDetails || []),...(result.diagnosticDetails || [])].map(detail=>detail.code);
+    const message = codes.includes('NEGATIVE_ACQUISITION_COST') ? "The fuel reference is below its delivery and service components. Adjust the price or cost breakdown."
+      : codes.includes('INVALID_SUPPLY_CHAIN') ? "Supply settings contain invalid values. Review the connected inputs."
+      : codes.includes('NUMERICAL_VALIDATION_FAILED') ? "The solution did not pass its fuel-balance checks. Review the inputs and calculate again."
+      : codes.includes('INVALID_FLIGHT_INPUT') ? null
+      : "Joint network constraints cannot supply this rotation. Review source capacity, delivery timing and airport stocks.";
+    return showError(message ? [message] : [...result.errors,...result.diagnostics]);
+  }
   dirty = false; currentErrors = [];
   renderResult();
+}
+function emitIntegratedResult() {
+  document.dispatchEvent(new CustomEvent('integratedresultchange',{detail:{result:result?.feasible&&!dirty?result:null,strategy}}));
 }
 function renderResult({ rebuildMap = true } = {}) {
   if (!result?.feasible) return;
   $("#model-error").hidden = true;
   $("#savings-label").textContent =
-    mode === "demo" ? "Fuel-cost savings · scenario" : "Fuel-cost savings · user quotes";
+    mode === "demo" ? "Joint supply-cost saving · scenario" : "Joint supply-cost saving · user quotes";
   $("#savings").textContent = money(result.savingsUsd);
   $("#savings-percent").textContent = Number.isFinite(result.savingsPercent)
     ? `↓ ${result.savingsPercent.toFixed(1)}%`
@@ -652,11 +670,11 @@ function renderResult({ rebuildMap = true } = {}) {
   if ($("#extra-co2")) $("#extra-co2").textContent = diagnostic.extraDirectCo2T === null ? "—" : tonnes(diagnostic.extraDirectCo2T);
   if ($("#carbon-threshold")) $("#carbon-threshold").textContent = diagnostic.carbonBreakEvenUsdPerTCo2 === null ? "—" : `${money(diagnostic.carbonBreakEvenUsdPerTCo2)} /t CO₂`;
   if ($("#carbon-note")) $("#carbon-note").textContent = diagnostic.carbonBreakEvenUsdPerTCo2 !== null
-    ? "Carbon cost at this level offsets the fuel saving. Direct combustion CO₂ only; the route is optimized for fuel purchase cost."
+    ? t("Carbon cost at this level offsets the fuel saving. Direct combustion CO₂ only; the route is optimized for fuel purchase cost.")
     : diagnostic.comparableBaseline
       ? "No additional-emissions break-even for these plans."
       : "A feasible baseline is needed for this comparison.";
-  $("#result-state").textContent = "Same rotation · same terminal fuel";
+  $("#result-state").textContent = "Same route · same aircraft and airport stock targets";
   $("#cost-ratio").style.width =
     result.baseline?.feasible && result.baseline.totalCostUsd > 0
       ? `${Math.min(100, (result.totalCostUsd / result.baseline.totalCostUsd) * 100)}%`
@@ -689,6 +707,7 @@ function renderResult({ rebuildMap = true } = {}) {
 
   if ($("#motion-detail")) $("#motion-detail").hidden = false;
   translateTree($("#workspace-calculations"));
+  emitIntegratedResult();
 }
 function showError(errors) {
   setDirty("No feasible plan. Check the input guidance below.");
@@ -699,7 +718,7 @@ function showError(errors) {
     : "No feasible uplift plan for these inputs.";
   $("#result-state").textContent = "No feasible plan";
   $("#recommendation").innerHTML =
-    "<span>!</span><p>Check quotation validity, route continuity and fuel/weight constraints, then recalculate.</p>";
+    `<span>!</span><p>${t("Check aircraft inputs and the connected supply settings, then calculate again.")}</p>`;
 }
 function renderStrategies() {
   const plan = strategy === "optimized" ? result : result?.baseline;
@@ -714,7 +733,7 @@ function renderStrategies() {
   $("#strategy-cards").innerHTML = plan.legs
     .map(
       (leg, i) =>
-        `<article class="strategy-card"><header><span class="step">${t("Leg {{leg}} / {{count}}",{leg:String(i+1).padStart(2,"0"),count:input.legs.length})}</span><span class="strategy-tag">${leg.upliftT < 0.001 ? "No uplift" : leg.carryFuelT > 0.01 ? "Tankering" : "Just in time"}</span></header><h3>${leg.from} <span>→</span> ${leg.to}<span>${escape(airportCity(airports[leg.from]))} → ${escape(airportCity(airports[leg.to]))}</span></h3><div class="fuel-bar"><i style="width:${Math.min(100, (leg.takeoffFuelT / input.aircraft.tankCapacityT) * 100)}%"></i></div><div class="fuel-bar-label"><span>${t("Takeoff {{fuel}} t",{fuel:tonnes(leg.takeoffFuelT)})}</span><span>${t("Arrival {{fuel}} t",{fuel:tonnes(leg.landingFuelT)})}</span></div><div class="strategy-figures"><div><span>Uplift</span><b>${tonnes(leg.upliftT)}</b><small>t</small></div><div><span>Fuel purchase</span><b>${money(leg.costUsd)}</b></div></div><p>${t("Leg burn {{burn}} t · extra-weight burn {{extra}} t",{burn:tonnes(leg.burnT),extra:tonnes(leg.extraBurnT)})}</p></article>`,
+        `<article class="strategy-card"><header><span class="step">${t("Leg {{leg}} / {{count}}",{leg:String(i+1).padStart(2,"0"),count:input.legs.length})}</span><span class="strategy-tag">${leg.upliftT < 0.001 ? "No uplift" : leg.carryFuelT > 0.01 ? "Tankering" : "Just in time"}</span></header><h3>${leg.from} <span>→</span> ${leg.to}<span>${escape(airportCity(airports[leg.from]))} → ${escape(airportCity(airports[leg.to]))}</span></h3><div class="fuel-bar"><i style="width:${Math.min(100, (leg.takeoffFuelT / input.aircraft.tankCapacityT) * 100)}%"></i></div><div class="fuel-bar-label"><span>${t("Takeoff {{fuel}} t",{fuel:tonnes(leg.takeoffFuelT)})}</span><span>${t("Arrival {{fuel}} t",{fuel:tonnes(leg.landingFuelT)})}</span></div><div class="strategy-figures"><div><span>Uplift</span><b>${tonnes(leg.upliftT)}</b><small>t</small></div><div><span>Allocated supply cost</span><b>${money(leg.costUsd)}</b></div></div><p>${t("Leg burn {{burn}} t · extra-weight burn {{extra}} t",{burn:tonnes(leg.burnT),extra:tonnes(leg.extraBurnT)})}</p></article>`,
     )
     .join("");
   const binding = plan.legs.flatMap((l) =>
@@ -887,6 +906,7 @@ $("#rotation-form").addEventListener("submit", (e) => {
 });
 $("#rotation-form").addEventListener("input", (e) => {
   const field = e.target;
+  if (field.closest(".integrated-network")) return;
   if (field.dataset.leg !== undefined && field.dataset.key) {
     const leg = input.legs[Number(field.dataset.leg)],
       key = field.dataset.key;
@@ -1014,6 +1034,7 @@ $$("[data-strategy]").forEach((button) =>
     const progress = motion?.getState().totalProgress ?? 0;
     stopPlayback();
     renderStrategies();
+    emitIntegratedResult();
     renderMap({ progress });
     $("#play-route").disabled =
       !result || (strategy === "baseline" && !result.baseline?.feasible);
@@ -1079,10 +1100,10 @@ $("#download-plan").addEventListener("click", () => {
   const provenance =
     mode === "quotes" ? input.legs.map((l) => activeQuote(l.from)) : [];
   downloadFile(
-    "fuel-atlas-rotation.json",
+    "fuel-atlas-connected-plan.json",
     JSON.stringify(
       {
-        schemaVersion: 2,
+        schemaVersion: 3,
         date: $("#flight-date").value,
         priceMode: mode,
         routeSelection: "user-defined",
@@ -1092,11 +1113,12 @@ $("#download-plan").addEventListener("click", () => {
         geographyStatus: "sourced-coordinates-great-circle-illustration",
         performanceStatus: "generated-with-explicit-overrides",
         priceStatus: mode === "demo" ? "modeled-synthetic" : "user-supplied",
-        input,
+        input: {...input,supplyChain:getIntegratedNetwork()},
+        supplyOverrides:getIntegratedOverrides(),
         quotes: provenance,
         result,
         decisionDiagnostics: decisionDiagnostics(result),
-        limitations: "Fixed-route uplift scenario. Replace illustrative performance with airline-approved data; no order execution.",
+        modelScope: "One fixed-route supply-to-aircraft optimization. Supplier dispatch, deliveries, airport inventories and aircraft uplift share one set of constraints. Departure events define supply windows.",
       },
       null,
       2,
@@ -1140,6 +1162,8 @@ reducedMotionPreference.addEventListener?.("change", () => {
   renderMap({ progress });
 });
 
+document.addEventListener('integratedinputpending', () => setDirty("Supply network inputs changed. Calculate the joint plan again."));
+document.addEventListener('integratednetworkchange',event=>{if(event.detail.source==='user-edit')setDirty("Supply network inputs changed. Calculate the joint plan again.");});
 document.addEventListener("languagechange", () => {
   renderQuoteFeedback();
   const progress = motion?.getState().totalProgress ?? 0;

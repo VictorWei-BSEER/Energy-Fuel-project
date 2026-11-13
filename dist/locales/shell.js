@@ -834,5 +834,45 @@ export const shellMessages = {
   "Calculate fuel plan": {
     "en": "Calculate fuel plan",
     "zh": "计算加油方案"
+  },
+  "nav.model": {
+    "en": "Model",
+    "zh": "模型"
+  },
+  "nav.data": {
+    "en": "Data",
+    "zh": "数据"
+  },
+  "nav.research": {
+    "en": "Research",
+    "zh": "研究"
+  },
+  "nav.method": {
+    "en": "Method",
+    "zh": "方法"
+  },
+  "Fuel Atlas — Model": {
+    "en": "Fuel Atlas — Model",
+    "zh": "燃油图谱 — 模型"
+  },
+  "Fuel Atlas connects fuel supply, transport, airport stocks and aircraft uplift in one planning model.": {
+    "en": "Fuel Atlas connects fuel supply, transport, airport stocks and aircraft uplift in one planning model.",
+    "zh": "燃油图谱将供应、运输、机场库存和飞机加油放在同一个模型中计算。"
+  },
+  "Choose your route and supply conditions, then calculate procurement, transport, airport stocks and aircraft uplift together.": {
+    "en": "Choose your route and supply conditions, then calculate procurement, transport, airport stocks and aircraft uplift together.",
+    "zh": "选择航线和供给条件，一次计算采购、运输、机场库存与飞机加油。"
+  },
+  "Delivered fuel reference": {
+    "en": "Delivered fuel reference",
+    "zh": "机场交付参考价"
+  },
+  "Allocated supply cost": {
+    "en": "Allocated supply cost",
+    "zh": "分摊供应成本"
+  },
+  "Total supply cost": {
+    "en": "Total supply cost",
+    "zh": "供应总成本"
   }
 };

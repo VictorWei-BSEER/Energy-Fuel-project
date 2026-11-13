@@ -460,3 +460,10 @@ export function defaultRotation() {
     ],
   };
 }
+
+// Shared physical core for the joint supply-chain / aircraft LP. Exporting these
+// helpers does not change the standalone model's validation or equations.
+export const normalizeRotationInput = normalize;
+export const rotationExtraLimits = limits;
+export const evaluateRotationExtras = planFromExtra;
+export const rotationMassTolerance = massTolerance;

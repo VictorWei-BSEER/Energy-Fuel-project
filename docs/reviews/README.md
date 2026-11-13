@@ -1,8 +1,8 @@
 # Product and methods reviews — 13 November 2026
 
-The current release starts with a user-selected route and a deterministic, inspectable scenario dataset. It replaces the main crude-market display with model inputs, makes the interface fully bilingual and gives each assumed input a replacement data source.
+The current release joins procurement, delivery, airport inventory and aircraft uplift in one LP. Model, Data, Research and Method share four tabs, and old standalone links redirect into the same workspace.
 
-The [configurable model review](2026-11-13-configurable-model-review.md) records the current browser acceptance results. Earlier reviews below document the shared navigation and mathematical foundations.
+The [integrated model review](2026-11-13-integrated-model-review.md) records the independent mathematical audit. The [integrated browser review](2026-11-13-integrated-browser-review.md) records causal input/output checks, language, navigation and layouts. The [integrated localization review](2026-11-13-integrated-localization-review.md) checks the four sections and dynamic feedback in both languages. The earlier reviews below document the foundations and remain dated evidence.
 
 | Review | Focus | Record |
 | --- | --- | --- |

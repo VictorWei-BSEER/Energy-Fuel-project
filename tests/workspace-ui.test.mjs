@@ -88,5 +88,5 @@ test('workspace deep links, browser history and keyboard navigation select acces
   assert.deepEqual(visible(), ['workspace-sources']);
   assert.equal($('#workspace-tab-sources').getAttribute('aria-selected'), 'true');
   const legacy = await readFile(new URL('../dist/planner.html', import.meta.url), 'utf8');
-  assert.match(legacy, /url=\.\/network\.html#calculations/);
+  assert.match(legacy, /url=\.\/index\.html#model/);
 });

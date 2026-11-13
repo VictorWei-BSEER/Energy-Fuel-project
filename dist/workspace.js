@@ -1,4 +1,4 @@
-import { t, initI18n } from './i18n.js?v=20261113-bilingual';
+import { t, initI18n } from './i18n.js?v=20261113-integrated';
 
 const isLegacyNetwork = document.body.classList.contains('network-workspace');
 if (!isLegacyNetwork) initI18n(document);
@@ -10,8 +10,9 @@ const panels = [...document.querySelectorAll('.workspace-panel')];
 const names = tabs.map(tab => tab.dataset.workspace);
 const scrollPositions = new Map();
 const titles = {
-  calculations: document.body.classList.contains('network-workspace') ? 'Supply-chain model' : 'Build your fuel plan', 'oil-markets': 'Fuel data',
-  research: 'Research', briefing: 'How it works', sources: 'Sources',
+  calculations: isLegacyNetwork ? 'Supply-chain model' : 'nav.model',
+  'oil-markets': isLegacyNetwork ? 'Fuel data' : 'nav.data',
+  research: 'nav.research', briefing: 'nav.method', sources: 'Sources',
 };
 let active = null;
 
@@ -19,9 +20,11 @@ function readRoute(hash = window.location.hash) {
   let value;
   try { value = decodeURIComponent(hash.replace(/^#/, '')); } catch { return null; }
   const [requested, ...parts] = value.split('/');
-  const name = requested === 'fuel-data' ? 'oil-markets' : requested;
+  const aliases = { model: 'calculations', calculations: 'calculations', data: 'oil-markets', 'fuel-data': 'oil-markets', 'oil-markets': 'oil-markets', research: 'research', method: 'briefing', briefing: 'briefing', sources: isLegacyNetwork ? 'sources' : 'oil-markets' };
+  const name = aliases[requested] || requested;
   if (!names.includes(name)) return null;
-  return { name, section: parts.join('/') };
+  const section = parts.join('/') || (!isLegacyNetwork && requested === 'sources' ? 'data-source-plan' : '');
+  return { name, section };
 }
 
 function selectWorkspace(route, { navigate = false, focus = false } = {}) {
@@ -40,7 +43,7 @@ function selectWorkspace(route, { navigate = false, focus = false } = {}) {
   for (const panel of panels) panel.hidden = panel.id !== `workspace-${name}`;
   document.documentElement.dataset.activeWorkspace = name;
   document.title = `${label(titles[name] || name)} — ${label('Fuel Atlas')}`;
-  const routeName = name === 'oil-markets' && names.includes('research') ? 'fuel-data' : name;
+  const routeName = isLegacyNetwork ? name : ({ calculations: 'model', 'oil-markets': 'data', research: 'research', briefing: 'method' }[name] || name);
   const hash = `#${routeName}${section ? `/${encodeURIComponent(section)}` : ''}`;
   if (navigate && window.location.hash !== hash) window.history.pushState(null, '', hash);
   if (changed) document.dispatchEvent(new CustomEvent('workspacechange', { detail: { workspace: name } }));

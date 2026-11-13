@@ -6,25 +6,27 @@
     <meta name="theme-color" content="#ffffff" />
     <meta
       name="description"
-      content="Fuel Atlas: global fixed-route fuel optimization, traceable market data and aviation energy-security research."
+      content="Fuel Atlas connects fuel supply, transport, airport stocks and aircraft uplift in one planning model."
     />
-    <title>Fuel Atlas — Build your fuel plan</title>
+    <title>Fuel Atlas — Model</title>
     <link rel="stylesheet" href="./styles.css" />
     <link rel="stylesheet" href="./dashboard.css?v=20261102-header-2" />
-    <script type="module" src="./i18n.js?v=20261113-bilingual"></script>
-    <script type="module" src="./workspace.js?v=20261113-bilingual"></script>
-    <script type="module" src="./data-view.js?v=20261113-bilingual"></script>
+    <script type="module" src="./i18n.js?v=20261113-integrated"></script>
+    <script type="module" src="./workspace.js?v=20261113-integrated"></script>
+    <script type="module" src="./data-view.js?v=20261113-integrated"></script>
 
     <link href="./flight.css" rel="stylesheet" />
     <link href="./workspace-flight.css" rel="stylesheet" />
     <link href="./flight-motion.css" rel="stylesheet" />
     <link href="./institutional.css?v=20261113" rel="stylesheet" />
-    <link href="./research/research-embedded.css?v=20261113-bilingual" rel="stylesheet" />
-    <link href="./brief/brief.css?v=20261113-bilingual" rel="stylesheet" />
-    <link href="./data-view.css?v=20261113-bilingual" rel="stylesheet" />
-    <link href="./application.css?v=20261113-bilingual" rel="stylesheet" />
-    <script defer src="./research/research.js?v=20261113-bilingual"></script>
-    <script src="./flight-app.js?v=20261113-bilingual" type="module"></script>
+    <link href="./research/research-embedded.css?v=20261113-integrated" rel="stylesheet" />
+    <link href="./brief/brief.css?v=20261113-integrated" rel="stylesheet" />
+    <link href="./data-view.css?v=20261113-integrated" rel="stylesheet" />
+    <link href="./application.css?v=20261113-integrated" rel="stylesheet" />
+    <link href="./integrated-view.css?v=20261113-integrated" rel="stylesheet" />
+    <script defer src="./research/research.js?v=20261113-integrated"></script>
+    <script src="./integrated-view.js?v=20261113-integrated" type="module"></script>
+    <script src="./flight-app.js?v=20261113-integrated" type="module"></script>
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 36 36%22%3E%3Cpath fill=%22%230057b8%22 d=%22M4 29 17 5h13L17 29z%22/%3E%3C/svg%3E"
@@ -34,7 +36,7 @@
     <a class="skip-link" href="#main">Skip to workspace</a>
     <div class="workspace">
       <header class="topbar">
-        <a href="#calculations" class="wordmark"
+        <a href="#model" class="wordmark"
           ><svg
             class="brand-icon"
             viewBox="0 0 36 36"
@@ -67,11 +69,10 @@
       </header>
       <nav class="workspace-navigation" aria-label="Main workspace">
         <div class="workspace-tabs" role="tablist" aria-label="Fuel Atlas sections">
-          <button type="button" role="tab" id="workspace-tab-calculations" data-workspace="calculations" aria-controls="workspace-calculations" aria-selected="true">Route model</button>
-          <button type="button" role="tab" id="workspace-tab-oil-markets" data-workspace="oil-markets" aria-controls="workspace-oil-markets" aria-selected="false" tabindex="-1">Fuel data</button>
-          <button type="button" role="tab" id="workspace-tab-research" data-workspace="research" aria-controls="workspace-research" aria-selected="false" tabindex="-1">Research</button>
-          <button type="button" role="tab" id="workspace-tab-briefing" data-workspace="briefing" aria-controls="workspace-briefing" aria-selected="false" tabindex="-1">How it works</button>
-          <button type="button" role="tab" id="workspace-tab-sources" data-workspace="sources" aria-controls="workspace-sources" aria-selected="false" tabindex="-1">Sources</button>
+          <button type="button" role="tab" id="workspace-tab-calculations" data-workspace="calculations" aria-controls="workspace-calculations" aria-selected="true" data-i18n="nav.model">Model</button>
+          <button type="button" role="tab" id="workspace-tab-oil-markets" data-workspace="oil-markets" aria-controls="workspace-oil-markets" aria-selected="false" tabindex="-1" data-i18n="nav.data">Data</button>
+          <button type="button" role="tab" id="workspace-tab-research" data-workspace="research" aria-controls="workspace-research" aria-selected="false" tabindex="-1" data-i18n="nav.research">Research</button>
+          <button type="button" role="tab" id="workspace-tab-briefing" data-workspace="briefing" aria-controls="workspace-briefing" aria-selected="false" tabindex="-1" data-i18n="nav.method">Method</button>
         </div>
       </nav>
       <main id="main">
@@ -91,15 +92,12 @@
                 Build your fuel plan
               </h1>
               <p class="workspace-intro">
-                Choose your airports in order, generate the route inputs, then compare where to refuel and how much to carry.
+                Choose your route and supply conditions, then calculate procurement, transport, airport stocks and aircraft uplift together.
               </p>
             </div>
             <div class="overview-actions">
               <button class="outline-button" type="button" data-import="">
-                Import supplier quotes <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg></button
-              ><a class="outline-button" href="./network.html#calculations"
-                >Supply-chain model <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg></a
-              >
+                Import supplier quotes <svg class='action-icon' aria-hidden='true' focusable='false' viewBox='0 0 16 16'><path d='M4 12L12 4M4 4h8v8' fill='none' stroke='currentColor' stroke-width='1.5'/></svg></button>
             </div>
           </section>
           <section id="planner" class="flight-planner">
@@ -165,7 +163,7 @@
                       <tr>
                         <th>Leg</th>
                         <th>Origin → destination</th>
-                        <th>Origin fuel price <small>USD/t</small></th>
+                        <th>Delivered fuel reference <small>USD/t</small></th>
                         <th>Base flight burn <small>t</small></th>
                         <th>Recommended uplift <small>t</small></th>
                         <th>Landing fuel <small>t</small></th>
@@ -220,6 +218,7 @@
                     </table>
                   </div>
                 </details>
+                <!-- WORKSPACE:SUPPLY -->
                 <div class="form-bottom">
                   <p id="plan-status" role="status">
                     <span class="live-dot"></span> Ready to build your route
@@ -277,7 +276,7 @@
                         ><strong id="motion-fuel">— <small>t</small></strong>
                       </div>
                       <div>
-                        <span>Cumulative fuel cost</span
+                        <span>Allocated supply cost</span
                         ><strong id="motion-cost">—</strong>
                       </div>
                     </div>
@@ -357,7 +356,7 @@
                     <path d="m4 17 6-6 4 3 6-9M15 5h5v5" />
                   </svg>
                 </div>
-                <h2 id="decision-title">Uplift strategy & cost</h2>
+                <h2 id="decision-title">Total supply cost</h2>
                 <p class="decision-sub" id="result-state">
                   Compare the same route and terminal fuel
                 </p>
@@ -402,6 +401,7 @@
                 </p>
               </aside>
             </div>
+            <!-- WORKSPACE:CHAIN_RESULTS -->
             <section class="strategy-section">
               <div class="section-top">
                 <div>
@@ -434,16 +434,9 @@
           hidden
         >
           <!-- WORKSPACE:DATA -->
-        </section>
-        <section
-          id="workspace-sources"
-          class="workspace-panel observed-monitor"
-          role="tabpanel"
-          aria-labelledby="workspace-tab-sources"
-          tabindex="0"
-          hidden
-        >
-          <!-- WORKSPACE:SOURCES -->
+          <section id="data-source-plan" class="source-plan-section" aria-labelledby="data-source-plan-title">
+            <!-- WORKSPACE:SOURCES -->
+          </section>
         </section>
         <section id="workspace-research" class="workspace-panel research-workspace research-exhibit" role="tabpanel" aria-labelledby="workspace-tab-research" tabindex="0" hidden>
           <!-- WORKSPACE:RESEARCH -->

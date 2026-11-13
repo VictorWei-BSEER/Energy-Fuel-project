@@ -41,7 +41,7 @@ def localize(fragment, language):
     rendered = re.sub(pattern, replace, fragment)
     rendered = rendered.replace('aria-label="Model guide downloads"',
                                 'aria-label="使用说明下载"' if language == 'zh' else 'aria-label="Model guide downloads"')
-    rendered = re.sub(r'href="#(calculations|research|sources)"',
+    rendered = re.sub(r'href="#(model|calculations|research|sources|data(?:/data-source-plan)?)"',
                       lambda m: f'href="{ORIGIN}#{m.group(1)}"', rendered)
     rendered = rendered.replace('href="./brief/', 'href="./')
     if language == 'zh':
@@ -88,7 +88,7 @@ body { margin: 0; background: white; color: #142b46; font-family: Arial,"Noto Sa
 '''
     built = {}
     for language in ('en', 'zh'):
-        title = 'Fuel Atlas — How it works' if language == 'en' else '燃油图谱使用说明'
+        title = 'Fuel Atlas — Method' if language == 'en' else '燃油图谱计算方法'
         page = '<!doctype html>\n<html lang="' + ('zh-Hans' if language == 'zh' else 'en') + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><title>' + title + '</title><style>\n' + css + print_css + '\n</style></head><body><nav class="print-language" aria-label="Language"><a href="./print.html" lang="en">English</a><a href="./print-zh.html" lang="zh-Hans">中文</a></nav><main class="print-page">' + localize(fragment, language) + '</main></body></html>\n'
         built[BRIEF / ('print.html' if language == 'en' else 'print-zh.html')] = page.encode()
     built[BRIEF / 'downloads/Fuel_Atlas_Model_Guide.md'] = (ROOT / 'docs/decision-brief.md').read_bytes()

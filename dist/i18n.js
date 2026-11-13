@@ -1,10 +1,11 @@
-import { shellMessages } from './locales/shell.js?v=20261113-bilingual';
-import { flightMessages } from './locales/flight.js?v=20261113-bilingual';
-import { researchMessages } from './locales/research.js?v=20261113-bilingual';
-import { guideMessages } from './locales/guide.js?v=20261113-bilingual';
-import { dataMessages } from './locales/data.js?v=20261113-bilingual';
+import { integratedMessages } from './locales/integrated.js?v=20261113-integrated';
+import { shellMessages } from './locales/shell.js?v=20261113-integrated';
+import { flightMessages } from './locales/flight.js?v=20261113-integrated';
+import { researchMessages } from './locales/research.js?v=20261113-integrated';
+import { guideMessages } from './locales/guide.js?v=20261113-integrated';
+import { dataMessages } from './locales/data.js?v=20261113-integrated';
 
-const messages = { ...shellMessages, ...flightMessages, ...researchMessages, ...guideMessages, ...dataMessages };
+const messages = { ...shellMessages, ...flightMessages, ...researchMessages, ...guideMessages, ...dataMessages, ...integratedMessages };
 const normalize = value => String(value).replace(/\s+/g, ' ').trim();
 const byText = new Map();
 const byEnglish = new Map();

@@ -192,8 +192,8 @@ export const dataMessages = {
     "zh": "保留油和重量限制"
   },
   "sources.reserveNow": {
-    "en": "Explicit reserve, tank, takeoff and landing assumptions.",
-    "zh": "明确设定保留油、油箱容量、起飞和落地重量限制。"
+    "en": "Explicit aircraft reserves and weight limits, plus opening stock, storage capacity and final stock targets at each airport.",
+    "zh": "飞机保留油和重量限制，以及各机场的期初库存、储存容量和期末库存目标。"
   },
   "sources.reserveNext": {
     "en": "Use the operator's approved reserve policy, aircraft limits, payload plan and airport-specific performance restrictions.",
@@ -204,8 +204,8 @@ export const dataMessages = {
     "zh": "可加注量"
   },
   "sources.supplyNow": {
-    "en": "An adjustable supply cap for each visit, with individual leg overrides.",
-    "zh": "每次到访的供油上限可调整，也可在各航段单独修改。"
+    "en": "Shared supplier allocations, delivery limits and airport stocks, together with the uplift cap at each visit.",
+    "zh": "供应商共享配额、配送限制和机场库存，以及每次到访的加注上限。"
   },
   "sources.supplyNext": {
     "en": "Confirm allocated tonnes and the uplift window with each supplier. Add delivery-rate, slot or storage constraints when the operation requires them.",
@@ -236,8 +236,8 @@ export const dataMessages = {
     "zh": "这条航线应该在哪些机场买多少油？"
   },
   "sources.modelText": {
-    "en": "You choose the airports and their order. The model chooses how much fuel to buy at each stop while meeting fuel balance, reserve, tank, weight and supply constraints. It compares that plan with buying the minimum needed on each leg, using the same final fuel target.",
-    "zh": "你决定机场和停靠顺序，模型决定各站购油量，同时满足燃油平衡、保留油、油箱、重量和供油限制。比较对象是每段只买够用的方案，两者采用相同的终点剩余油量目标。"
+    "en": "You choose the airports and their order. One calculation chooses upstream purchases, deliveries, airport inventory and aircraft uplift while meeting supply, timing, storage and flight constraints. The comparison holds minimum aircraft uplift fixed and optimizes upstream supply under the same final stock targets.",
+    "zh": "你决定机场和停靠顺序。同一次计算决定上游采购、配送、机场库存和航班加油量，满足供应、到货时间、储存及飞行约束。比较方案固定各航段按需加油量，再在相同的期末库存目标下优化上游供应。"
   },
   "sources.modelNext": {
     "en": "A single leg checks feasibility and cost. Several legs reveal whether a lower price at an earlier stop justifies carrying extra fuel.",
@@ -344,8 +344,8 @@ export const dataMessages = {
     "zh": "携油损耗率"
   },
   "data.currentPrice": {
-    "en": "Current price · USD/t",
-    "zh": "当前价格 · 美元/吨"
+    "en": "Airport input · USD/t",
+    "zh": "机场价格输入 · 美元/吨"
   },
   "data.missingPrice": {
     "en": "Quote needed",

@@ -166,7 +166,7 @@ async function mount(t, { hash = "", reducedMotion = false, preset = "eastasia" 
   };
 }
 
-test("homepage uses one five-tab workspace with isolated source controls", async (t) => {
+test("homepage uses one four-tab workspace with source collection inside Data", async (t) => {
   const ui = await mount(t, { preset: null });
   const { $, document, click, visible } = ui;
   assert.ok(document.querySelector(".topbar .wordmark"));
@@ -179,7 +179,7 @@ test("homepage uses one five-tab workspace with isolated source controls", async
     [...document.querySelectorAll("[data-workspace]")].map(
       (tab) => tab.dataset.workspace,
     ),
-    ["calculations", "oil-markets", "research", "briefing", "sources"],
+    ["calculations", "oil-markets", "research", "briefing"],
   );
   assert.deepEqual(visible(), ["workspace-calculations"]);
   const ids = [...document.querySelectorAll("[id]")].map(
@@ -200,7 +200,7 @@ test("homepage uses one five-tab workspace with isolated source controls", async
   );
   assert.equal($("#data-airport-rows").closest(".workspace-panel").id, "workspace-oil-markets");
   assert.equal($("#data-assumption-form").closest(".workspace-panel").id, "workspace-oil-markets");
-  assert.ok(document.querySelector("#workspace-sources .data-source-table"));
+  assert.ok(document.querySelector("#workspace-oil-markets #data-source-plan .data-source-table"));
   assert.equal(document.querySelector("#public-market"), null);
   assert.equal(document.querySelector("#animated-plane"), null, "first visit has no preloaded or playing route");
   assert.equal($("#motion-toggle").dataset.state, "unavailable");
@@ -218,11 +218,11 @@ test("homepage uses one five-tab workspace with isolated source controls", async
   ui.input("#initial-fuel", 20);
   click("#workspace-tab-oil-markets");
   assert.deepEqual(visible(), ["workspace-oil-markets"]);
-  click("#workspace-tab-sources");
-  assert.deepEqual(visible(), ["workspace-sources"]);
+  click('[data-open-workspace="sources"]');
+  assert.deepEqual(visible(), ["workspace-oil-markets"]);
   click("#workspace-tab-calculations");
   assert.equal($("#initial-fuel").value, "20", "tab changes preserve edits");
-  assert.deepEqual(ui.history, ["#fuel-data", "#sources", "#calculations"]);
+  assert.deepEqual(ui.history, ["#data", "#data/data-source-plan", "#model"]);
 });
 
 test("explicit global example calculates a playable route and scope changes preserve the solved plan", async (t) => {
@@ -440,7 +440,7 @@ test("workspace and document visibility pause autoplay and resume only when the 
   setHidden(false);
   assert.equal($("#motion-toggle").dataset.state, "playing");
   click("#motion-toggle");
-  click("#workspace-tab-sources");
+  click('[data-open-workspace="sources"]');
   click("#workspace-tab-calculations");
   assert.equal($("#motion-toggle").dataset.state, "paused");
   setHidden(true);
@@ -452,7 +452,7 @@ test("opening a Sources deep link does not animate the hidden calculation worksp
   const { $, click, pendingFrames, visible } = await mount(t, {
     hash: "#sources",
   });
-  assert.deepEqual(visible(), ["workspace-sources"]);
+  assert.deepEqual(visible(), ["workspace-oil-markets"]);
   assert.equal($("#motion-toggle").dataset.state, "paused");
   assert.equal(pendingFrames(), 0);
   click("#workspace-tab-calculations");

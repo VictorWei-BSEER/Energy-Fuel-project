@@ -1,5 +1,7 @@
 # 固定轮转加油模型
 
+This document specifies the aircraft fuel-balance component. The active application uses it inside the [joint supply-to-aircraft model](integrated-model.md), where procurement, deliveries and airport stocks are solved with uplift in one optimization.
+
 实现来源：[dist/flight-optimizer.js](../dist/flight-optimizer.js)。单位统一为公吨（t）与 USD/t；以下描述对应本版代码。
 
 ## 问题与范围

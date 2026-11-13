@@ -1,94 +1,94 @@
-# Fuel Atlas 使用说明
+# Fuel Atlas 计算方法
 
 更新于 2026 年 11 月 13 日
 
-选好航线，生成一组数据，看看每一站怎么加油。
+选好航线，一次计算采购、运输、机场库存和飞机加油。
 
 ## 情景数据
 
-机场坐标来自公开地理数据。价格、供油上限和飞机参数是用于推演的生成数据，相同设置会得到相同结果。有自己的数据后，可以逐项替换。
+机场坐标来自公开数据。价格、供应与运输容量、库存和飞机参数是可修改的生成数据。导入报价只是更换同一模型的价格输入。
 
 ## 1 选择航线
 
-先选择出发地和目的地，再按需要添加经停，组成 1–5 段连续航线。地图会随选择变化。模型沿这条航线计算各站加油量。也可以单独打开示例航线。
+先选择出发地和目的地，再按需要添加经停，组成 1–5 段连续航线。每次起飞对应一个规划阶段。机场顺序保持不变，模型统一安排整条链上的燃油流动。也可以单独打开示例航线。
 
-## 2 生成数据
+## 2 设置供给条件
 
-为航线生成一组完整数据。机场油价和供油上限按情景规则设定，飞行时间、耗油和备份油根据距离及所选飞机参数计算。生成后可以继续修改。
+生成航线数据，再调整供应商容量、运输成本与提前期、机场初始库存和储存上限。在同一张表里设置飞机参数、初始油量与备份油。重复经过同一机场时，会使用同一份库存。
 
-## 3 计算方案
+## 3 一次计算
 
-修改后运行计算。模型会检查油量平衡、油箱容量、起降重量、备份油和各机场的供油上限。当前设置无法完成航线时，结果会指出需要调整的限制。
+计算将供应商采购、运输到货、机场库存和飞机加油连在一起。燃油必须先到货，才能装入飞机。供应与运输容量、储存上限、机场保留库存，以及飞机油量和重量限制会一起检查。运输提前期按起飞阶段计算。
 
-## 4 比较两种方案
+## 4 查看完整方案
 
-比较每站按需加油和提前多买燃油两种方案。两者采用相同的初始油量和终点油量。除了采购成本，也要看额外耗油、各站加油量与剩余燃油。播放航线可以查看这些数值沿途如何变化。
+沿着供应商、机场和航段查看燃油数量。成本拆分列出采购、运输、处理、库存持有、加注服务和适用调整项。飞机加油量与额外耗油会和逐段按需加油的基线比较，两者使用相同供给网络、初始及终点库存。
 
-## 5 换入自己的数据
+## 5 换入自己的报价
 
-导入带有效期的机场报价，选好飞行日期，再更新飞机和供油参数。报价统一为包含到机费用的美元/公吨。缺失或有效期重叠的报价会提示修正。最后可以导出输入和结果，保存本次比较。
+导入带有效期、包含费用的到机报价，单位为美元/公吨，并选好飞行日期。报价直接进入采购成本，不再重复叠加模拟的上游和服务费用。供应、库存和飞机限制仍然生效。可以导出完整输入与方案，保存本次计算。
 
-## 成本降低意味着什么
+## 按相同条件比较
 
-采购成本降低，可能同时伴随更多飞行耗油。用于携油的额外燃油已经计入采购成本。评估最终收益时，再补充单独的碳费用、操作费用和载荷影响。
+基线在每个航段只加所需燃油，同时在相同约束下优化上游供给。两种方案采用相同的终点飞机油量和机场库存目标。基线无法执行时，先查看限制条件。携油造成的额外耗油已经计入采购数量。
 
-## 接下来接哪些数据
+## 逐项接入实际数据
 
 | 数据 | 来源 | 在模型中的用途 |
 | --- | --- | --- |
-| 机场航油价格 | 供应商报价、航司合同与发票 | 替换生成价格，同时保留有效期、币种、单位、费用与采购条件。 |
-| 飞机性能 | 航司认可的性能与飞行计划数据 | 替换耗油率、重量限制、备份油和额外重量耗油参数。 |
-| 实际供油能力 | 供应商、机场燃油运营商及合同供油权利 | 设置每次停靠可获得的加油量，并测试供油中断。 |
-| 市场基准 | 公开能源价格、汇率与国家燃油平衡数据 | 观察市场背景并设置情景，机场合同价单独接入。 |
+| 价格与供油权利 | 供应商报价、合同与发票 | 设置采购价格、有效期、费用口径和分配量。 |
+| 飞机性能 | 航司飞行计划与性能数据 | 设置耗油、备份油、载荷、重量限制和额外重量耗油参数。 |
+| 运输与机场库存 | 物流运营商、机场燃油运营商和交付计划 | 设置交付能力与提前期、可用初始库存、储存空间和库存目标。 |
+| 市场背景 | 公开能源价格、汇率与国家平衡数据 | 在数据页帮助设置情景并比较市场变化。 |
 
-## 先从一个变化开始
+## 改一个条件，再比较
 
-先改一个机场的价格或供油上限，重新计算并比较。再试不同的飞机参数或航线，更容易看清结果由什么驱动。研究报告里有更详细的携油成本分析。
+试着降低一家供应商的容量、延后一次交付，或提高某个机场的保留库存。重新计算，观察采购、库存和加油量如何一起变化。同一份结果也会显示额外携油造成的耗油。
 
 
-# Fuel Atlas Model guide
+# Fuel Atlas Method
 
 Updated 13 November 2026
 
-Choose a route, generate a scenario and compare the fuel plan at each stop.
+Choose your route and solve procurement, transport, airport stocks and aircraft uplift in one calculation.
 
 ## Scenario data
 
-Airport coordinates come from public geographic data. Prices, supply limits and aircraft parameters are generated assumptions for exploring the model. The same settings produce the same inputs. Replace them with your own data when available.
+Airport coordinates come from public data. Prices, supplier and transport capacities, stocks and aircraft inputs are generated assumptions that you can edit. Imported quotations provide another price input to the same model.
 
-## 1 Choose the route
+## 1 Choose your route
 
-Choose the departure and destination, then add stops to build a continuous route of 1–5 legs. The map follows your choices. The model keeps this route fixed and chooses how much fuel to buy at each stop. An example route is available separately.
+Choose the departure and destination, then add stops for a continuous route of 1–5 legs. Each departure is one planning stage. The airport order stays fixed while the model decides how fuel moves through the whole chain. An example route is available separately.
 
-## 2 Generate the inputs
+## 2 Set the supply conditions
 
-Generate a complete scenario for the route. Airport prices and supply limits come from the scenario rules. Distance and the selected aircraft profile give flight time, fuel burn and reserves. You can then edit the values you want to test.
+Generate the route inputs, then adjust supplier capacity, transport cost and lead stages, opening airport stock and storage limits. Set the aircraft profile, starting fuel and reserves in the same form. Repeated visits to an airport draw on the same stock pool.
 
-## 3 Run the calculation
+## 3 Calculate once
 
-Run the optimizer after editing. It checks fuel balance, tank capacity, takeoff weight, landing weight, reserves and each airport’s uplift limit. If the route cannot be served with those inputs, the result shows which limits need attention.
+The calculation connects supplier purchases to transport arrivals, airport stock and aircraft uplift. Fuel must arrive before it can be loaded. Supplier and route capacities, storage, airport reserves and aircraft fuel and weight limits are enforced together. Transport lead times are counted in departure stages.
 
-## 4 Compare both plans
+## 4 Read the complete plan
 
-Compare buying as needed at every stop with buying extra fuel earlier. Both plans start and finish with the same fuel. Read the purchase cost alongside extra burn, uplift by airport and remaining fuel. Playback shows how those values change along the route.
+Follow quantities from each supplier to each airport and flight leg. The cost breakdown separates procurement, freight, handling, stock holding, into-plane service and applicable adjustments. Compare aircraft uplift and extra burn with a minimum-uplift baseline that uses the same supply network and starting and final stocks.
 
-## 5 Bring in your own data
+## 5 Use your own quotations
 
-Import dated airport quotes, choose the flight date and update the aircraft and supply inputs. Prices use USD per metric tonne with into-plane fees included. Missing or overlapping quotes are shown for correction. Export the inputs and results to keep a copy of the comparison.
+Import dated, fee-inclusive into-plane offers in USD per metric tonne and choose the flight date. The quoted price enters procurement directly, so modeled upstream and service fees are not added again. Supply, storage and aircraft constraints still apply. Export the complete inputs and plan to keep the calculation.
 
-## How to read a lower cost
+## Compare like with like
 
-A lower purchase cost can come with more fuel burned in flight. That extra fuel is already included in the purchase calculation. Add any separate carbon charges, handling costs or payload effects when assessing the final benefit.
+The baseline loads only the fuel needed for each flight leg while optimizing upstream supply under the same constraints. Both plans use the same final aircraft fuel and airport-stock targets. If the baseline cannot be served, inspect the limiting conditions first. Extra carriage fuel is already included in the purchase quantities.
 
-## Data to connect next
+## Replace inputs with operational data
 
 | Input | Source | Use in the model |
 | --- | --- | --- |
-| Airport fuel prices | Supplier quotes, airline contracts and invoices | Replace generated prices. Keep validity, currency, units, fees and buyer terms together. |
-| Aircraft performance | Airline-approved performance and flight-planning data | Replace burn rates, weight limits, reserves and the extra-weight fuel penalty. |
-| Fuel availability | Suppliers, airport fuel operators and contracted delivery rights | Set usable uplift limits for each visit and test a supply interruption. |
-| Market benchmarks | Public energy prices, exchange rates and national fuel balances | Track the market background and set scenarios. Airport contract prices remain separate inputs. |
+| Prices and supply rights | Supplier offers, contracts and invoices | Set procurement prices, valid dates, fee coverage and allocated volumes. |
+| Aircraft performance | Operator flight-planning and performance data | Set burn, reserves, payload, weight limits and the extra-weight fuel penalty. |
+| Transport and airport stocks | Logistics operators, fuel operators and delivery schedules | Set delivery capacity and lead stages, usable opening stock, storage space and stock targets. |
+| Market background | Public energy prices, exchange rates and national balances | Inform scenario assumptions and market comparisons in the Data tab. |
 
-## Try one change at a time
+## Change one constraint and compare
 
-Change one airport price or supply limit, recalculate and compare. Then vary the aircraft or route. This makes it easier to see what is driving the result. The research tab explains the fuel-carriage trade-off in more detail.
+Reduce one supplier’s capacity, delay a delivery or raise an airport’s reserve target. Calculate again and see how procurement, stock and uplift change together. The same result also shows the fuel burned to carry extra fuel.
