@@ -1,2 +1,20 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fuel Atlas — Calculations</title><meta http-equiv="refresh" content="0;url=./network.html#calculations"><link rel="stylesheet" href="./styles.css"></head><body><main><p>The planning workspace has moved to the Calculations tab.</p><a href="./network.html#calculations">Open predictions &amp; flight calculations ↗</a></main></body></html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fuel Atlas — Model</title>
+  <!-- UNIFIED-MODEL-ENTRY:START -->
+  <script>
+  (function () {
+    var value = location.hash.slice(1);
+    try { value = decodeURIComponent(value); } catch (_) { value = ''; }
+    var parts = value.split('/');
+    var tab = parts.shift();
+    var aliases = { calculations: 'model', model: 'model', 'oil-markets': 'data', 'fuel-data': 'data', data: 'data', sources: 'data', research: 'research', briefing: 'method', method: 'method' };
+    var target = new URL('./index.html', location.href);
+    var section = parts.join('/');
+    if (tab === 'sources' && !section) section = 'data-source-plan';
+    target.hash = (aliases[tab] || 'model') + (section ? '/' + encodeURIComponent(section) : '');
+    location.replace(target.href);
+  }());
+  </script>
+  <noscript><meta http-equiv="refresh" content="0;url=./index.html#model"></noscript>
+  <!-- UNIFIED-MODEL-ENTRY:END -->
+</head><body><main><p>Continue to the fuel planning model.</p><a href="./index.html#model">Open Fuel Atlas</a></main></body></html>

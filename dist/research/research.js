@@ -3,6 +3,7 @@
  */
 (function (root) {
   'use strict';
+  const tr = (key, values = {}) => root.FuelI18n?.t(key, values) ?? key.replace(/\{\{([\w.]+)\}\}/g, (token, name) => Object.hasOwn(values, name) ? String(values[name]) : token);
   const CO2_FACTOR = 3.16;
   const DEFAULTS = Object.freeze({ durationH: 4, kPerHour: .035, model: 'linear', originPriceScenarioUsdPerT: 1000, carbonUsdPerTCo2: 0, extraCostUsdPerDeliveredT: 0, requiredDeliveryT: 1, extraOriginHeadroomT: 1 });
   function number(value, name, minimum = 0, exclusive = false) {
@@ -40,7 +41,7 @@
   const format = (value, digits = 1) => new Intl.NumberFormat('en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
   let frozen = { inputs: {}, results: {} }, current = null;
   try { frozen = JSON.parse($('#research-data')?.textContent || '{}'); } catch { /* Empty data is rendered as unavailable, never invented. */ }
-  const modelName = model => model === 'linear' ? 'Linear' : 'Exponential';
+  const modelName = model => tr(model === 'linear' ? 'Linear' : 'Exponential');
   function getInputs() {
     const form = $('#scenario-form');
     if (!form.checkValidity()) throw new RangeError('Enter valid values within the displayed input limits.');
@@ -53,12 +54,12 @@
   }
   function renderBalance(result) {
     const chart = $('#balance-chart'), width = 680, x = 20, usefulWidth = width * result.retentionFraction;
-    chart.setAttribute('aria-label', `${format(result.extraOriginUpliftT, 3)} tonnes extra origin uplift: ${format(result.requiredDeliveryT, 3)} useful tonnes delivered and ${format(result.additionalBurnT, 3)} additional tonnes burned.`);
-    chart.innerHTML = `<text x="${x}" y="20" class="svg-value" font-size="16">${format(result.extraOriginUpliftT, 3)} t extra origin uplift</text><rect x="${x}" y="36" width="${usefulWidth}" height="28" fill="#0055b8"/><rect x="${x + usefulWidth}" y="36" width="${width - usefulWidth}" height="28" fill="#ad701e"/><text x="${x}" y="91" class="svg-label" font-size="15">1.000 t delivered</text><text x="${x + width}" y="91" class="svg-label" text-anchor="end" font-size="15">${format(result.additionalBurnT, 3)} t burned</text>`;
+    chart.setAttribute('aria-label', tr('{{uplift}} tonnes extra origin uplift: {{delivered}} useful tonnes delivered and {{burn}} additional tonnes burned.', { uplift: format(result.extraOriginUpliftT, 3), delivered: format(result.requiredDeliveryT, 3), burn: format(result.additionalBurnT, 3) }));
+    chart.innerHTML = `<text x="${x}" y="20" class="svg-value" font-size="16">${esc(tr('{{value}} t extra origin uplift', { value: format(result.extraOriginUpliftT, 3) }))}</text><rect x="${x}" y="36" width="${usefulWidth}" height="28" fill="#0055b8"/><rect x="${x + usefulWidth}" y="36" width="${width - usefulWidth}" height="28" fill="#ad701e"/><text x="${x}" y="91" class="svg-label" font-size="15">${esc(tr('1.000 t delivered'))}</text><text x="${x + width}" y="91" class="svg-label" text-anchor="end" font-size="15">${esc(tr('{{value}} t burned', { value: format(result.additionalBurnT, 3) }))}</text>`;
   }
   function update() {
-    $('#duration-value').textContent = `${format(Number($('#duration').value))} hours`;
-    $('#carry-rate-value').textContent = `${format(Number($('#carry-rate').value))}% / hour`;
+    $('#duration-value').textContent = tr('{{value}} hours', { value: format(Number($('#duration').value)) });
+    $('#carry-rate-value').textContent = tr('{{value}}% / hour', { value: format(Number($('#carry-rate').value)) });
     try {
       const inputs = getInputs(), result = compute(inputs); current = result;
       $('#scenario-error').hidden = true; $('#scenario-results').hidden = false; $('#export-scenario').disabled = false;
@@ -71,13 +72,13 @@
       $('#local-co2-value').textContent = format(result.localInterruption.additionalCo2T, 3);
       $('#local-case-delivery').textContent = format(result.localInterruption.destinationUpliftDisplacedT, 3);
       $('#premium-explanation').textContent = result.carbonUsdPerTCo2 || result.extraCostUsdPerDeliveredT
-        ? `The destination price must exceed the assumed origin price by this premium to cover carriage and the selected additional charges. Origin price ${format(result.originPriceScenarioUsdPerT, 0)} USD/t is an illustrative input.`
-        : 'The destination price must exceed the origin price by this premium to cover carriage fuel. With no additional charges, this ratio does not depend on an assumed price level.';
+        ? tr('This premium covers carriage fuel and the selected charges, using a scenario origin price of {{price}} USD/t.', { price: format(result.originPriceScenarioUsdPerT, 0) })
+        : tr('This premium covers the extra fuel burned in carriage. With no other charges, the ratio is independent of the starting price.');
       const alternative = compute({ ...inputs, model: inputs.model === 'linear' ? 'exponential' : 'linear' });
-      $('#alternative-result').textContent = `${modelName(alternative.model)} sensitivity: ${format(alternative.breakEvenPremiumPct)}% premium. The difference is model-form uncertainty, not a measured confidence interval.`;
+      $('#alternative-result').textContent = tr('{{model}} approximation: {{value}}% premium. Compare the two forms to see how the method affects the result.', { model: modelName(alternative.model), value: format(alternative.breakEvenPremiumPct) });
       renderBalance(result);
     } catch (error) {
-      current = null; $('#scenario-error').textContent = error.message; $('#scenario-error').hidden = false;
+      current = null; $('#scenario-error').textContent = tr(error.message); $('#scenario-error').hidden = false;
       $('#scenario-results').hidden = true; $('#export-scenario').disabled = true; $('#local-case-delivery').textContent = '—';
     }
   }
@@ -85,8 +86,8 @@
     const airports = frozen.inputs?.airports, routes = frozen.inputs?.routes;
     const cases = frozen.results?.routeCases, ranges = frozen.results?.routeRanges;
     if (!Array.isArray(airports) || !Array.isArray(routes) || !Array.isArray(cases) || !Array.isArray(ranges)) {
-      $('#route-table-rows').innerHTML = '<tr><td colspan="4">Frozen research results unavailable.</td></tr>';
-      $('#coordinate-provenance').textContent = 'No coordinate or model result substitutes have been generated.';
+      $('#route-table-rows').innerHTML = `<tr><td colspan="4">${esc(tr('Research results unavailable.'))}</td></tr>`;
+      $('#coordinate-provenance').textContent = tr('Load the research dataset to display these results.');
       return;
     }
     const project = point => [(point.lon - 92) / 59 * 900, (51 - point.lat) / 57 * 680];
@@ -96,16 +97,16 @@
       const origin = byCode.get(route.origin), destination = byCode.get(route.destination);
       if (!origin || !destination) return '';
       const [x1, y1] = project(origin), [x2, y2] = project(destination);
-      return `<path class="study-line" d="M${x1},${y1}Q${(x1 + x2) / 2 + 38},${(y1 + y2) / 2 + 12} ${x2},${y2}"><title>${esc(route.id)}: schematic study connection</title></path>`;
+      return `<path class="study-line" d="M${x1},${y1}Q${(x1 + x2) / 2 + 38},${(y1 + y2) / 2 + 12} ${x2},${y2}"><title>${esc(tr('{{route}} study connection', { route: route.id }))}</title></path>`;
     }).join('');
-    $('#study-airports').innerHTML = '<text x="230" y="230" class="map-label">CHINA</text><text x="675" y="125" class="map-label">JAPAN</text>' + airports.map(airport => {
+    $('#study-airports').innerHTML = `<text x="230" y="230" class="map-label">${esc(tr('CHINA'))}</text><text x="675" y="125" class="map-label">${esc(tr('JAPAN'))}</text>` + airports.map(airport => {
       const [x, y] = project(airport), left = airport.iata === 'HKG', dx = left ? -18 : 18, anchor = left ? 'end' : 'start';
-      return `<g transform="translate(${x},${y})"><title>${esc(airport.name)}: ${airport.lat}°, ${airport.lon}°; source coordinates only</title><circle class="airport-dot" r="8"/><text class="airport-label" x="${dx}" y="-2" text-anchor="${anchor}">${esc(airport.iata)}</text><text class="airport-city" x="${dx}" y="19" text-anchor="${anchor}">${esc(city[airport.iata] || airport.name)}</text></g>`;
+      return `<g transform="translate(${x},${y})"><title>${esc(tr(airport.name))}: ${airport.lat}°, ${airport.lon}°</title><circle class="airport-dot" r="8"/><text class="airport-label" x="${dx}" y="-2" text-anchor="${anchor}">${esc(airport.iata)}</text><text class="airport-city" x="${dx}" y="19" text-anchor="${anchor}">${esc(tr(city[airport.iata] || airport.name))}</text></g>`;
     }).join('');
     const central = routes.map(route => cases.find(item => item.routeId === route.id && item.model === 'linear' && item.carbonUsdPerTCo2 === 0));
-    if (central.some(row => !row)) { $('#route-table-rows').innerHTML = '<tr><td colspan="4">Incomplete frozen route results.</td></tr>'; return; }
+    if (central.some(row => !row)) { $('#route-table-rows').innerHTML = `<tr><td colspan="4">${esc(tr('Route results are incomplete.'))}</td></tr>`; return; }
     const plotted = central.map(row => ({ row, range: ranges.find(item => item.routeId === row.routeId)?.linear }));
-    if (plotted.some(item => !item.range)) { $('#route-table-rows').innerHTML = '<tr><td colspan="4">Incomplete frozen sensitivity ranges.</td></tr>'; return; }
+    if (plotted.some(item => !item.range)) { $('#route-table-rows').innerHTML = `<tr><td colspan="4">${esc(tr('Sensitivity ranges are incomplete.'))}</td></tr>`; return; }
     const max = Math.max(10, Math.ceil(Math.max(...plotted.map(item => item.range.premiumPctMax)) / 10) * 10);
     const x = value => 130 + value / max * 470, ticks = Array.from({ length: 7 }, (_, i) => max * i / 6);
     const grid = ticks.map(value => `<line x1="${x(value)}" y1="26" x2="${x(value)}" y2="248" stroke="#d9e2ed"/><text x="${x(value)}" y="277" class="svg-label" font-size="13" text-anchor="middle">${format(value, 0)}%</text>`).join('');
@@ -114,9 +115,9 @@
       return `<text x="0" y="${y + 5}" class="svg-value" font-size="17">${esc(row.routeId.replace('-', '–'))}</text><line x1="${x(range.premiumPctMin)}" y1="${y}" x2="${x(range.premiumPctMax)}" y2="${y}" stroke="#6688aa" stroke-width="3"/><line x1="${x(range.premiumPctMin)}" y1="${y - 7}" x2="${x(range.premiumPctMin)}" y2="${y + 7}" stroke="#6688aa"/><line x1="${x(range.premiumPctMax)}" y1="${y - 7}" x2="${x(range.premiumPctMax)}" y2="${y + 7}" stroke="#6688aa"/><circle cx="${x(row.breakEvenPremiumPct)}" cy="${y}" r="7" fill="#0055b8"/><text x="${x(row.breakEvenPremiumPct)}" y="${y - 16}" class="svg-value" font-size="16" text-anchor="middle">${format(row.breakEvenPremiumPct)}%</text>`;
     }).join('');
     $('#route-chart').innerHTML = grid + bars;
-    $('#route-table-rows').innerHTML = plotted.map(({ row, range }) => `<tr><th scope="row">${esc(row.routeId.replace('-', '–'))}</th><td>${format(row.distanceKm, 0)} km</td><td>${format(row.durationH)} h</td><td><strong>${format(row.breakEvenPremiumPct)}%</strong><small>${format(range.premiumPctMin)}–${format(range.premiumPctMax)}%</small></td></tr>`).join('');
+    $('#route-table-rows').innerHTML = plotted.map(({ row, range }) => `<tr><th scope="row">${esc(row.routeId.replace('-', '–'))}</th><td>${esc(tr('{{value}} km', { value: format(row.distanceKm, 0) }))}</td><td>${esc(tr('{{value}} h', { value: format(row.durationH) }))}</td><td><strong>${format(row.breakEvenPremiumPct)}%</strong><small>${format(range.premiumPctMin)}–${format(range.premiumPctMax)}%</small></td></tr>`).join('');
     const source = frozen.inputs.airportSnapshot || {};
-    $('#coordinate-provenance').textContent = `Coordinates: ${source.sourceName || 'OurAirports'}; collected ${source.originalFetchedAt || 'date unavailable'}. Record-level observation dates are not supplied. Coordinate snapshot SHA-256: ${source.snapshotSha256 || 'not supplied'}.`;
+    $('#coordinate-provenance').textContent = tr('Coordinates from {{source}}, collected {{date}}. Snapshot SHA-256 {{hash}}.', { source: source.sourceName || 'OurAirports', date: source.originalFetchedAt || tr('date unavailable'), hash: source.snapshotSha256 || tr('not supplied') });
     if (frozen.results.headline && Number.isFinite(frozen.results.headline.breakEvenPremiumPct)) $('#cover-premium').textContent = format(frozen.results.headline.breakEvenPremiumPct);
   }
   $('#scenario-form').addEventListener('input', update);
@@ -129,5 +130,6 @@
     const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
     const anchor = document.createElement('a'); anchor.href = url; anchor.download = 'fuel-atlas-tankering-scenario.json'; document.body.append(anchor); anchor.click(); anchor.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   });
+  document.addEventListener('languagechange', () => { renderGeography(); update(); });
   renderGeography(); update();
 })(globalThis);

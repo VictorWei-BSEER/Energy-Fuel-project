@@ -1,10 +1,12 @@
 # 固定轮转加油模型
 
+This document specifies the aircraft fuel-balance component. The active application uses it inside the [joint supply-to-aircraft model](integrated-model.md), where procurement, deliveries and airport stocks are solved with uplift in one optimization.
+
 实现来源：[dist/flight-optimizer.js](../dist/flight-optimizer.js)。单位统一为公吨（t）与 USD/t；以下描述对应本版代码。
 
 ## 问题与范围
 
-输入一串固定的 2–5 个连续航段，最小化各出发站新增燃油采购成本。可以在便宜站提前加油，带到后续站；额外携油增加本段耗油。模型不改变航线、不增加经停、不预测价格。
+输入一串固定的 1–5 个连续航段，最小化各出发站新增燃油采购成本。可以在便宜站提前加油，带到后续站；额外携油增加本段耗油。模型不改变航线、不增加经停、不预测价格。
 
 `baselineRotation(input)` 生成逐站按需基线；`optimizeRotation(input)` 返回最优可行方案及基线；`defaultRotation()` 返回新的可编辑演示输入。
 
@@ -101,10 +103,14 @@ The UI now opens a separate, explicitly hypothetical four-leg SIN–DXB–LHR–
 
 ## 与研究报告的区别
 
-全球工作台使用固定 2–5 航段的受约束加油优化；研究报告使用单次边际燃油运输的阈值模型。工作台的 `carryBurnRate` 是**整个航段**每吨额外携油的损耗比例；研究的 `burnCoefficientPerHour` 是**每小时**系数。只有采用线性研究假设并指定时长 `t` 时，才可令 `carryBurnRate = k × t`；若采用指数研究假设，则应令 `carryBurnRate = 1 − exp(−k × t)`。这是一种模型映射，不是机型或航线性能校准，也不意味着工作台默认示例来自研究中的三条亚洲连接。
+全球工作台使用固定 1–5 航段的受约束加油优化；研究报告使用单次边际燃油运输的阈值模型。工作台的 `carryBurnRate` 是**整个航段**每吨额外携油的损耗比例；研究的 `burnCoefficientPerHour` 是**每小时**系数。只有采用线性研究假设并指定时长 `t` 时，才可令 `carryBurnRate = k × t`；若采用指数研究假设，则应令 `carryBurnRate = 1 − exp(−k × t)`。这是一种模型映射，不是机型或航线性能校准，也不意味着工作台默认示例来自研究中的三条亚洲连接。
 
 研究阈值比较相同目的地可用燃油，但没有油箱、重量或实际供油可行性检验。工作台在给定的人工性能与报价参数下检查上述约束。两者均不推断机场供货能力、航班取消概率、真实利润或区域福利。
 
 可比方案的额外直接燃烧排放为 `3.16 × extraBurnVsBaselineT`，单位 t CO₂；3.16 来自研究已列明的 ICAO Jet A/Jet A-1 因子，不含生命周期和非 CO₂ 效应。在节省与额外排放都为正时，`savingsUsd / (3.16 × extraBurnVsBaselineT)` 给出**当前方案**燃油采购节省被额外碳价值抵消的 USD/t CO₂ 阈值；它既不是观测碳价，也不是重新纳入碳目标优化后的最优决策。
 
 可选独立核验：安装 NumPy/SciPy 后运行 `python3 scripts/audit-flight-model.py`。脚本用与生产代码不同的加油量/落地油量变量和 SciPy/HiGHS，比较 600 个固定种子的可行/不可行输入，并检验现金成本与燃油平衡。它是数值复核，不是实际飞机运行认证。
+
+## 可配置生成情景
+
+`dist/scenario-data.js` 为共享目录的全部 67 个机场生成有分项公式的合成价格及每次到访供油上限，并按用户选择的 1–5 航段计算距离、航时和通用机型参数。所有经济和性能输入都是可编辑情景；坐标是单独有来源的地理数据。详见 [生成数据与公式](scenario-data.md)。单航段可计算需求与可行性，但同一初始/终点库存下没有跨站携油套利，成本节省为零。

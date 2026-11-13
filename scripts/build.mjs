@@ -14,6 +14,17 @@ await build({
   legalComments: 'eof',
   banner: { js: '/* Fuel Atlas planning engine. Source: src/planner.js. Third-party license: vendor-licenses.txt */' },
 });
+await build({
+  entryPoints: ['src/integrated-optimizer.js'],
+  outfile: 'dist/integrated-optimizer.js',
+  bundle: true,
+  format: 'esm',
+  platform: 'browser',
+  target: ['es2022'],
+  minify: true,
+  legalComments: 'eof',
+  banner: { js: '/* Fuel Atlas joint supplier-to-aircraft LP. Source: src/integrated-optimizer.js. Shared flight physics: flight-optimizer.js. Third-party license: vendor-licenses.txt */' },
+});
 const require = createRequire(import.meta.url);
 await build({
   entryPoints: ['src/airport-directory.js'],

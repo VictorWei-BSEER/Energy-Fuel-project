@@ -2,6 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- UNIFIED-MODEL-ENTRY:START -->
+  <script>
+  (function () {
+    var value = location.hash.slice(1);
+    try { value = decodeURIComponent(value); } catch (_) { value = ''; }
+    var parts = value.split('/');
+    var tab = parts.shift();
+    var aliases = { calculations: 'model', model: 'model', 'oil-markets': 'data', 'fuel-data': 'data', data: 'data', sources: 'data', research: 'research', briefing: 'method', method: 'method' };
+    var target = new URL('./index.html', location.href);
+    var section = parts.join('/');
+    if (tab === 'sources' && !section) section = 'data-source-plan';
+    target.hash = (aliases[tab] || 'model') + (section ? '/' + encodeURIComponent(section) : '');
+    location.replace(target.href);
+  }());
+  </script>
+  <noscript><meta http-equiv="refresh" content="0;url=./index.html#model"></noscript>
+  <!-- UNIFIED-MODEL-ENTRY:END -->
+
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f3f6fa">
   <meta name="description" content="Fuel Atlas: fuel planning and scenario calculations, public oil market charts, and transparent data sources in one workspace.">

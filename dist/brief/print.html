@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><title>Fuel Atlas — Project decision brief</title><style>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ffffff"><title>Fuel Atlas — Method</title><style>
 .project-brief-content { color: #17334f; font-family: Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif; font-size: 15px; line-height: 1.65; max-width: 1320px; margin: 0 auto; }
 .project-brief-content * { box-sizing: border-box; }
 .project-brief-content h1, .project-brief-content h2, .project-brief-content h3, .project-brief-content p { margin: 0; }
@@ -82,105 +82,69 @@
 .project-brief-content .brief-actions a:first-child:hover { background: #003d83; }
 .project-brief-content .brief-actions a span { font-size: 11px; font-weight: 400; }
 @media print { .project-brief-content .brief-actions { display: none; } }
+.project-brief-content .guide-scenario { background: #eef5fc; padding: 20px 24px; margin: 24px 0; border-left: 3px solid #0057b8; max-width: none; }
+.project-brief-content .guide-scenario h2 { font-size: 18px; margin-bottom: 8px; }
+.project-brief-content .guide-steps { margin: 0 0 26px; padding: 0; list-style: none; }
+.project-brief-content .guide-steps > li { display: grid; grid-template-columns: 34px minmax(0,1fr); gap: 18px; padding: 22px 0; border-top: 1px solid #d9e2ec; }
+.project-brief-content .guide-steps h2 { font-size: 22px; margin-bottom: 10px; }
+.project-brief-content .guide-step-number { display: flex; justify-content: center; align-items: center; height: 30px; width: 30px; border-radius: 50%; background: #eef5fc; color: #0057b8; font-size: 14px; font-weight: 600; }
+.project-brief-content .brief-section > h2 { margin-bottom: 16px; }
+.project-brief-content .model-guide-content table { font-size: 14px; }
+@media print { .project-brief-content .guide-steps > li { break-inside: avoid; padding: 14px 0; } .project-brief-content .guide-steps h2 { font-size: 13pt; } .project-brief-content .guide-scenario { padding: 12px 16px; margin: 16px 0; } }
 
-@page { size: A4; margin: 16mm 16mm 17mm; }
-body { margin: 0; background: white; color: #142b46; font-family: Arial, sans-serif; }
+@page { size: A4; margin: 15mm 16mm 16mm; }
+body { margin: 0; background: white; color: #142b46; font-family: Arial,"Noto Sans CJK SC",sans-serif; }
 .print-page { max-width: 1120px; padding: 28px; margin: 0 auto; }
-.print-source-notes { border-top: 1px solid #d9e2ec; padding-top: 15px; font: 12px/1.5 Arial,sans-serif; color: #536b84; }
-.print-source-notes h2 { font-size: 16px; color: #142b46; margin: 0 0 8px; }
-.print-source-notes ol { padding-left: 18px; margin: 0 0 8px; }
-.print-source-notes a { color: #0057b8; overflow-wrap: anywhere; }
+.print-language { max-width: 1120px; margin: 20px auto 0; padding: 0 28px; font: 14px/1.5 Arial,sans-serif; }
+.print-language a { color: #0057b8; margin-right: 20px; }
 @media print {
+  .print-language { display: none; }
   .print-page { max-width: none; padding: 0; }
-  .project-brief-content { font-size: 9.2pt; line-height: 1.5; }
-  .project-brief-content h1 { font-size: 23pt; letter-spacing: -.7px; }
+  .project-brief-content { font-size: 9.5pt; line-height: 1.5; }
+  .project-brief-content h1 { font-size: 23pt; letter-spacing: -.5px; }
   .project-brief-content h2 { font-size: 14pt; }
-  .project-brief-content h3 { font-size: 11pt; }
-  .project-brief-content .brief-deck { font-size: 11pt; margin-top: 8px; }
   .project-brief-content .brief-heading { display: block; padding: 0 0 14px; }
-  .project-brief-content .brief-status { margin-top: 12px; padding: 0 0 0 10px; }
-  .project-brief-content .brief-status span, .project-brief-content .brief-status strong, .project-brief-content .brief-status small { display: inline; font-size: 9pt; margin-right: 8px; }
-  .project-brief-content .brief-status br { display: none; }
-  .project-brief-content .brief-thesis { padding: 16px 0; }
-  .project-brief-content .brief-thesis h2 { margin-bottom: 8px; }
-  .project-brief-content .brief-section { padding: 17px 0; }
-  .project-brief-content .brief-section-heading { margin-bottom: 11px; }
-  .project-brief-content .brief-callout { padding: 10px 13px; }
-  .project-brief-content .brief-columns { display: block; }
-  .project-brief-content .brief-columns > div { break-inside: avoid; }
-  .project-brief-content .brief-columns > div + div { margin-top: 13px; }
-  .project-brief-content section[aria-labelledby="brief-research-title"] { break-before: page; }
-  .project-brief-content .brief-value { padding: 14px 17px; margin-bottom: 17px; break-inside: avoid; }
-  .project-brief-content .brief-equation { font-size: 11pt; }
+  .project-brief-content .brief-deck { font-size: 11pt; margin-top: 10px; }
+  .project-brief-content .brief-eyebrow { font-size: 8pt; }
+  .project-brief-content .guide-scenario { padding: 11px 15px; margin: 16px 0; break-inside: avoid; }
+  .project-brief-content .guide-scenario h2 { font-size: 11pt; }
+  .project-brief-content .guide-steps { margin-bottom: 16px; }
+  .project-brief-content .guide-steps > li { padding: 12px 0; grid-template-columns: 25px minmax(0,1fr); gap: 12px; break-inside: avoid; }
+  .project-brief-content .guide-steps h2 { font-size: 12pt; margin-bottom: 7px; }
+  .project-brief-content .guide-step-number { width: 23px; height: 23px; font-size: 10pt; }
+  .project-brief-content .brief-value { padding: 12px 16px; margin: 0 0 16px; break-inside: avoid; }
   .project-brief-content .brief-value h2 { margin-bottom: 8px; }
-  .project-brief-content table { font-size: 9pt; }
-  .project-brief-content caption, .project-brief-content thead th, .project-brief-content .brief-note { font-size: 8pt; }
+  .project-brief-content .brief-section { padding: 16px 0; }
+  .project-brief-content section[aria-labelledby="guide-data-title"] { break-before: page; }
+  .project-brief-content .brief-section > h2 { margin-bottom: 12px; break-after: avoid; }
+  .project-brief-content table { font-size: 8.5pt; line-height: 1.45; }
+  .project-brief-content caption, .project-brief-content thead th { font-size: 8pt; }
   .project-brief-content th, .project-brief-content td { padding: 8px 10px; }
+  .project-brief-content tbody th { width: 23%; min-width: 100px; }
   .project-brief-content caption { padding: 7px 10px; }
-  .project-brief-content .brief-pilot-grid { display: block; margin-top: 13px; }
-  .project-brief-content .brief-pilot-grid article { margin-bottom: 12px; padding: 10px 13px; break-inside: avoid; }
-  .project-brief-content .brief-pilot-grid p { font-size: 9pt; }
-  .project-brief-content .brief-day { font-size: 8pt !important; margin-bottom: 5px; }
-  .project-brief-content p + p { margin-top: 8px; }
-  .project-brief-content .brief-next { display: block; padding: 12px; margin-top: 15px; break-inside: avoid; }
-  .project-brief-content .brief-next strong { margin-right: 8px; }
-  .project-brief-content .brief-footer { padding: 12px 0; font-size: 8pt; }
-  .project-brief-content .brief-eyebrow { font-size: 8pt; margin-bottom: 7px; }
-  .print-source-notes { font-size: 8pt; padding-top: 10px; break-inside: avoid; }
-  .print-source-notes h2 { font-size: 11pt; }
+  .project-brief-content tr { break-inside: avoid; }
+  .project-brief-content .brief-footer { padding: 12px 0 0; font-size: 8pt; }
 }
 
-</style></head><body><main class="print-page"><div class="project-brief-content">
-  <header class="brief-heading">
-    <div><p class="brief-eyebrow">Project brief · 13 November 2026</p><h1>From fuel prices to defensible decisions</h1><p class="brief-deck">A testable case for aviation fuel planning and Asian supply resilience.</p></div>
-    <div class="brief-status"><span>Current maturity</span><strong>Research prototype</strong><small>Demonstrated calculations. Commercial value not yet validated.</small></div>
-  </header>
-  <nav class="brief-actions" aria-label="Project brief downloads"><a href="./downloads/Fuel_Atlas_Decision_Brief.pdf" download>Download brief <span>PDF ↓</span></a><a href="./downloads/Fuel_Atlas_Decision_Brief.md" download>Methods and evidence <span>Markdown ↓</span></a><a href="./print.html">Print view <span aria-hidden="true">→</span></a></nav>
-
-  <section class="brief-thesis" aria-labelledby="brief-thesis-title">
-    <p class="brief-eyebrow">The decision</p><h2 id="brief-thesis-title">When does cheaper fuel justify carrying more of it?</h2>
-    <p>Fuel Atlas connects a fixed flight rotation, comparable fuel offers and aircraft constraints to explain where to buy fuel and how much to carry. The research asks a second question: when a local supply interruption occurs, does that flexibility protect connectivity or shift scarcity and emissions elsewhere?</p>
-    <p class="brief-callout"><strong>Next milestone:</strong> an airline-supervised shadow pilot using dated contracts and approved performance data. The present system supports a diligence conversation; it does not establish dispatch readiness, customer traction or investment returns.</p>
-  </section>
-
-  <section class="brief-section" aria-labelledby="brief-evidence-title">
-    <div class="brief-section-heading"><span>01</span><h2 id="brief-evidence-title">What the evidence supports</h2></div>
-    <div class="brief-table-wrap"><table><caption>Implemented capability and the next validation step</caption><thead><tr><th scope="col">Available today</th><th scope="col">Still to establish</th></tr></thead><tbody>
-      <tr><th scope="row">Fixed-rotation optimization</th><td>2–5 legs; explicit fuel, weight and supply constraints; matched terminal fuel. Requires aircraft-specific calibration and operational validation.</td></tr>
-      <tr><th scope="row">Global geographic sample</th><td>67 sourced airports across six continents. Coordinates do not establish prices, supplier availability or global market coverage.</td></tr>
-      <tr><th scope="row">Traceable data and research</th><td>Public benchmarks, quotation import and reproducible conditional analysis. No verified airline contract dataset, realized savings or prospective operational trial is included.</td></tr>
-    </tbody></table></div>
-    <p class="brief-note">The flight optimizer, marginal tankering study and separate supply-chain planner answer different questions; they are not one calibrated global energy model.</p>
-  </section>
-
-  <section class="brief-section" aria-labelledby="brief-commercial-title">
-    <div class="brief-section-heading"><span>02</span><h2 id="brief-commercial-title">A focused commercial hypothesis</h2></div>
-    <div class="brief-columns"><div><h3>Buyer and workflow</h3><p><strong>Hypothesis:</strong> airline fuel procurement teams, with flight-operations approval, may pay for faster, auditable comparisons of uplift choices. Start with one fleet type and a small airport network: reconcile offers, replay a rotation, explain binding constraints, then export the decision record.</p><p>A paid pilot followed by a subscription is a pricing hypothesis. Interview buyers and measure procurement, integration and support costs before estimating a market or setting a price.</p></div><div><h3>Positioning against existing tools</h3><p><a href="https://skymetrix.com/airtelligent/fuel/">Skymetrix</a> describes fuel procurement, flight-event integration and tankering support. <a href="https://www.openairlines.com/for-fuel-managers-ops-engineers/">OpenAirlines</a> offers operational fuel analytics and reporting. These vendor descriptions establish an existing competitive category, not comparative performance.</p><p>Fuel Atlas must test whether transparent resilience scenarios and decision provenance solve an unmet workflow. A map and optimizer alone are not a defensible advantage; data rights, validated performance and integration would have to be earned.</p></div></div>
-  </section>
-
-  <section class="brief-value" aria-labelledby="brief-value-title">
-    <p class="brief-eyebrow">Economic test</p><h2 id="brief-value-title">Measure net value, not a headline saving</h2>
-    <p class="brief-equation">Net value = matched baseline purchase cost − feasible alternative purchase cost − additional non-fuel costs</p>
-    <p>Purchase-cost comparisons already include modeled carriage fuel; do not subtract that burn twice. Separately reconcile carbon charges, handling, displaced payload, contract penalties and implementation costs. Hold mission, payload, reserves, quote availability, initial fuel and terminal fuel constant. Report gross and net differences, rejected cases and analyst time saved. No annual saving or market-size estimate is asserted here.</p>
-  </section>
-
-  <section class="brief-section" aria-labelledby="brief-pilot-title">
-    <div class="brief-section-heading"><span>03</span><h2 id="brief-pilot-title">A 90-day validation proposal</h2></div>
-    <p>Illustrative schedule from an agreed pilot start; milestones depend on data access. These are proposed acceptance gates, not completed results.</p>
-    <div class="brief-pilot-grid">
-      <article><p class="brief-day">Days 1–30</p><h3>Establish comparability</h3><p>Obtain authorized offers, invoices, uplift records and approved performance data. Record units, fees, validity, supply rights and exclusions.</p><p><strong>Gate:</strong> every admitted record has complete provenance; missing inputs block recommendations. Agree tolerances and a holdout period before analysis.</p></article>
-      <article><p class="brief-day">Days 31–60</p><h3>Replay without hindsight</h3><p>Use only information available at each historical decision. Compare against recorded practice and the same-constraint baseline; independently check fuel and weight balances.</p><p><strong>Gate:</strong> no unresolved hard-constraint violations; report coverage, burn error, reconciliation error and net value against pre-agreed tolerances.</p></article>
-      <article><p class="brief-day">Days 61–90</p><h3>Test prospective usefulness</h3><p>Run in shadow mode. Operations retains authority; log disagreements, overrides, analyst effort and data failures.</p><p><strong>Gate:</strong> evidence of repeatable user value, affordable integration and explicit operational sign-off. Stop or redesign if benefit disappears after costs or data remain inaccessible.</p></article>
-    </div>
-  </section>
-
-  <section class="brief-section" aria-labelledby="brief-research-title">
-    <div class="brief-section-heading"><span>04</span><h2 id="brief-research-title">A systems-research agenda</h2></div>
-    <p>Compare local delivery failure, refinery disruption and a correlated import shock. Test tankering alongside ground stocks, alternate suppliers and coordinated allocation. Stocks, restoration times and service priorities must come from documented evidence or labeled scenario ranges.</p>
-    <p>Report unmet fuel and service separately, additional burn and direct CO₂, cost, recovery time and who receives scarce supply. Vary performance, logistics and policy jointly; publish model-form disagreement and scenario regret instead of invented outage probabilities. Any service valuation or equity weighting must be explicit and tested.</p>
-    <p>This agenda relates to <a href="https://iiasa.ac.at/programs/ece">IIASA’s work on energy, services and inequalities</a> and <a href="https://iiasa.ac.at/programs/asa">systems methods, resilience and open science</a>. It is a proposed research direction, with no IIASA affiliation or endorsement. Release code, input classifications and reproducible results; protect contract confidentiality with permissioned access and publishable aggregates.</p>
-    <div class="brief-next"><strong>The next decision:</strong><span>Secure a data partner and an independent methods review before expanding product scope. Treat empirical validation—not more screens—as the route from prototype to credible planning tool.</span></div>
-  </section>
-  <footer class="brief-footer"><p>Prepared for critical discussion · External product and programme pages checked 13 November 2026 · Vendor descriptions are not independent validation.</p><p><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#calculations">Explore the model</a><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#research">Read the research</a><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#sources">Inspect data sources</a><a href="./downloads/Fuel_Atlas_Decision_Brief.pdf" download>Download PDF</a></p></footer>
+</style></head><body><nav class="print-language" aria-label="Language"><a href="./print.html" lang="en">English</a><a href="./print-zh.html" lang="zh-Hans">中文</a></nav><main class="print-page"><div class="project-brief-content model-guide-content">
+<header class="brief-heading"><div><p data-i18n="guide.eyebrow" class="brief-eyebrow">Method</p><h1 data-i18n="guide.title">One fuel plan, from supply to flight</h1><p data-i18n="guide.deck" class="brief-deck">Choose your route and solve procurement, transport, airport stocks and aircraft uplift in one calculation.</p></div></header>
+<nav class="brief-actions" aria-label="Model guide downloads"><a href="./downloads/Fuel_Atlas_Model_Guide_EN.pdf" download><span data-i18n="guide.pdf.en">English PDF</span></a><a href="./downloads/Fuel_Atlas_Model_Guide_ZH.pdf" download><span data-i18n="guide.pdf.zh">Chinese PDF</span></a><a href="./downloads/Fuel_Atlas_Model_Guide.md" download><span data-i18n="guide.notes">Guide and data plan</span></a><a href="./print.html" data-i18n-href="guide.print.href"><span data-i18n="guide.print">Print view</span></a></nav>
+<section class="brief-thesis guide-scenario" aria-labelledby="guide-scenario-title"><h2 data-i18n="guide.scenario.title" id="guide-scenario-title">Scenario data</h2><p data-i18n="guide.scenario.text">Airport coordinates come from public data. Prices, supplier and transport capacities, stocks and aircraft inputs are generated assumptions that you can edit. Imported quotations provide another price input to the same model.</p></section>
+<ol class="guide-steps">
+<li><div class="guide-step-number" aria-hidden="true">1</div><div><h2 data-i18n="guide.step1.title">Choose your route</h2><p data-i18n="guide.step1.text">Choose the departure and destination, then add stops for a continuous route of 1–5 legs. Each departure is one planning stage. The airport order stays fixed while the model decides how fuel moves through the whole chain. An example route is available separately.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">2</div><div><h2 data-i18n="guide.step2.title">Set the supply conditions</h2><p data-i18n="guide.step2.text">Generate the route inputs, then adjust supplier capacity, transport cost and lead stages, opening airport stock and storage limits. Set the aircraft profile, starting fuel and reserves in the same form. Repeated visits to an airport draw on the same stock pool.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">3</div><div><h2 data-i18n="guide.step3.title">Calculate once</h2><p data-i18n="guide.step3.text">The calculation connects supplier purchases to transport arrivals, airport stock and aircraft uplift. Fuel must arrive before it can be loaded. Supplier and route capacities, storage, airport reserves and aircraft fuel and weight limits are enforced together. Transport lead times are counted in departure stages.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">4</div><div><h2 data-i18n="guide.step4.title">Read the complete plan</h2><p data-i18n="guide.step4.text">Follow quantities from each supplier to each airport and flight leg. The cost breakdown separates procurement, freight, handling, stock holding, into-plane service and applicable adjustments. Compare aircraft uplift and extra burn with a minimum-uplift baseline that uses the same supply network and starting and final stocks.</p></div></li>
+<li><div class="guide-step-number" aria-hidden="true">5</div><div><h2 data-i18n="guide.step5.title">Use your own quotations</h2><p data-i18n="guide.step5.text">Import dated, fee-inclusive into-plane offers in USD per metric tonne and choose the flight date. The quoted price enters procurement directly, so modeled upstream and service fees are not added again. Supply, storage and aircraft constraints still apply. Export the complete inputs and plan to keep the calculation.</p></div></li>
+</ol>
+<section class="brief-value" aria-labelledby="guide-read-title"><h2 data-i18n="guide.read.title" id="guide-read-title">Compare like with like</h2><p data-i18n="guide.read.text">The baseline loads only the fuel needed for each flight leg while optimizing upstream supply under the same constraints. Both plans use the same final aircraft fuel and airport-stock targets. If the baseline cannot be served, inspect the limiting conditions first. Extra carriage fuel is already included in the purchase quantities.</p></section>
+<section class="brief-section" aria-labelledby="guide-data-title"><h2 data-i18n="guide.data.title" id="guide-data-title">Replace inputs with operational data</h2><div class="brief-table-wrap"><table><caption data-i18n="guide.data.caption">Data used by the connected model</caption><thead><tr><th data-i18n="guide.data.input" scope="col">Input</th><th data-i18n="guide.data.source" scope="col">Source</th><th data-i18n="guide.data.use" scope="col">Use in the model</th></tr></thead><tbody>
+<tr><th data-i18n="guide.data.quote" scope="row">Prices and supply rights</th><td data-i18n="guide.data.quote.source">Supplier offers, contracts and invoices</td><td data-i18n="guide.data.quote.use">Set procurement prices, valid dates, fee coverage and allocated volumes.</td></tr>
+<tr><th data-i18n="guide.data.performance" scope="row">Aircraft performance</th><td data-i18n="guide.data.performance.source">Operator flight-planning and performance data</td><td data-i18n="guide.data.performance.use">Set burn, reserves, payload, weight limits and the extra-weight fuel penalty.</td></tr>
+<tr><th data-i18n="guide.data.supply" scope="row">Transport and airport stocks</th><td data-i18n="guide.data.supply.source">Logistics operators, fuel operators and delivery schedules</td><td data-i18n="guide.data.supply.use">Set delivery capacity and lead stages, usable opening stock, storage space and stock targets.</td></tr>
+<tr><th data-i18n="guide.data.benchmark" scope="row">Market background</th><td data-i18n="guide.data.benchmark.source">Public energy prices, exchange rates and national balances</td><td data-i18n="guide.data.benchmark.use">Inform scenario assumptions and market comparisons in the Data tab.</td></tr>
+</tbody></table></div></section>
+<section class="brief-section" aria-labelledby="guide-next-title"><h2 data-i18n="guide.next.title" id="guide-next-title">Change one constraint and compare</h2><p data-i18n="guide.next.text">Reduce one supplier’s capacity, delay a delivery or raise an airport’s reserve target. Calculate again and see how procurement, stock and uplift change together. The same result also shows the fuel burned to carry extra fuel.</p></section>
+<footer class="brief-footer"><p data-i18n="guide.updated">Updated 13 November 2026</p><p><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#model"><span data-i18n="guide.model">Open the model</span></a><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#research"><span data-i18n="guide.research">Read the research</span></a><a href="https://fuel-atlas-east-asia.victorskwei.chatgpt.site/#data/data-source-plan"><span data-i18n="guide.sources">View data and sources</span></a></p></footer>
 </div>
-<aside class="print-source-notes"><h2>Source links</h2><ol><li><a href="https://skymetrix.com/airtelligent/fuel/">https://skymetrix.com/airtelligent/fuel/</a></li><li><a href="https://www.openairlines.com/for-fuel-managers-ops-engineers/">https://www.openairlines.com/for-fuel-managers-ops-engineers/</a></li><li><a href="https://iiasa.ac.at/programs/ece">https://iiasa.ac.at/programs/ece</a></li><li><a href="https://iiasa.ac.at/programs/asa">https://iiasa.ac.at/programs/asa</a></li></ol><p>Source pages checked 13 November 2026. Product descriptions are vendor statements. No affiliation or endorsement is implied.</p></aside></main></body></html>
+</main></body></html>

@@ -1,3 +1,8 @@
+import { t, initI18n } from './i18n.js?v=20261113-integrated';
+
+const isLegacyNetwork = document.body.classList.contains('network-workspace');
+if (!isLegacyNetwork) initI18n(document);
+const label = value => isLegacyNetwork ? value : t(value);
 // Every product view stays mounted. Switching tabs preserves forms, solved
 // plans, research controls and each view's scroll position.
 const tabs = [...document.querySelectorAll('[data-workspace]')];
@@ -5,17 +10,21 @@ const panels = [...document.querySelectorAll('.workspace-panel')];
 const names = tabs.map(tab => tab.dataset.workspace);
 const scrollPositions = new Map();
 const titles = {
-  calculations: document.body.classList.contains('network-workspace') ? 'Supply-chain model' : 'Global fuel model', 'oil-markets': 'Market data',
-  research: 'Research report', briefing: 'Project brief', sources: 'Sources & methods',
+  calculations: isLegacyNetwork ? 'Supply-chain model' : 'nav.model',
+  'oil-markets': isLegacyNetwork ? 'Fuel data' : 'nav.data',
+  research: 'nav.research', briefing: 'nav.method', sources: 'Sources',
 };
 let active = null;
 
 function readRoute(hash = window.location.hash) {
   let value;
   try { value = decodeURIComponent(hash.replace(/^#/, '')); } catch { return null; }
-  const [name, ...parts] = value.split('/');
+  const [requested, ...parts] = value.split('/');
+  const aliases = { model: 'calculations', calculations: 'calculations', data: 'oil-markets', 'fuel-data': 'oil-markets', 'oil-markets': 'oil-markets', research: 'research', method: 'briefing', briefing: 'briefing', sources: isLegacyNetwork ? 'sources' : 'oil-markets' };
+  const name = aliases[requested] || requested;
   if (!names.includes(name)) return null;
-  return { name, section: parts.join('/') };
+  const section = parts.join('/') || (!isLegacyNetwork && requested === 'sources' ? 'data-source-plan' : '');
+  return { name, section };
 }
 
 function selectWorkspace(route, { navigate = false, focus = false } = {}) {
@@ -33,8 +42,9 @@ function selectWorkspace(route, { navigate = false, focus = false } = {}) {
   }
   for (const panel of panels) panel.hidden = panel.id !== `workspace-${name}`;
   document.documentElement.dataset.activeWorkspace = name;
-  document.title = `${titles[name] || name} — Fuel Atlas`;
-  const hash = `#${name}${section ? `/${encodeURIComponent(section)}` : ''}`;
+  document.title = `${label(titles[name] || name)} — ${label('Fuel Atlas')}`;
+  const routeName = isLegacyNetwork ? name : ({ calculations: 'model', 'oil-markets': 'data', research: 'research', briefing: 'method' }[name] || name);
+  const hash = `#${routeName}${section ? `/${encodeURIComponent(section)}` : ''}`;
   if (navigate && window.location.hash !== hash) window.history.pushState(null, '', hash);
   if (changed) document.dispatchEvent(new CustomEvent('workspacechange', { detail: { workspace: name } }));
   const panel = panels.find(item => item.id === `workspace-${name}`);
@@ -77,3 +87,7 @@ window.addEventListener('hashchange', onHistory);
 window.addEventListener('popstate', onHistory);
 if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
 selectWorkspace(readRoute() || { name: 'calculations', section: '' });
+
+document.addEventListener('languagechange', () => {
+  document.title = `${label(titles[active] || active)} — ${label('Fuel Atlas')}`;
+});

@@ -253,3 +253,19 @@ test("the unconstrained two-leg decision agrees with the research marginal-deliv
   near(profitable.extraBurnVsBaselineT, 1 / retained - 1);
   near(3.16 * profitable.extraBurnVsBaselineT, 0.5144186046511628);
 });
+
+test('one leg computes fuel needs with no cross-station arbitrage and respects shortages', () => {
+  const input = small([900]);
+  const result = optimizeRotation(input);
+  balances(input, result);
+  near(result.legs[0].upliftT, 8);
+  near(result.totalCostUsd, 7200);
+  near(result.savingsUsd, 0);
+  near(result.extraBurnVsBaselineT, 0);
+  input.legs[0].maxUpliftT = 7;
+  const unavailable = optimizeRotation(input);
+  assert.equal(unavailable.feasible, false);
+  assert.equal(unavailable.savingsUsd, null);
+  const emptyRoute = small([]);
+  assert.equal(optimizeRotation(emptyRoute).status, 'invalid');
+});

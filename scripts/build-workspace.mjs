@@ -77,17 +77,42 @@ function embedResearch(html) {
   return fragment.outerHTML;
 }
 
+
+function embedSourcePlan(html) {
+  const { document } = parseHTML(html);
+  const container = document.querySelector('.sources-view');
+  if (!container) throw new Error('Source plan is missing its content wrapper');
+  // Source collection is a section of Data, rather than a second page heading.
+  for (const old of [...container.querySelectorAll('h1, h2')]) {
+    const replacement = document.createElement(old.tagName === 'H1' ? 'h2' : 'h3');
+    for (const attribute of old.attributes) replacement.setAttribute(attribute.name, attribute.value);
+    replacement.innerHTML = old.innerHTML;
+    if (old.tagName === 'H1') replacement.id = 'data-source-plan-title';
+    old.replaceWith(replacement);
+  }
+  return container.outerHTML;
+}
+
 export async function composeWorkspace({ check = false } = {}) {
-  const [template, research, css, brief] = await Promise.all([
+  const [template, research, css, brief, fuelData, sources, supply, chainResults] = await Promise.all([
     read('src/workspace/index.template.html'), read('dist/research/index.html'),
     read('dist/research/research.css'), read('dist/brief/brief.html'),
+    read('dist/data-view/panel.html'), read('dist/data-view/sources.html'), read('dist/integrated-view/panel.html'), read('dist/integrated-view/results.html'),
   ]);
-  for (const marker of ['<!-- WORKSPACE:RESEARCH -->', '<!-- WORKSPACE:BRIEF -->']) {
+  for (const marker of ['<!-- WORKSPACE:RESEARCH -->', '<!-- WORKSPACE:BRIEF -->', '<!-- WORKSPACE:DATA -->', '<!-- WORKSPACE:SOURCES -->', '<!-- WORKSPACE:SUPPLY -->', '<!-- WORKSPACE:CHAIN_RESULTS -->']) {
     if (template.split(marker).length !== 2) throw new Error(`Expected one ${marker} marker`);
   }
+  if (parseHTML(supply).document.querySelector('form')) throw new Error('Supply inputs must share rotation-form; nested forms are not allowed');
   const html = template.replace('<!-- WORKSPACE:RESEARCH -->', embedResearch(research))
-    .replace('<!-- WORKSPACE:BRIEF -->', brief.trim());
+    .replace('<!-- WORKSPACE:BRIEF -->', brief.trim())
+    .replace('<!-- WORKSPACE:DATA -->', fuelData.trim())
+    .replace('<!-- WORKSPACE:SOURCES -->', embedSourcePlan(sources))
+    .replace('<!-- WORKSPACE:SUPPLY -->', supply.trim())
+    .replace('<!-- WORKSPACE:CHAIN_RESULTS -->', chainResults.trim());
   const { document } = parseHTML(html);
+  const tabs = [...document.querySelectorAll('[data-workspace]')].map(node => node.getAttribute('data-workspace'));
+  if (tabs.join(',') !== 'calculations,oil-markets,research,briefing') throw new Error('The application must expose Model, Data, Research and Method only');
+  if (document.querySelectorAll('.workspace-panel').length !== 4) throw new Error('Expected four mounted application panels');
   const ids = [...document.querySelectorAll('[id]')].map(node => node.id);
   if (ids.length !== new Set(ids).size) throw new Error('Composed workspace has duplicate IDs');
   const transformed = await transform(scopeResearchCss(css), { loader: 'css', target: ['es2022'] });
@@ -101,7 +126,7 @@ export async function composeWorkspace({ check = false } = {}) {
       if (await read(path) !== content) throw new Error(`${path} is stale; run npm run build:workspace`);
     } else await writeFile(resolve(root, path), content);
   }
-  console.log(`Unified workspace ${check ? 'verified' : 'built'}: five mounted panels; research CSS isolated.`);
+  console.log(`Unified workspace ${check ? 'verified' : 'built'}: four mounted panels; research CSS isolated.`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

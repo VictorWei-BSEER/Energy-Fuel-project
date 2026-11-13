@@ -70,10 +70,10 @@ function normalize(input) {
   }
   if (
     !Array.isArray(input.legs) ||
-    input.legs.length < 2 ||
+    input.legs.length < 1 ||
     input.legs.length > 5
   ) {
-    errors.push("轮转必须包含 2–5 个连续航段。");
+    errors.push("轮转必须包含 1–5 个连续航段。");
     return { errors };
   }
   const legs = Array.from(input.legs, (raw, i) => {
@@ -460,3 +460,10 @@ export function defaultRotation() {
     ],
   };
 }
+
+// Shared physical core for the joint supply-chain / aircraft LP. Exporting these
+// helpers does not change the standalone model's validation or equations.
+export const normalizeRotationInput = normalize;
+export const rotationExtraLimits = limits;
+export const evaluateRotationExtras = planFromExtra;
+export const rotationMassTolerance = massTolerance;

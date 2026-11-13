@@ -37,16 +37,22 @@ async function mount(t, hash = '') {
   return { $, document, window, click, visible, history, focused, scrolled };
 }
 
-test('all five product views share one mounted shell and preserve independent form state', async t => {
+test('all four product views share one mounted shell and preserve independent form state', async t => {
   const ui = await mount(t);
   const { $, document, window, click, visible } = ui;
   assert.deepEqual([...document.querySelectorAll('[data-workspace]')].map(tab => tab.dataset.workspace),
-    ['calculations', 'oil-markets', 'research', 'briefing', 'sources']);
+    ['calculations', 'oil-markets', 'research', 'briefing']);
   assert.equal(document.querySelectorAll('.topbar').length, 1);
   assert.equal(document.querySelectorAll('.workspace-navigation').length, 1);
   assert.ok(document.querySelector('main').lastElementChild.classList.contains('site-footer'), 'the shared footer follows every mounted panel');
+  assert.equal(document.querySelector('#workspace-sources'), null);
+  assert.ok(document.querySelector('#workspace-oil-markets #data-source-plan .data-source-table'));
+  assert.equal(document.querySelector('#workspace-calculations a[href*="network.html"]'), null);
+  assert.equal(document.querySelector('#workspace-calculations form form'), null);
   assert.equal(document.querySelector('#workspace-research iframe'), null);
   assert.equal(document.querySelector('#workspace-research .masthead'), null);
+  const plannerChildren = [...document.querySelector('#planner').children];
+  assert.ok(plannerChildren.indexOf(document.querySelector('#rotation')) < plannerChildren.indexOf(document.querySelector('.workspace-grid')), 'route inputs precede the map in reading and keyboard order');
   const ids = [...document.querySelectorAll('[id]')].map(node => node.id);
   assert.equal(new Set(ids).size, ids.length);
   const field = $('#initial-fuel');
@@ -75,7 +81,7 @@ test('research deep links, internal references and browser history select the ri
   const { $, document, window, click, visible, scrolled, focused } = ui;
   assert.deepEqual(visible(), ['workspace-research']);
   assert.deepEqual(scrolled, ['essay']);
-  assert.equal(document.title, 'Research report — Fuel Atlas');
+  assert.equal(document.title, '研究 — 燃油图谱');
   click('#workspace-research a[href="#research/methods"]');
   assert.equal(window.location.hash, '#research/methods');
   assert.equal(focused.at(-1), 'methods');
@@ -86,14 +92,14 @@ test('research deep links, internal references and browser history select the ri
   assert.deepEqual(visible(), ['workspace-research']);
   assert.equal(scrolled.at(-1), 'essay');
   assert.equal($('#workspace-tab-research').getAttribute('aria-selected'), 'true');
-  window.location.hash = '#briefing/brief-pilot-title';
+  window.location.hash = '#briefing/guide-data-title';
   window.dispatchEvent(new window.Event('popstate'));
   assert.deepEqual(visible(), ['workspace-briefing']);
-  assert.equal(scrolled.at(-1), 'brief-pilot-title');
+  assert.equal(scrolled.at(-1), 'guide-data-title');
   assert.equal(document.querySelectorAll('[role="tab"][tabindex="0"]').length, 1);
 });
 
-test('keyboard roving navigation covers research and project brief without changing tab semantics', async t => {
+test('keyboard roving navigation covers research and model guide without changing tab semantics', async t => {
   const ui = await mount(t, '#research');
   const key = (id, value) => {
     const event = new ui.window.Event('keydown', { bubbles: true, cancelable: true });
@@ -102,9 +108,9 @@ test('keyboard roving navigation covers research and project brief without chang
   key('#workspace-tab-research', 'ArrowRight');
   assert.deepEqual(ui.visible(), ['workspace-briefing']);
   assert.equal(ui.focused.at(-1), 'workspace-tab-briefing');
-  key('#workspace-tab-briefing', 'End');
-  assert.deepEqual(ui.visible(), ['workspace-sources']);
-  key('#workspace-tab-sources', 'Home');
+  key('#workspace-tab-research', 'End');
+  assert.deepEqual(ui.visible(), ['workspace-briefing']);
+  key('#workspace-tab-briefing', 'Home');
   assert.deepEqual(ui.visible(), ['workspace-calculations']);
 });
 
@@ -143,4 +149,42 @@ test('research CSS isolation scopes resets, media rules and selector lists witho
   assert.match(css, /@media print \{\s*#workspace-research p/);
   assert.doesNotMatch(css, /@page|(?:^|})\s*(?:body|h1|p)\s*\{/);
   assert.throws(() => scopeResearchCss('@font-face { font-family: leak; }'), /Unsupported global/);
+});
+
+test('canonical routes and old source aliases use the same four mounted panels', async t => {
+  const ui = await mount(t, '#sources');
+  assert.deepEqual(ui.visible(), ['workspace-oil-markets']);
+  assert.equal(ui.scrolled.at(-1), 'data-source-plan');
+  for (const [hash, panel] of [
+    ['#model', 'calculations'], ['#calculations', 'calculations'],
+    ['#data', 'oil-markets'], ['#fuel-data', 'oil-markets'], ['#oil-markets', 'oil-markets'],
+    ['#method', 'briefing'], ['#briefing', 'briefing'], ['#research', 'research'],
+  ]) {
+    ui.window.location.hash = hash;
+    ui.window.dispatchEvent(new ui.window.Event('hashchange'));
+    assert.deepEqual(ui.visible(), [`workspace-${panel}`], hash);
+  }
+  ui.click('[data-open-workspace="sources"]');
+  assert.equal(ui.window.location.hash, '#data/data-source-plan');
+  assert.equal(ui.scrolled.at(-1), 'data-source-plan');
+  assert.equal(ui.$('#data-source-plan').closest('.workspace-panel').id, 'workspace-oil-markets');
+  assert.equal(ui.document.querySelectorAll('#workspace-oil-markets h1').length, 1);
+});
+
+test('previous network and planner entry points redirect to the unified model and preserve source destinations', async () => {
+  for (const page of ['network.html', 'planner.html']) {
+    const source = await readFile(new URL(`../dist/${page}`, import.meta.url), 'utf8');
+    const script = source.match(/<!-- UNIFIED-MODEL-ENTRY:START -->[\s\S]*?<script>([\s\S]*?)<\/script>/)[1];
+    for (const [hash, expected] of [
+      ['', '#model'], ['#calculations', '#model'], ['#oil-markets', '#data'],
+      ['#sources', '#data/data-source-plan'], ['#research/essay', '#research/essay'],
+      ['#briefing/guide-data-title', '#method/guide-data-title'],
+    ]) {
+      const current = new URL(`https://fuel.example/${page}${hash}`), redirects = [];
+      vm.runInNewContext(script, { URL, location: {
+        href: current.href, hash: current.hash, replace: value => redirects.push(value),
+      }});
+      assert.deepEqual(redirects, [`https://fuel.example/index.html${expected}`], `${page}${hash}`);
+    }
+  }
 });
