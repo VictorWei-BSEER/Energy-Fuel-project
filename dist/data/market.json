@@ -8,7 +8,7 @@
     "unit": "USD/US gallon",
     "frequency": "daily observations; published with a reporting lag"
   },
-  "fetchedAt": "2026-11-20T03:24:49.959357Z",
+  "fetchedAt": "2026-11-20T03:44:52.151777Z",
   "observedAt": "2026-11-17",
   "observations": [
     {
@@ -388,7 +388,7 @@
     "detail": "Observed EIA public benchmark. Not a live, Asian, or airport executable quote.",
     "limitations": "US wholesale benchmark used only as an explicit proxy. Asian delivered differentials, logistics costs, capacities and demand remain model assumptions.",
     "transport": {
-      "sha256": "d2e88c35109a6d7c94e4b389d803387f77570d0ec266de0a065ca5816e4f0ff3",
+      "sha256": "9e79678954327f97200390b16fbdd09737142f121a69483c9a750ec7ff66ed31",
       "httpLastModified": "Wed, 18 Nov 2026 14:38:21 GMT"
     }
   },
